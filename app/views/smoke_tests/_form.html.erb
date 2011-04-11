@@ -1,0 +1,33 @@
+<%= form_for(@smoke_test) do |f| %>
+  <% if @smoke_test.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@smoke_test.errors.count, "error") %> prohibited this smoke_test from being saved:</h2>
+
+      <ul>
+      <% @smoke_test.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :branch_url %><br />
+    <%= f.text_field :branch_url %>
+  </div>
+  <div class="field">
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </div>
+  <div class="field">
+    <%= f.label :revision %><br />
+    <%= f.text_field :revision %>
+  </div>
+  <div class="field">
+    <%= f.label :merge_trunk %><br />
+    <%= f.text_field :merge_trunk %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

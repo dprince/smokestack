@@ -1,0 +1,29 @@
+<h1>Listing smoke_tests</h1>
+
+<table>
+  <tr>
+    <th>Branch name</th>
+    <th>Description</th>
+    <th>Revision</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @smoke_tests.each do |smoke_test| %>
+  <tr>
+    <td><%= smoke_test.branch_url %></td>
+    <td><%= smoke_test.description %></td>
+    <td><%= smoke_test.revision %></td>
+    <td><%= smoke_test.merge_trunk %></td>
+    <td><%= link_to 'Show', smoke_test %></td>
+    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test) %></td>
+    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Smoke test', new_smoke_test_path %>
