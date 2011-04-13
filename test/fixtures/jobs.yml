@@ -1,7 +1,6 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  script: MyText
   status: Pending
   stdout: MyText
   stderr: MyText
@@ -9,7 +8,6 @@ one:
   smoke_test_id: 1
 
 two:
-  script: MyText
   status: Success
   stdout: MyText
   stderr: MyText

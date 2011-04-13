@@ -6,6 +6,7 @@ gem 'rails', '3.0.6'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql'
+gem 'resque', '1.15.0'
 
 # Use unicorn as the web server
 # gem 'unicorn'

@@ -46,4 +46,13 @@ class SmokeTestsControllerTest < ActionController::TestCase
 
     assert_redirected_to smoke_tests_path
   end
+
+  test "should run job" do
+    AsyncExec.jobs.clear
+    assert_difference('Job.count') do
+      post :run_job, :id => @smoke_test.id
+    end
+    assert_not_nil AsyncExec.jobs[Job]
+  end
+
 end

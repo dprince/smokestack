@@ -80,4 +80,20 @@ class SmokeTestsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  # POST /smoke_tests/1/run_job
+  def run_job
+    @smoke_test = SmokeTest.find(params[:id])
+
+    job=Job.create(
+        :smoke_test => @smoke_test
+    )
+
+    respond_to do |format|
+      format.html { redirect_to(job) }
+      format.xml  { head :ok }
+    end
+
+  end
+
 end

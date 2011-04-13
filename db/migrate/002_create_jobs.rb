@@ -1,7 +1,6 @@
 class CreateJobs < ActiveRecord::Migration
   def self.up
     create_table :jobs do |t|
-      t.text :script
       t.string :status
       t.text :stdout
       t.text :stderr

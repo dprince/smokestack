@@ -13,7 +13,6 @@
 ActiveRecord::Schema.define(:version => 2) do
 
   create_table "jobs", :force => true do |t|
-    t.text     "script"
     t.string   "status"
     t.text     "stdout",        :limit => 2147483647
     t.text     "stderr",        :limit => 2147483647
