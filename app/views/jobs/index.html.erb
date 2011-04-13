@@ -1,0 +1,33 @@
+<h1>Listing jobs</h1>
+
+<table>
+  <tr>
+    <th>Script</th>
+    <th>Success</th>
+    <th>Stdout</th>
+    <th>Stderr</th>
+    <th>Msg</th>
+    <th>Smoke test</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @jobs.each do |job| %>
+  <tr>
+    <td><%= job.script %></td>
+    <td><%= job.status %></td>
+    <td><%= job.stdout %></td>
+    <td><%= job.stderr %></td>
+    <td><%= job.msg %></td>
+    <td><%= job.smoke_test_id %></td>
+    <td><%= link_to 'Show', job %></td>
+    <td><%= link_to 'Edit', edit_job_path(job) %></td>
+    <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Job', new_job_path %>

@@ -1,4 +1,6 @@
 Smokestack::Application.routes.draw do
+  resources :jobs
+
   resources :smoke_tests
 
   # The priority is based upon order of creation:

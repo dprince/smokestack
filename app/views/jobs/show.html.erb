@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Script:</b>
+  <%= @job.script %>
+</p>
+
+<p>
+  <b>Success:</b>
+  <%= @job.status %>
+</p>
+
+<p>
+  <b>Stdout:</b>
+  <%= @job.stdout %>
+</p>
+
+<p>
+  <b>Stderr:</b>
+  <%= @job.stderr %>
+</p>
+
+<p>
+  <b>Msg:</b>
+  <%= @job.msg %>
+</p>
+
+<p>
+  <b>Smoke test:</b>
+  <%= @job.smoke_test_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_job_path(@job) %> |
+<%= link_to 'Back', jobs_path %>
