@@ -5,11 +5,11 @@ one:
   stdout: MyText
   stderr: MyText
   msg: MyString
-  smoke_test_id: 1
+  smoke_test: trunk
 
 two:
   status: Success
   stdout: MyText
   stderr: MyText
   msg: MyString
-  smoke_test_id: 1
+  smoke_test: trunk

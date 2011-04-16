@@ -13,6 +13,18 @@ class JobTest < ActiveSupport::TestCase
     assert_equal smoke_tests(:trunk), job.smoke_test
   end
 
+  test "update" do
+    job = jobs(:one)
+    job.update_attributes(
+      :status => "Success",
+      :revision => "1234"
+    )
+    job = Job.find(jobs(:one).id)
+    assert_equal "Success", job.status
+    assert_equal "1234", job.revision
+    assert_equal "1234", smoke_tests(:trunk).last_revision
+  end
+
   test "verify true job" do
     assert Job.perform(jobs(:one), "true")
   end

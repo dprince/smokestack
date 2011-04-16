@@ -3,9 +3,11 @@ require 'tempfile'
 
 class Job < ActiveRecord::Base
 
+  validates_presence_of :smoke_test_id
   belongs_to :smoke_test
   after_initialize :handle_after_init
   after_create :handle_after_create
+  after_save :handle_after_save
 
   def handle_after_init
     if new_record? then
@@ -15,6 +17,10 @@ class Job < ActiveRecord::Base
 
   def handle_after_create
     AsyncExec.run_job(Job, self.id)
+  end
+
+  def handle_after_save
+    self.smoke_test.update_attribute(:last_revision, self.revision)
   end
 
   @queue=:job

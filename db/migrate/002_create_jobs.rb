@@ -4,6 +4,7 @@ class CreateJobs < ActiveRecord::Migration
       t.string :status
       t.text :stdout
       t.text :stderr
+      t.string :revision
       t.string :msg
       t.integer :smoke_test_id
 

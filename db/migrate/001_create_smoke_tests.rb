@@ -3,7 +3,7 @@ class CreateSmokeTests < ActiveRecord::Migration
     create_table :smoke_tests do |t|
       t.string :branch_url
       t.string :description
-      t.string :revision
+      t.string :last_revision
       t.boolean :merge_trunk, :default => true
 
       t.timestamps

@@ -3,11 +3,9 @@
 trunk:
   branch_url: lp:nova
   description: Nova trunk
-  revision: 
   merge_trunk: true
 
 dev1:
   branch_url: lp:~dan-prince/nova/dev1
   description: Dev 1
-  revision:
   merge_trunk: true
