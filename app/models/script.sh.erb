@@ -1,2 +1,20 @@
 #!/bin/bash
-echo <%= job.id %>
+
+chef-vpc-toolkit -v || \
+	{ echo "Please install the Chef VPC Toolkit."; exit 1; }
+
+TMP_DIR=$(mktemp -d)
+cd $TMP_DIR
+git clone git@github.com:dprince/openstack_vpc.git && cd openstack_vpc || \
+	{ echo "Failed to checkout openstack VPC."; exit 1; }
+
+trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
+if rake create; then
+	rake chef:poll_clients CHEF_TIMEOUT=600 || \
+		{ echo "Chef client timeout."; rake chef:tail_logs; exit 1; }
+	rake nova:smoke_tests SERVER_NAME=nova1
+else
+	rake chef:tail_logs
+	echo "Failed to create server group."
+	exit 1
+fi

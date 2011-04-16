@@ -27,6 +27,7 @@ class Job < ActiveRecord::Base
 
   def self.perform(id, script_text=nil)
     job = Job.find(id)
+	job.update_attribute(:status, "Running")
 
     if script_text.nil?
         template = File.read(File.join(Rails.root, "app", "models", "script.sh.erb"))
@@ -43,7 +44,13 @@ class Job < ActiveRecord::Base
         job.stderr=stderr.readlines.join.chomp
         job.save
         retval = wait_thr.value
-        return retval.success? 
+        if retval.success? 
+			job.update_attribute(:status, "Success")
+			return true
+		else
+			job.update_attribute(:status, "Failed")
+			return false
+		end
 
     end
 

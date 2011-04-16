@@ -9,6 +9,7 @@
     <th></th>
     <th></th>
     <th></th>
+    <th></th>
   </tr>
 
 <% @smoke_tests.each do |smoke_test| %>
@@ -20,6 +21,7 @@
     <td><%= link_to 'Show', smoke_test %></td>
     <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test) %></td>
     <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Run job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post %></td>
   </tr>
 <% end %>
 </table>
