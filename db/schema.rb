@@ -13,8 +13,10 @@
 ActiveRecord::Schema.define(:version => 2) do
 
   create_table "jobs", :force => true do |t|
-    t.string   "status"
+    t.string   "status",                              :default => "Pending"
+    t.boolean  "has_stdout"
     t.text     "stdout",        :limit => 2147483647
+    t.boolean  "has_stderr"
     t.text     "stderr",        :limit => 2147483647
     t.string   "revision"
     t.string   "msg"
@@ -27,6 +29,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.string   "branch_url"
     t.string   "description"
     t.string   "last_revision"
+    t.string   "status",        :default => "Pending"
     t.boolean  "merge_trunk",   :default => true
     t.datetime "created_at"
     t.datetime "updated_at"

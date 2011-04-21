@@ -3,13 +3,17 @@
 one:
   status: Pending
   stdout: MyText
+  has_stdout: False
   stderr: MyText
+  has_stderr: False
   msg: MyString
   smoke_test: trunk
 
 two:
   status: Success
   stdout: MyText
+  has_stdout: False
   stderr: MyText
+  has_stderr: False
   msg: MyString
   smoke_test: trunk

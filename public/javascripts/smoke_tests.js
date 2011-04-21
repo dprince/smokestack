@@ -1,40 +1,12 @@
 
-function regenerate_index(container) {
+function reload_smoke_tests_table(container) {
 
 	$.ajax({
-		url: '/smoke_tests',
-		dataType: 'json',
+		url: '/smoke_tests?table_only=true',
 		type: 'GET',
 		success: function(data) {
-			index_html="<tr class=\"ui-widget-header\">";
-			index_html+="<th>Branch name</th>";
-			index_html+="<th>Description</th>";
-			index_html+="<th>Revision</th>";
-			index_html+="<th>Merge<br/>Trunk</th>";
-			index_html+="<th></th>";
-			index_html+="<th></th>";
-			index_html+="<th></th>";
-			index_html+="<th></th>";
-			index_html+="</tr>";
-
-			for (i=0; i<data.length; i++) {
-				item=data[i].smoke_test
-				index_html+="<tr id=\"smoke-test-tr-"+item.id+"\">";
-				index_html+="<td>"+item.branch_url+"</td>";
-				index_html+="<td>"+item.description+"</td>";
-				index_html+="<td>"+item.last_revision+"</td>";
-				index_html+="<td>"+item.merge_trunk+"</td>";
-				index_html+="<td><a href=\"/smoke_tests/"+item.id+"\" class=\"smoke-test-show\">Show</a></td>";
-				index_html+="<td><a href=\"/smoke_tests/"+item.id+"/edit\" class=\"smoke-test-edit\">Edit</a></td>";
-				index_html+="<td><a href=\"/smoke_tests/"+item.id+"\" class=\"smoke-test-destroy\">Destroy</a></td>";
-				index_html+="<td><a href=\"/smoke_tests/"+item.id+"\" class=\"smoke-test-run-job\">Run Job</a></td>";
-				index_html+="</tr>";
-			}
-
-			container.html(index_html);
-			smoke_test_selectors();
+			container.html(data);
 			smoke_test_table_selectors();
-
 		},
 		error: function(data) {
 			alert('Failed to load smoke tests.'+data);
@@ -215,7 +187,7 @@ function smoke_test_create_or_edit(method) {
         success: function(data) {
             id=$("id", data).text();
             $("#smoke-tests-dialog").dialog('close');
-			regenerate_index($("#smoke-tests-table"));
+			reload_smoke_tests_table($("#smoke-tests-table"));
         },
         error: function(data) {
             err_html="<ul>";

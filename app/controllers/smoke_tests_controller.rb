@@ -5,10 +5,14 @@ class SmokeTestsController < ApplicationController
   def index
     @smoke_tests = SmokeTest.all
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json  { render :json => @smoke_tests }
-      format.xml  { render :xml => @smoke_tests }
+    if params[:table_only] then
+      render :partial => "table"
+    else
+      respond_to do |format|
+        format.html # index.html.erb
+        format.json  { render :json => @smoke_tests }
+        format.xml  { render :xml => @smoke_tests }
+      end
     end
   end
 
@@ -68,6 +72,7 @@ class SmokeTestsController < ApplicationController
     respond_to do |format|
       if @smoke_test.update_attributes(params[:smoke_test])
         format.html { redirect_to(@smoke_test, :notice => 'Smoke test was successfully updated.') }
+        format.json  { head :ok }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

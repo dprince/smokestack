@@ -2,12 +2,18 @@ class JobsController < ApplicationController
   # GET /jobs
   # GET /jobs.xml
   def index
-    @jobs = Job.all
+    @jobs = Job.find(:all, :include => [:smoke_test])
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @jobs }
+    if params[:table_only] then
+      render :partial => "table"
+    else
+      respond_to do |format|
+        format.html # index.html.erb
+        format.json  { render :json => @jobs }
+        format.xml  { render :xml => @jobs }
+      end
     end
+
   end
 
   # GET /jobs/1
@@ -17,6 +23,7 @@ class JobsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
+      format.json  { render :json => @job }
       format.xml  { render :xml => @job }
     end
   end
@@ -28,6 +35,7 @@ class JobsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
+      format.json  { render :json => @job }
       format.xml  { render :xml => @job }
     end
   end
@@ -45,9 +53,11 @@ class JobsController < ApplicationController
     respond_to do |format|
       if @job.save
         format.html { redirect_to(@job, :notice => 'Job was successfully created.') }
+        format.json  { render :json => @job, :status => :created, :location => @job }
         format.xml  { render :xml => @job, :status => :created, :location => @job }
       else
         format.html { render :action => "new" }
+        format.json  { render :json => @job.errors, :status => :unprocessable_entity }
         format.xml  { render :xml => @job.errors, :status => :unprocessable_entity }
       end
     end
@@ -61,9 +71,11 @@ class JobsController < ApplicationController
     respond_to do |format|
       if @job.update_attributes(params[:job])
         format.html { redirect_to(@job, :notice => 'Job was successfully updated.') }
+        format.json  { head :ok }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
+        format.json  { render :json => @job.errors, :status => :unprocessable_entity }
         format.xml  { render :xml => @job.errors, :status => :unprocessable_entity }
       end
     end
@@ -73,11 +85,14 @@ class JobsController < ApplicationController
   # DELETE /jobs/1.xml
   def destroy
     @job = Job.find(params[:id])
+    json=@job.to_json
+    xml=@job.to_xml
     @job.destroy
 
     respond_to do |format|
       format.html { redirect_to(jobs_url) }
-      format.xml  { head :ok }
+      format.json  { render :json => json }
+      format.xml  { render :xml => xml }
     end
   end
 end

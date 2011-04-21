@@ -3,6 +3,11 @@ body, p, ol, ul, td {
   font-size:   12px;
 }
 
+table.data tr.header {
+    color: #004276;
+    background-color: #cfcfcf;
+}
+
 table.data tr.tr0 {
     background-color: #FFF;
 }

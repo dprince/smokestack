@@ -1,0 +1,25 @@
+  <tr class="ui-widget-header">
+    <th>Branch name</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Revision</th>
+    <th>Merge<br/>Trunk</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @smoke_tests.each do |smoke_test| %>
+  <tr id="smoke-test-tr-<%= smoke_test.id %>" class="<%= cycle "tr0", "tr1" %>">
+    <td><%= smoke_test.branch_url %></td>
+    <td><%= smoke_test.description %></td>
+    <td><%= raw status_image(smoke_test.status) %></td>
+    <td><%= smoke_test.last_revision %></td>
+    <td><%= smoke_test.merge_trunk %></td>
+    <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
+    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
+    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
+    <td><%= link_to 'Run Job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
+  </tr>
+<% end %>

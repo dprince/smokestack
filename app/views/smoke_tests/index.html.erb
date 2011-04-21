@@ -11,34 +11,26 @@ $(document).ready(function() {
 	smoke_test_selectors();
 	smoke_test_table_selectors();
 
+    var smokeTestsTabId = $("#tabs").tabs( "option", "selected" );
+    var smokeTestsTable = $("#smoke-tests-table")
+
+    function refreshDiv() { 
+
+        var selected = $("#tabs").tabs( "option", "selected" );
+        if (selected == smokeTestsTabId) {
+            reload_smoke_tests_table(smokeTestsTable);
+        }
+
+    }
+
+    var refreshId = setInterval(refreshDiv, 6000);
+
 });
 
 </script>
 
 <table id="smoke-tests-table" class="ui-widget ui-widget-content data">
-  <tr class=ui-widget-header>
-    <th>Branch name</th>
-    <th>Description</th>
-    <th>Revision</th>
-    <th>Merge<br/>Trunk</th>
-    <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-<% @smoke_tests.each do |smoke_test| %>
-  <tr id="smoke-test-tr-<%= smoke_test.id %>">
-    <td><%= smoke_test.branch_url %></td>
-    <td><%= smoke_test.description %></td>
-    <td><%= smoke_test.last_revision %></td>
-    <td><%= smoke_test.merge_trunk %></td>
-    <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
-    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
-    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
-    <td><%= link_to 'Run job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
-  </tr>
-<% end %>
+	<%= render :partial => 'table' %>
 </table>
 
 </div>

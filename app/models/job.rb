@@ -20,7 +20,10 @@ class Job < ActiveRecord::Base
   end
 
   def handle_after_save
-    self.smoke_test.update_attribute(:last_revision, self.revision)
+    self.smoke_test.update_attributes(
+		:last_revision => self.revision,
+		:status => self.status
+	)
   end
 
   @queue=:job
@@ -41,7 +44,13 @@ class Job < ActiveRecord::Base
 
     Open3.popen3("bash #{script_file.path}") do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp
+		if job.stdout and not job.stdout.empty? then
+			job.has_stdout = true
+		end
         job.stderr=stderr.readlines.join.chomp
+		if job.stderr and not job.stderr.empty? then
+			job.has_stderr = true
+		end
         job.save
         retval = wait_thr.value
         if retval.success? 

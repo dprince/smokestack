@@ -1,8 +1,10 @@
 class CreateJobs < ActiveRecord::Migration
   def self.up
     create_table :jobs do |t|
-      t.string :status
+      t.string :status, :default => "Pending"
+      t.boolean :has_stdout
       t.text :stdout
+      t.boolean :has_stderr
       t.text :stderr
       t.string :revision
       t.string :msg

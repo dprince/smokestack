@@ -1,32 +1,33 @@
-<h1>Listing jobs</h1>
+<div id="jobs" class="ui-widget">
 
-<table>
-  <tr>
-    <th>Script</th>
-    <th>Success</th>
-    <th>Stdout</th>
-    <th>Stderr</th>
-    <th>Msg</th>
-    <th>Smoke test</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+<div id="jobs-dialog"></div>
 
-<% @jobs.each do |job| %>
-  <tr>
-    <td><%= job.status %></td>
-    <td><%= job.stdout %></td>
-    <td><%= job.stderr %></td>
-    <td><%= job.msg %></td>
-    <td><%= job.smoke_test_id %></td>
-    <td><%= link_to 'Show', job %></td>
-    <td><%= link_to 'Edit', edit_job_path(job) %></td>
-    <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	var jobsTabId = $("#tabs").tabs( "option", "selected" );
+	var jobsTable = $("#jobs-table")
+
+    job_table_selectors();
+
+	function refreshDiv() { 
+
+		var selected = $("#tabs").tabs( "option", "selected" );
+		if (selected == jobsTabId) {
+			reload_jobs_table(jobsTable);
+		}
+
+	}
+
+	var refreshId = setInterval(refreshDiv, 6000);
+
+});
+
+</script>
+
+<table id="jobs-table" class="ui-widget ui-widget-content data">
+	<%= render :partial => 'table' %>
 </table>
 
-<br />
-
-<%= link_to 'New Job', new_job_path %>
+</div>
