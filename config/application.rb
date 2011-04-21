@@ -1,4 +1,5 @@
 require File.expand_path('../boot', __FILE__)
+SMOKESTACK_VERSION="dev"
 CHEF_VPC_PROJECT = "#{File.dirname(__FILE__)}" unless defined?(CHEF_VPC_PROJECT)
 
 require 'rails/all'

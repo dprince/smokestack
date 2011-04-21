@@ -1,22 +1,26 @@
 class SmokeTestsController < ApplicationController
   # GET /smoke_tests
+  # GET /smoke_tests.json
   # GET /smoke_tests.xml
   def index
     @smoke_tests = SmokeTest.all
 
     respond_to do |format|
       format.html # index.html.erb
+      format.json  { render :json => @smoke_tests }
       format.xml  { render :xml => @smoke_tests }
     end
   end
 
   # GET /smoke_tests/1
+  # GET /smoke_tests/1.json
   # GET /smoke_tests/1.xml
   def show
     @smoke_test = SmokeTest.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
+      format.json  { render :json => @smoke_test }
       format.xml  { render :xml => @smoke_test }
     end
   end
@@ -28,6 +32,7 @@ class SmokeTestsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
+      format.json  { render :json => @smoke_test }
       format.xml  { render :xml => @smoke_test }
     end
   end
@@ -45,9 +50,11 @@ class SmokeTestsController < ApplicationController
     respond_to do |format|
       if @smoke_test.save
         format.html { redirect_to(@smoke_test, :notice => 'Smoke test was successfully created.') }
+        format.json  { render :json => @smoke_test, :status => :created, :location => @smoke_test }
         format.xml  { render :xml => @smoke_test, :status => :created, :location => @smoke_test }
       else
         format.html { render :action => "new" }
+        format.json  { render :json => @smoke_test.errors, :status => :unprocessable_entity }
         format.xml  { render :xml => @smoke_test.errors, :status => :unprocessable_entity }
       end
     end
@@ -64,6 +71,7 @@ class SmokeTestsController < ApplicationController
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
+        format.json  { render :json => @smoke_test.errors, :status => :unprocessable_entity }
         format.xml  { render :xml => @smoke_test.errors, :status => :unprocessable_entity }
       end
     end
@@ -73,11 +81,14 @@ class SmokeTestsController < ApplicationController
   # DELETE /smoke_tests/1.xml
   def destroy
     @smoke_test = SmokeTest.find(params[:id])
+    json=@smoke_test.to_json
+    xml=@smoke_test.to_xml
     @smoke_test.destroy
 
     respond_to do |format|
       format.html { redirect_to(smoke_tests_url) }
-      format.xml  { head :ok }
+      format.json  { render :json => json }
+      format.xml  { render :xml => xml }
     end
   end
 
@@ -91,6 +102,7 @@ class SmokeTestsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(job) }
+      format.json  { head :ok }
       format.xml  { head :ok }
     end
 

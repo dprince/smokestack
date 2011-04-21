@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+  <title>SmokeStack</title>
+  <%= javascript_include_tag "smoke_tests.js" %>
+  <%= stylesheet_link_tag :all %>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js" type="text/javascript"></script>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+
+<script type="text/javascript">
+
+$(function(){
+
+	$("#tabs").tabs();
+
+});
+
+</script>
+
+<div id="header_font_div">SmokeStack</div>
+<br class="clear"/>
+
+<div id="tabs">
+	<ul>
+		<li><a href="/smoke_tests">Tests</a></li>
+		<li><a href="/jobs">Jobs</a></li>
+	</ul>
+</div>
+
+<div id="footer_div">
+Version: <%= SMOKESTACK_VERSION %>
+</div>
+</body>
+</html>

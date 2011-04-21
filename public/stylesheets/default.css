@@ -1,0 +1,65 @@
+body, p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size:   12px;
+}
+
+table.data tr.tr0 {
+    background-color: #FFF;
+}
+
+table.data tr.tr1 {
+    background-color: #DDD;
+}
+
+table.data tr.inactive {
+  color: #333;
+  font-style: italic;
+}
+
+br.clear {
+	clear: both;
+}
+
+img.check_image {
+}
+
+img.status_image {
+}
+
+#header_font_div {
+	font-size:   20px;
+	font-weight:   bold;
+	margin-left: .3em;
+	margin-bottom: 0.2em;
+	float: left;
+}
+
+#login_div {
+	font-size:   14px;
+	text-align: center;
+	margin-top: 3.0em;
+	margin-bottom: 3.0em;
+}
+
+#login_div table {
+	width: 400px;
+	margin: auto;
+	text-align: left;
+}
+
+#login_header {
+	float: right;
+}
+
+#footer_div {
+	float: right;
+	color: #333;
+}
+
+.show {
+	display: inline;
+}
+
+.hide {
+	display: none;
+}

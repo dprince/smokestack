@@ -1,11 +1,26 @@
-<h1>Listing smoke_tests</h1>
+<div id="smoke-tests" class="ui-widget">
 
-<table>
-  <tr>
+<%= link_to 'New Test Configuration', new_smoke_test_path, :id => "smoke-test-new-link" %>
+
+<div id="smoke-tests-dialog"></div>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	smoke_test_selectors();
+	smoke_test_table_selectors();
+
+});
+
+</script>
+
+<table id="smoke-tests-table" class="ui-widget ui-widget-content data">
+  <tr class=ui-widget-header>
     <th>Branch name</th>
     <th>Description</th>
     <th>Revision</th>
-    <th></th>
+    <th>Merge<br/>Trunk</th>
     <th></th>
     <th></th>
     <th></th>
@@ -13,19 +28,17 @@
   </tr>
 
 <% @smoke_tests.each do |smoke_test| %>
-  <tr>
+  <tr id="smoke-test-tr-<%= smoke_test.id %>">
     <td><%= smoke_test.branch_url %></td>
     <td><%= smoke_test.description %></td>
     <td><%= smoke_test.last_revision %></td>
     <td><%= smoke_test.merge_trunk %></td>
-    <td><%= link_to 'Show', smoke_test %></td>
-    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test) %></td>
-    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete %></td>
-    <td><%= link_to 'Run job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post %></td>
+    <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
+    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
+    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
+    <td><%= link_to 'Run job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
   </tr>
 <% end %>
 </table>
 
-<br />
-
-<%= link_to 'New Smoke test', new_smoke_test_path %>
+</div>
