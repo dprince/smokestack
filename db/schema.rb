@@ -14,9 +14,7 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "jobs", :force => true do |t|
     t.string   "status",                              :default => "Pending"
-    t.boolean  "has_stdout"
     t.text     "stdout",        :limit => 2147483647
-    t.boolean  "has_stderr"
     t.text     "stderr",        :limit => 2147483647
     t.string   "revision"
     t.string   "msg"

@@ -44,13 +44,7 @@ class Job < ActiveRecord::Base
 
     Open3.popen3("bash #{script_file.path}") do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp
-		if job.stdout and not job.stdout.empty? then
-			job.has_stdout = true
-		end
         job.stderr=stderr.readlines.join.chomp
-		if job.stderr and not job.stderr.empty? then
-			job.has_stderr = true
-		end
         job.save
         retval = wait_thr.value
         if retval.success? 

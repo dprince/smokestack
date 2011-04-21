@@ -2,6 +2,7 @@
     <th>ID</th>
     <th>Smoke Test</th>
     <th>Status</th>
+    <th>Runtime</th>
     <th>Msg</th>
     <th></th>
     <th></th>
@@ -15,7 +16,8 @@
     <% else %>
 		<td>&nbsp;</td>
     <% end %>
-    <td nowrap><%= raw status_image(job.status) %></td>
+    <td nowrap><%= raw(status_image(job.status)) %></td>
+    <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>
     <td><%= link_to 'Show', job, :class => "job-show" %></td>
     <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>

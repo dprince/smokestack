@@ -38,8 +38,6 @@ class JobTest < ActiveSupport::TestCase
     job = Job.find(jobs(:one).id)
     assert_equal "yo", job.stdout
     assert_equal "", job.stderr
-    assert_equal true, job.has_stdout
-    assert_equal false, job.has_stderr
   end
 
   test "verify stderr" do
@@ -47,8 +45,6 @@ class JobTest < ActiveSupport::TestCase
     job = Job.find(jobs(:one).id)
     assert_equal "", job.stdout
     assert_equal "yo", job.stderr
-    assert_equal true, job.has_stderr
-    assert_equal false, job.has_stdout
   end
 
   test "update job status updates smoke test status" do

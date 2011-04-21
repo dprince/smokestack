@@ -2,7 +2,7 @@ class JobsController < ApplicationController
   # GET /jobs
   # GET /jobs.xml
   def index
-    @jobs = Job.find(:all, :include => [:smoke_test])
+    @jobs = Job.find(:all, :select => "id, status, msg, smoke_test_id, created_at, updated_at", :include => [:smoke_test])
 
     if params[:table_only] then
       render :partial => "table"
