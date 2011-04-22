@@ -17,4 +17,8 @@ module ApplicationHelper
 
 	end
 
+    def yes_no(val)
+        val ? "Yes" : "No"
+    end
+
 end

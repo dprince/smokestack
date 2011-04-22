@@ -1,18 +1,18 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Success:</b>
+  <b>Smoke test:</b>
+  <%= @job.smoke_test.description %>
+</p>
+
+<% if @job.smoke_test.branch_url %>
+  <b>Branch Url:</b>
+  <%= @job.smoke_test.branch_url %>
+<% end %>
+
+<p>
+  <b>Status:</b>
   <%= @job.status %>
-</p>
-
-<p>
-  <b>Stdout:</b>
-  <%= @job.stdout %>
-</p>
-
-<p>
-  <b>Stderr:</b>
-  <%= @job.stderr %>
 </p>
 
 <p>
@@ -21,6 +21,15 @@
 </p>
 
 <p>
-  <b>Smoke test:</b>
-  <%= @job.smoke_test_id %>
+  <b>Stdout:</b><br/>
+<textarea rows="10" cols="80">
+  <%= @job.stdout %>
+</textarea>
+</p>
+
+<p>
+  <b>Stderr:</b><br/>
+<textarea rows="10" cols="80">
+  <%= @job.stderr %>
+</textarea>
 </p>

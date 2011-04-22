@@ -17,5 +17,20 @@
 
 <p>
   <b>Merge trunk:</b>
-  <%= @smoke_test.merge_trunk %>
+  <%= yes_no(@smoke_test.merge_trunk) %>
 </p>
+<hr/>
+<% @jobs = @smoke_test.jobs %>
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+    job_table_selectors();
+
+});
+
+</script>
+<table id="jobs-table" class="ui-widget ui-widget-content data">
+    <%= render :partial => '/jobs/table' %>
+</table>
+

@@ -16,7 +16,7 @@
     <td><%= smoke_test.description %></td>
     <td><%= raw status_image(smoke_test.status) %></td>
     <td><%= smoke_test.last_revision %></td>
-    <td><%= smoke_test.merge_trunk %></td>
+    <td><%= yes_no(smoke_test.merge_trunk) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
     <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
     <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
