@@ -21,12 +21,12 @@ class SmokeTestTest < ActiveSupport::TestCase
     assert_equal false, smoke_test.valid?
   end
 
-  test "create fails without branch url" do
-    smoke_test = SmokeTest.create(
-        :description => "Nova trunk",
-        :merge_trunk => true
-    )
-    assert_equal false, smoke_test.valid?
-  end
+#  test "create fails without branch url" do
+#    smoke_test = SmokeTest.create(
+#        :description => "Nova trunk",
+#        :merge_trunk => true
+#    )
+#    assert_equal false, smoke_test.valid?
+#  end
 
 end

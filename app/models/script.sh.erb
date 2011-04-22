@@ -11,7 +11,7 @@ function get_nova_pkg_revision {
 	ssh -t nova1 2> /dev/null <<-EOF_NOVA
 	echo ""
 	echo ""
-	dpkg -l nova-common | tail -n 1 | sed -e "s|.*\~\([^-]*\)\~.*|\1|"
+	dpkg -l nova-common | tail -n 1 | sed -e "s|.*bzr\([^-]*\).*|\1|"
 	EOF_NOVA
 	EOF_BASH
 	)
@@ -30,7 +30,7 @@ chef-vpc-toolkit -v || \
 	fail "Please install the Chef VPC Toolkit."
 
 cd $TMP_DIR
-<% if job.smoke_test.branch_url then %>
+<% if not job.smoke_test.branch_url.empty? then %>
 	bzr branch "<%= job.smoke_test.branch_url %>" nova_source || \
 		fail "Failed to checkout bzr branch."
 	NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
@@ -53,17 +53,19 @@ if rake create; then
 	rake chef:poll_clients CHEF_TIMEOUT=600 || \
 		{ rake chef:tail_logs; fail "Chef client timeout."; }
 
-<% if job.smoke_test.branch_url then %>
-	rake nova:install_source SOURCE_DIR="$TMP_DIR/nova_source" SERVER_NAME=nova1
-<% else %>
-	echo "NOVA_REVISION=$(get_nova_pkg_revision)"
+<% if job.smoke_test.branch_url.empty? then %>
+	NOVA_REVISION=$(get_nova_pkg_revision)
 	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from dpkg."
+	echo "NOVA_REVISION=$NOVA_REVISION"
+<% else %>
+	rake nova:install_source SOURCE_DIR="$TMP_DIR/nova_source" \
+		SERVER_NAME=nova1 || fail "Failed to install nova source."
 <% end %>
 
-	rake nova:smoke_tests SERVER_NAME=nova1
+	rake nova:smoke_tests SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
 
 else
 	rake chef:tail_logs
-	echo "Failed to create server group."
-	exit 1
+	fail "Failed to create server group."
 fi
