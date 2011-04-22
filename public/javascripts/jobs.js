@@ -1,3 +1,15 @@
+var jobsTabId = 1;
+var jobsIntervalId = setInterval(refreshJobs, 6000);
+
+function refreshJobs() {
+
+    var selected = $("#tabs").tabs( "option", "selected" );
+    if (selected == jobsTabId) {
+        reload_jobs_table($("#jobs-table"));
+    }
+
+}
+
 function reload_jobs_table(container) {
 
 	$.ajax({
@@ -48,7 +60,6 @@ function job_table_selectors() {
 			success: function(data) {
 				id=$("id", data).text();
 				$("#job-tr-"+id).remove();
-				reload_jobs_table($("#jobs-table"));
 			},
 			error: function(data) {
 				alert('Error: Failed to destroy job.');
@@ -72,12 +83,12 @@ function job_table_selectors() {
                 width: 600,
                 buttons: {
                     Close: function() {
-						$("#jobs-dialog").dialog('close');
+						$(this).dialog('close');
 					}
                 },
 				close: function(data) {
-					$("#jobs-dialog").html("");
-					$("#jobs-dialog").dialog('destroy');
+					$(this).html("");
+					$(this).dialog('destroy');
 				}
             });
 

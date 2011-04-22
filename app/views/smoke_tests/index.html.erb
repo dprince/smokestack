@@ -2,28 +2,12 @@
 
 <%= link_to 'New Test Configuration', new_smoke_test_path, :id => "smoke-test-new-link" %>
 
-<div id="smoke-tests-dialog"></div>
-
 <script type="text/javascript">
 
 $(document).ready(function() {
 
 	smoke_test_selectors();
 	smoke_test_table_selectors();
-
-    var smokeTestsTabId = $("#tabs").tabs( "option", "selected" );
-    var smokeTestsTable = $("#smoke-tests-table")
-
-    function refreshDiv() { 
-
-        var selected = $("#tabs").tabs( "option", "selected" );
-        if (selected == smokeTestsTabId) {
-            reload_smoke_tests_table(smokeTestsTable);
-        }
-
-    }
-
-    var refreshId = setInterval(refreshDiv, 6000);
 
 });
 

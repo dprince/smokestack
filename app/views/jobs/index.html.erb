@@ -1,26 +1,10 @@
 <div id="jobs" class="ui-widget">
 
-<div id="jobs-dialog"></div>
-
 <script type="text/javascript">
 
 $(document).ready(function() {
 
-	var jobsTabId = $("#tabs").tabs( "option", "selected" );
-	var jobsTable = $("#jobs-table")
-
     job_table_selectors();
-
-	function refreshDiv() { 
-
-		var selected = $("#tabs").tabs( "option", "selected" );
-		if (selected == jobsTabId) {
-			reload_jobs_table(jobsTable);
-		}
-
-	}
-
-	var refreshId = setInterval(refreshDiv, 6000);
 
 });
 

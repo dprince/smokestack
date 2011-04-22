@@ -2,6 +2,7 @@
     <th>ID</th>
     <th>Smoke Test</th>
     <th>Status</th>
+    <th>Revision</th>
     <th>Runtime</th>
     <th>Msg</th>
     <th></th>
@@ -17,6 +18,7 @@
 		<td>&nbsp;</td>
     <% end %>
     <td nowrap><%= raw(status_image(job.status)) %></td>
+    <td><%= job.revision %></td>
     <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>
     <td><%= link_to 'Show', job, :class => "job-show" %></td>

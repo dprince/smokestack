@@ -15,6 +15,9 @@
 
 <script type="text/javascript">
 
+var globalJobRefreshId = null;
+var globalSmokeTestRefreshId = null;
+
 $(function(){
 
 	$("#tabs").tabs();
@@ -22,6 +25,14 @@ $(function(){
 });
 
 </script>
+
+<%
+#NOTE: we store dialog divs here to avoid a div id leak. This is because
+# Jquery UI moves divs used for dialogs into the body regardless of where
+# they originally appear.
+%>
+<div id="smoke-tests-dialog"></div>
+<div id="jobs-dialog"></div>
 
 <div id="header_font_div">SmokeStack</div>
 <br class="clear"/>
@@ -36,5 +47,6 @@ $(function(){
 <div id="footer_div">
 Version: <%= SMOKESTACK_VERSION %>
 </div>
+
 </body>
 </html>

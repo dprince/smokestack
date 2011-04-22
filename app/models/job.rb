@@ -45,6 +45,8 @@ class Job < ActiveRecord::Base
     Open3.popen3("bash #{script_file.path}") do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp
         job.stderr=stderr.readlines.join.chomp
+        job.revision=Job.parse_revision(job.stdout)
+        job.msg=Job.parse_last_message(job.stdout)
         job.save
         retval = wait_thr.value
         if retval.success? 
@@ -56,7 +58,27 @@ class Job < ActiveRecord::Base
 		end
 
     end
+    script_file.close
 
+  end
+
+  def self.parse_revision(stdout)
+    stdout.each_line do |line|
+      if line =~ /^NOVA_REVISION/ then
+        return line.sub(/^NOVA_REVISION=/, "").chomp
+      end
+    end
+    return ""
+  end
+
+  def self.parse_last_message(stdout)
+    failure_msg=""
+    stdout.each_line do |line|
+      if line =~ /^FAILURE_MSG/ then
+        failure_msg = line.sub(/^FAILURE_MSG=/, "").chomp
+      end
+    end
+    return failure_msg
   end
 
 end

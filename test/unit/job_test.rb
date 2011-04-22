@@ -57,4 +57,14 @@ class JobTest < ActiveSupport::TestCase
     assert_equal "Success", job.smoke_test.status
   end
 
+  test "parse revision" do
+    job = jobs(:two)
+    assert_equal "102", Job.parse_revision(job.stdout)
+  end
+
+  test "parse message" do
+    job = jobs(:two)
+    assert_equal "This is only a test.", Job.parse_last_message(job.stdout)
+  end
+
 end

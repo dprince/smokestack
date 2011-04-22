@@ -1,3 +1,14 @@
+var smokeTestsTabId = 0;
+var smokeTestsIntervalId = setInterval(refreshSmokeTest, 6000);
+
+function refreshSmokeTest() { 
+
+	var selected = $("#tabs").tabs( "option", "selected" );
+	if (selected == smokeTestsTabId) {
+		reload_smoke_tests_table($("#smoke-tests-table"));
+	} 
+
+}
 
 function reload_smoke_tests_table(container) {
 
@@ -34,8 +45,8 @@ function smoke_test_selectors() {
                     Create: function() { smoke_test_create_or_edit('POST') }
                 },
 				close: function(data) {
-					$("#smoke-tests-dialog").html("");
-					$("#smoke-tests-dialog").dialog('destroy');
+					$(this).html("");
+					$(this).dialog('destroy');
 				}
             });
 
@@ -126,8 +137,8 @@ function smoke_test_table_selectors() {
                     Save: function() { smoke_test_create_or_edit('PUT'); }
                 },
 				close: function(data) {
-					$("#smoke-tests-dialog").html("");
-					$("#smoke-tests-dialog").dialog('destroy');
+					$(this).html("");
+					$(this).dialog('destroy');
 				}
             });
 
@@ -150,12 +161,12 @@ function smoke_test_table_selectors() {
                 width: 600,
                 buttons: {
                     Close: function() {
-						$("#smoke-tests-dialog").dialog('close');
+						$(this).dialog('close');
 					}
                 },
 				close: function(data) {
-					$("#smoke-tests-dialog").html("");
-					$("#smoke-tests-dialog").dialog('destroy');
+					$(this).html("");
+					$(this).dialog('destroy');
 				}
             });
 
@@ -169,6 +180,7 @@ function smoke_test_table_selectors() {
          $.post($(this).attr("href"), function(html_snippet) {
 
 			alert('Job scheduled.');
+			reload_smoke_tests_table($("#smoke-tests-table"));
 
          });
 

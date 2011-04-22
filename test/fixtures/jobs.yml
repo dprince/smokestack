@@ -2,14 +2,19 @@
 
 one:
   status: Pending
-  stdout: MyText
-  stderr: MyText
+  stdout: 
+  stderr: 
   msg: MyString
   smoke_test: trunk
 
 two:
   status: Success
-  stdout: MyText
-  stderr: MyText
+  stdout: |
+    Chef VPC Toolkit Version: 2.5.1
+    Cloning into openstack_vpc..
+    NOVA_REVISION=102
+    FAILURE_MSG=This is only a test.
+    All tests passed successfully.
+  stderr: 
   msg: MyString
   smoke_test: trunk
