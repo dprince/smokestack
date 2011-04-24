@@ -5,7 +5,7 @@
   <%= @job.smoke_test.description %>
 </p>
 
-<% if @job.smoke_test.branch_url %>
+<% if not @job.smoke_test.branch_url.empty? %>
   <b>Branch Url:</b>
   <%= @job.smoke_test.branch_url %>
 <% end %>
@@ -21,15 +21,21 @@
 </p>
 
 <p>
-  <b>Stdout:</b><br/>
+  <b>Stdout:</b>
+<% if @job.stdout then %>
+<br/>
 <textarea rows="10" cols="80">
   <%= @job.stdout %>
 </textarea>
+<% end %>
 </p>
 
 <p>
-  <b>Stderr:</b><br/>
+  <b>Stderr:</b>
+<% if @job.stderr then %>
+<br/>
 <textarea rows="10" cols="80">
   <%= @job.stderr %>
 </textarea>
+<% end %>
 </p>
