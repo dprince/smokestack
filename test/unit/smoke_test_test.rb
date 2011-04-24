@@ -21,6 +21,13 @@ class SmokeTestTest < ActiveSupport::TestCase
     assert_equal false, smoke_test.valid?
   end
 
+  test "destroy deletes jobs" do
+    smoke_test=smoke_tests(:trunk)
+    id=smoke_test.id
+    smoke_test.destroy
+    assert_equal 0, Job.count(:conditions => ["smoke_test_id = ?", id])
+  end
+
 #  test "create fails without branch url" do
 #    smoke_test = SmokeTest.create(
 #        :description => "Nova trunk",
