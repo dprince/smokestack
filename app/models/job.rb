@@ -1,5 +1,6 @@
 require 'erubis'
 require 'tempfile'
+require 'open3'
 
 class Job < ActiveRecord::Base
 
@@ -21,19 +22,19 @@ class Job < ActiveRecord::Base
 
   def handle_after_save
     self.smoke_test.update_attributes(
-		:last_revision => self.revision,
-		:status => self.status
-	)
+        :last_revision => self.revision,
+        :status => self.status
+    )
   end
 
   @queue=:job
 
   def self.perform(id, script_text=nil)
     job = Job.find(id)
-	job.update_attribute(:status, "Running")
+    job.update_attribute(:status, "Running")
 
     if script_text.nil?
-        template = File.read(File.join(Rails.root, "app", "models", "script.sh.erb"))
+        template = File.read(File.join(Rails.root, "app", "models", "vpc_runner.sh.erb"))
         eruby = Erubis::Eruby.new(template)
         script_text=eruby.result(:job=>job)
     end
@@ -42,7 +43,10 @@ class Job < ActiveRecord::Base
     script_file.write(script_text)
     script_file.flush
 
-    Open3.popen3("bash #{script_file.path}") do |stdin, stdout, stderr, wait_thr|
+    args = ["bash", script_file.path, job.smoke_test.branch_url,
+            job.smoke_test.merge_trunk.to_s]
+
+    Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp
         job.stderr=stderr.readlines.join.chomp
         job.revision=Job.parse_revision(job.stdout)
@@ -50,12 +54,12 @@ class Job < ActiveRecord::Base
         job.save
         retval = wait_thr.value
         if retval.success? 
-			job.update_attribute(:status, "Success")
-			return true
-		else
-			job.update_attribute(:status, "Failed")
-			return false
-		end
+            job.update_attribute(:status, "Success")
+            return true
+        else
+            job.update_attribute(:status, "Failed")
+            return false
+        end
 
     end
     script_file.close

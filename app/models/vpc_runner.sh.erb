@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script to run Openstack VPC jobs
 
+BRANCH_URL=$1
+MERGE_TRUNK=$2
 TMP_DIR=$(mktemp -d)
 
 # Shell into the VPC group and print out the nova-common version from dpkg
@@ -26,24 +28,30 @@ function fail {
 	exit 1
 }
 
+function get_source_code {
+#FIXME: need to implement a Git version of this function as well.
+
+	bzr branch "$BRANCH_URL" nova_source || \
+		fail "Failed to checkout bzr branch."
+	local NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
+	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
+	echo "NOVA_REVISION=$NOVA_REVISION"
+
+	if [[ "$MERGE_TRUNK" == "true" ]]; then
+		cd nova_source || fail "Failed to cd into nova_source directory."
+		bzr merge lp:nova || fail "Failed to merge lp:nova."
+		cd $TMP_DIR
+	fi
+
+}
+
+function run_test {
+
 chef-vpc-toolkit -v || \
 	fail "Please install the Chef VPC Toolkit."
 
 cd $TMP_DIR
-<% if not job.smoke_test.branch_url.empty? then %>
-	bzr branch "<%= job.smoke_test.branch_url %>" nova_source || \
-		fail "Failed to checkout bzr branch."
-	NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
-	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
-	echo "NOVA_REVISION=$NOVA_REVISION"
-
-	<% if job.smoke_test.merge_trunk then %>
-		cd nova_source || fail "Failed to cd into nova_source directory."
-		bzr merge lp:nova || fail "Failed to merge lp:nova."
-		cd $TMP_DIR
-	<% end %>
-
-<% end %>
+[ -n "$BRANCH_URL" ] && get_source_code
 
 git clone git@github.com:dprince/openstack_vpc.git && cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
@@ -53,14 +61,14 @@ if rake create; then
 	rake chef:poll_clients CHEF_TIMEOUT=600 || \
 		{ rake chef:tail_logs; fail "Chef client timeout."; }
 
-<% if job.smoke_test.branch_url.empty? then %>
-	NOVA_REVISION=$(get_nova_pkg_revision)
+if [ -z "$BRANCH_URL" ]; then
+	local NOVA_REVISION=$(get_nova_pkg_revision)
 	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from dpkg."
 	echo "NOVA_REVISION=$NOVA_REVISION"
-<% else %>
+else
 	rake nova:install_source SOURCE_DIR="$TMP_DIR/nova_source" \
 		SERVER_NAME=nova1 || fail "Failed to install nova source."
-<% end %>
+fi
 
 	rake nova:smoke_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
@@ -69,3 +77,7 @@ else
 	rake chef:tail_logs
 	fail "Failed to create server group."
 fi
+
+}
+
+run_test
