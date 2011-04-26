@@ -1,0 +1,23 @@
+  <tr class="ui-widget-header">
+    <th>Username</th>
+    <th>First name</th>
+    <th>Last name</th>
+    <th>Active</th>
+    <th>Admin</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr id="user-tr-<%= user.id %>" class="<%= cycle "tr0", "tr1" %>">
+    <td><%= user.username %></td>
+    <td><%= user.first_name %></td>
+    <td><%= user.last_name %></td>
+    <td><%= yes_no user.is_active %></td>
+    <td><%= yes_no user.is_admin %></td>
+    <td><%= link_to 'Show', user, :class => "user-show" %></td>
+    <td><%= link_to 'Edit', edit_user_path(user), :class => "user-edit" %></td>
+    <td><%= link_to 'Destroy', user, :confirm => 'Are you sure?', :method => :delete, :class => "user-destroy" %></td>
+  </tr>
+<% end %>

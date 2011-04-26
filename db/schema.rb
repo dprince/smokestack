@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 2) do
+ActiveRecord::Schema.define(:version => 3) do
 
   create_table "jobs", :force => true do |t|
     t.string   "status",                              :default => "Pending"
@@ -29,6 +29,18 @@ ActiveRecord::Schema.define(:version => 2) do
     t.string   "last_revision"
     t.string   "status",        :default => "Pending"
     t.boolean  "merge_trunk",   :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "username",                           :null => false
+    t.string   "first_name",                         :null => false
+    t.string   "last_name",                          :null => false
+    t.string   "hashed_password",                    :null => false
+    t.string   "salt",                               :null => false
+    t.boolean  "is_active",       :default => true,  :null => false
+    t.boolean  "is_admin",        :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

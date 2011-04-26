@@ -1,0 +1,20 @@
+<div id="users" class="ui-widget">
+
+<%= link_to 'New User', new_user_path, :id => "user-new-link" %>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+    user_selectors();
+    user_table_selectors();
+
+});
+
+</script>
+
+<table id="users-table" class="ui-widget ui-widget-content data">
+    <%= render :partial => 'table' %>
+</table>
+
+</div>

@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Username:</b>
+  <%= @user.username %>
+</p>
+
+<p>
+  <b>First name:</b>
+  <%= @user.first_name %>
+</p>
+
+<p>
+  <b>Last name:</b>
+  <%= @user.last_name %>
+</p>
+
+<p>
+  <b>Account Active:</b>
+  <%= yes_no @user.is_active %>
+</p>
+
+<p>
+  <b>Admin:</b>
+  <%= yes_no @user.is_admin %>
+</p>

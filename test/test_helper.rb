@@ -12,3 +12,15 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
 end
+
+module AuthTestHelper
+
+  def login_as(user_sym)
+    @request.session[:user_id] = user_sym ? users(user_sym).id : nil
+  end
+
+  def http_basic_authorize(user_sym = :admin)
+    @request.env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic.encode_credentials(users(user_sym).username, 'cloud')
+  end
+
+end
