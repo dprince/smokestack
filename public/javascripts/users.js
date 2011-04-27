@@ -196,3 +196,58 @@ function user_create_or_edit(method) {
     });
 
 }
+
+function change_password_selector() {
+
+    $(".user-password-link").click(function(e){
+         e.preventDefault();
+
+         $.get($(this).attr("href"), function(html_snippet) {
+
+           $("#change-password-dialog").html(
+                html_snippet
+           );
+
+            $("#change-password-dialog").dialog({
+                modal: true,
+                height: 300,
+                width: 500,
+                buttons: {
+                    Save: function() { change_password(); }
+                },
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
+            });
+
+         });
+
+       });
+
+}
+
+function change_password() {
+
+    var post_data = $("#user-password-form").serialize();
+    $.ajax({
+        url: $("#user-password-form").attr("action"),
+        type: 'POST',
+        data: post_data,
+        dataType: 'xml',
+        success: function(data) {
+            id=$("id", data).text();
+            $("#change-password-dialog").dialog('close');
+        },
+        error: function(data) {
+            err_html="<ul>";
+            $("error", data.responseXML).each (function() {
+                err_html+="<li>"+$(this).text()+"</li>";
+            });
+            err_html+="</ul>";
+            $("#user-password-error-messages-content").html(err_html);
+            $("#user-password-error-messages").css("display", "inline");
+        }
+    });
+
+}

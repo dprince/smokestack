@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
 
-  before_filter :require_admin
+  before_filter :require_admin, :except => [:password, :update]
   before_filter :authorize
-  #before_filter :require_admin_or_self, :except => [:create, :new, :index]
+  before_filter :require_admin_or_self, :only => [:password, :update]
 
   # GET /users
   # GET /users.xml
@@ -101,12 +101,11 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST /users/1/password
+  # GET /users/1/password
   def password
     @user = User.find(params[:id])
   end
 
-=begin
   private
   def require_admin_or_self
     return true if is_admin
@@ -114,6 +113,5 @@ class UsersController < ApplicationController
     render :text => "Attempt to view an unauthorized record.", :status => "401"
     return false
   end
-=end
 
 end

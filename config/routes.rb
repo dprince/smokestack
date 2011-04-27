@@ -12,7 +12,7 @@ Smokestack::Application.routes.draw do
   resources :users
   resources :users do
     member do
-      post 'password'
+      get 'password'
     end
   end
 
