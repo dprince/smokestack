@@ -21,4 +21,27 @@ module ApplicationHelper
         val ? "Yes" : "No"
     end
 
+    def is_user
+
+        user_id=session[:user_id]
+        if user_id
+            user=User.find(user_id)
+            return true if not user.nil?
+        end
+        return false
+
+    end
+
+    def is_admin
+
+        user_id=session[:user_id]
+        user=nil
+        if user_id
+            user=User.find(user_id)
+            return true if not user.nil? and user.is_admin
+        end
+        return false
+
+    end
+
 end

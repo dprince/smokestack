@@ -13,6 +13,8 @@ $(document).ready(function() {
 
 </script>
 
+<%= form_tag('/users/XX', :method => :delete, :id => "user-delete-form") %>
+
 <table id="users-table" class="ui-widget ui-widget-content data">
     <%= render :partial => 'table' %>
 </table>

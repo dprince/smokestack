@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
             return true if user.is_active
         end
 
-        redirect_to("/")
+        redirect_to("main#index")
         return false
 
     end

@@ -5,9 +5,11 @@
     <th>Revision</th>
     <th>Merge<br/>Trunk</th>
     <th></th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <% if is_user %>
+      <th></th>
+      <th></th>
+      <th></th>
+    <% end %>
   </tr>
 
 <% @smoke_tests.each do |smoke_test| %>
@@ -18,8 +20,10 @@
     <td><%= smoke_test.last_revision %></td>
     <td><%= yes_no(smoke_test.merge_trunk) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
-    <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
-    <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
-    <td><%= link_to 'Run Job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
+    <% if is_user %>
+      <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
+      <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
+      <td><%= link_to 'Run Job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
+    <% end %>
   </tr>
 <% end %>

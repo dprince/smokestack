@@ -1,0 +1,36 @@
+<h1>Log In:</h1>
+
+<script>
+
+$(function(){
+    $('input.auth').keydown(function(e){
+        if (e.keyCode == 13) {
+			smokestack_auth();
+            return false;
+        }
+    });
+});
+
+</script>
+
+<div id="auth-error-messages" class="ui-widget" style="display: none">
+    <div class="ui-state-error ui-corner-all" style="padding: .25em .25em .25em 2.5em;">
+<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+<div id="auth-error-messages-content"></div>
+</p>
+    </div>
+</div>
+
+<form action="/auth/login" method="POST" name="auth" id="auth-form" onsubmit="smokestack_auth(); return false;">
+
+<p>
+<b>Username:</b>
+<input class="auth" name="username" type="text" value="" size="25" />
+</p>
+
+<p>
+<b>Password:</b>
+	<input class="auth" name="password" type="password" value="" size="25" />
+</p>
+
+</form>

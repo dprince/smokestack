@@ -97,11 +97,13 @@ function user_table_selectors() {
 			return;
 		}
 
+        var post_data = $("#user-delete-form").serialize();
+
 		$.ajax({
 			url: $(this).attr("href"),
 			type: 'POST',
 			dataType: 'xml',
-			data: { _method: 'delete' },
+			data: post_data,
 			success: function(data) {
 				id=$("id", data).text();
 				$("#user-tr-"+id).remove();

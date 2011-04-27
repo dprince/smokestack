@@ -52,11 +52,13 @@ function job_table_selectors() {
 			return;
 		}
 
+        var post_data = $("#job-delete-form").serialize();
+
 		$.ajax({
 			url: $(this).attr("href"),
 			type: 'POST',
 			dataType: 'xml',
-			data: { _method: 'delete' },
+			data: post_data,
 			success: function(data) {
 				id=$("id", data).text();
 				$("#job-tr-"+id).remove();

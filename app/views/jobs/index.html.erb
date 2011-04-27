@@ -10,8 +10,10 @@ $(document).ready(function() {
 
 </script>
 
+<%= form_tag('jobs/XX', :method => :delete, :id => "job-delete-form") %>
+
 <table id="jobs-table" class="ui-widget ui-widget-content data">
-	<%= render :partial => 'table' %>
+  <%= render :partial => 'table' %>
 </table>
 
 </div>

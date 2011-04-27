@@ -1,4 +1,14 @@
 Smokestack::Application.routes.draw do
+
+  resources :auth
+  resources :auth do
+    collection do
+      get 'index'
+      post 'login'
+      post 'logout'
+    end
+  end
+
   resources :users
   resources :users do
     member do

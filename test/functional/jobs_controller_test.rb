@@ -16,17 +16,37 @@ class JobsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:jobs)
   end
 
+  test "should get index as user" do
+    login_as(:bob)
+    get :index
+    assert_response :success
+    assert_not_nil assigns(:jobs)
+  end
+
+  test "should not get new" do
+    get :new
+    assert_response 302
+  end
+
   test "should get new" do
+    login_as(:bob)
     get :new
     assert_response :success
   end
 
   test "should create job" do
+    login_as(:bob)
     assert_difference('Job.count') do
       post :create, :job => @job.attributes
     end
 
     assert_redirected_to job_path(assigns(:job))
+  end
+
+  test "should not create job" do
+    assert_no_difference('Job.count') do
+      post :create, :job => @job.attributes
+    end
   end
 
   test "should show job" do
@@ -35,20 +55,40 @@ class JobsControllerTest < ActionController::TestCase
   end
 
   test "should get edit" do
+    login_as(:bob)
     get :edit, :id => @job.to_param
     assert_response :success
   end
 
+  test "should not get edit" do
+    get :edit, :id => @job.to_param
+    assert_response 302
+  end
+
   test "should update job" do
+    login_as(:bob)
     put :update, :id => @job.to_param, :job => @job.attributes
     assert_redirected_to job_path(assigns(:job))
   end
 
+  test "should not update job" do
+    put :update, :id => @job.to_param, :job => @job.attributes
+    assert_response 302
+  end
+
   test "should destroy job" do
+    login_as(:bob)
     assert_difference('Job.count', -1) do
       delete :destroy, :id => @job.to_param
     end
 
     assert_redirected_to jobs_path
   end
+
+  test "should not destroy job" do
+    assert_no_difference('Job.count', -1) do
+      delete :destroy, :id => @job.to_param
+    end
+  end
+
 end

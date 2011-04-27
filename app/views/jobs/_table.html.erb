@@ -6,22 +6,26 @@
     <th>Runtime</th>
     <th>Msg</th>
     <th></th>
-    <th></th>
+    <% if is_user %>
+      <th></th>
+    <% end %>
   </tr>
 
 <% @jobs.each do |job| %>
   <tr id="job-tr-<%= job.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%= job.id %></td>
     <% if job.smoke_test then %>
-		<td><%= job.smoke_test.description %></td>
+        <td><%= job.smoke_test.description %></td>
     <% else %>
-		<td>&nbsp;</td>
+        <td>&nbsp;</td>
     <% end %>
     <td nowrap><%= raw(status_image(job.status)) %></td>
     <td><%= job.revision %></td>
     <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>
     <td><%= link_to 'Show', job, :class => "job-show" %></td>
-    <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
+    <% if is_user %>
+      <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
+    <% end %>
   </tr>
 <% end %>

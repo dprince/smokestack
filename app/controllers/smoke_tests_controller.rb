@@ -1,4 +1,7 @@
 class SmokeTestsController < ApplicationController
+
+  before_filter :authorize, :except => [:index, :show]
+
   # GET /smoke_tests
   # GET /smoke_tests.json
   # GET /smoke_tests.xml
