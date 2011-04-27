@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>SmokeStack Help</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="/javascripts/application.js" type="text/javascript"></script>
+    <link href="/stylesheets/jquery-ui-1.8.11.custom.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/default.css" media="all" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript">
+    $(function() {
+
+        $("a.button").button();
+
+    });
+</script>
+
+  </head>
+<body>
+
+<div id="header_font_div">SmokeStack: Online Help</div>
+<br class="clear"/>
+
+<table class="ui-widget ui-widget-content data" width="100%">
+  <tr class="ui-widget-header">
+    <th>&nbsp;</th>
+  </tr>
+  <tr>
+    <td>
+
+<a href="/" class="button">Back to the SmokeStack</a>
+<hr/>
+
+<div>
+<b>Summary:</b>
+<p>
+A web application with a REST based HTTP interface to help smoke test the OpenStack. Architected to use <a href="https://github.com/rackspace/chef_vpc_toolkit">Chef VPC Toolkit</a> projects like <a href="https://github.com/dprince/openstack_vpc">openstack_vpc</a> to spin up groups of servers in the cloud for smoke testing.
+</p>
+</div>
+<hr/>
+
+<div>
+<b>Features:</b>
+<p>
+
+<ul>
+<li>Installs the latest PPA packages using Chef on stock Rackspace Cloud Servers</li>
+<li>Supports the ability to test custom branch source code. Code is optionally merged w/ trunk and then injected on top of the PPA source code in the cloud where smoke tests are then executed.</li>
+<li>Currently supports bzr.</li>
+<li>Captures stdout and stderr for each job</li>
+<li>Runs a set of Openstack API smoke tests which test the various v1.0 controllers</li>
+</ul>
+
+</p>
+</div>
+
+<hr/>
+
+<div>
+<b>Rest API</b>
+<ul>
+<li><b>GET /smoke_tests.json</b>: get a list of existing smoke tests</li>
+<li><b>POST /smoke_tests.json</b>: create a new smoke test</li>
+<li><b>POST /smoke_tests/1/run_job</b>: run a job for the selected smoke test.</li>
+<li><b>DELETE /smoke_tests/1.json</b>: destroy a smoke test</li>
+<li><b>GET /jobs.json</b>: get a list of jobs</li>
+<li><b>GET /jobs/1.json</b>: show information for a specific job</li>
+<li><b>DELETE /jobs/1.json</b>: destroy a job</li>
+</ul>
+
+</p>
+</div>
+<hr/>
+
+<div>
+<b>Example: creating and running a smoke test via Curl.</b>
+<p>
+
+Run the following example curl request:
+
+<pre>
+curl -k -u username:password -d "smoke_test[description]=blah" -d "smoke_test[branch_url]=lp:~dan-prince/nova/foo" http://localhost:3000/smoke_tests.xml
+
+curl -k -u admin:cloud -d "" http://localhost:3000/smoke_tests/22/run_job.xml
+</pre>
+
+</p>
+
+</div>
+
+<hr/>
+
+<div>
+<b>Coming soon:</b>
+<p>
+
+<ul>
+<li>Expand the smoke tests we execute to include EC2 and admin API functions.</li>
+<li>Support running multiple VPC projects as separate jobs. Simultaneously run tests with different backend driver and database configurations thus providing a way to test commonly selected combinations of MySQL/Postgres and Libvirt/XenServer, etc. This could also include running VPC projects to test larger function setups with Zones and Schedulers.</li>
+</ul>
+
+</p>
+</div>
+
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
