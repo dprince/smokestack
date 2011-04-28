@@ -87,7 +87,7 @@ class UsersControllerTest < ActionController::TestCase
 
   test "should not update user" do
     put :update, :id => @user.to_param, :user => @user.attributes
-    assert_response 401
+    assert_response 302
   end
 
   test "should destroy user as admin" do
