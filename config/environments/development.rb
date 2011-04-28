@@ -24,3 +24,4 @@ Smokestack::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 end
 
+ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"

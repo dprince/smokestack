@@ -53,7 +53,7 @@ chef-vpc-toolkit -v || \
 cd $TMP_DIR
 [ -n "$BRANCH_URL" ] && get_source_code
 
-git clone git@github.com:dprince/openstack_vpc.git && cd openstack_vpc || \
+git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
 
 trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT

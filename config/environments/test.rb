@@ -33,3 +33,5 @@ Smokestack::Application.configure do
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
 end
+
+ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
