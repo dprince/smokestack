@@ -20,6 +20,9 @@ The application was developed with MySQL. The following gems are required:
 
 Unpack the rails app and run the following commands to create the database.
 
+woopsie
+doopsie
+
 	rake db:create
 	rake db:migrate
 
