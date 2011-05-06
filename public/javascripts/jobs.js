@@ -18,9 +18,6 @@ function reload_jobs_table(container) {
 		success: function(data) {
 			container.html(data);
 			job_table_selectors();
-		},
-		error: function(data) {
-			alert('Failed to load jobs.'+data);
 		}
 	});
 

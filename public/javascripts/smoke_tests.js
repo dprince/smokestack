@@ -18,9 +18,6 @@ function reload_smoke_tests_table(container) {
         success: function(data) {
             container.html(data);
             smoke_test_table_selectors();
-        },
-        error: function(data) {
-            alert('Failed to load smoke tests.'+data);
         }
     });
 

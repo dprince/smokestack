@@ -18,9 +18,6 @@ function reload_users_table(container) {
 		success: function(data) {
 			container.html(data);
 			user_table_selectors();
-		},
-		error: function(data) {
-			alert('Failed to load users.'+data);
 		}
 	});
 
