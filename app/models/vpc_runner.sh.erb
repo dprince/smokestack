@@ -45,7 +45,7 @@ function get_source_code {
 
 }
 
-function run_test {
+function run_job {
 
 chef-vpc-toolkit -v || \
 	fail "Please install the Chef VPC Toolkit."
@@ -57,19 +57,27 @@ git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
 
 trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
-if rake create; then
+if rake group:create && rake group:poll; then
+
+	if [ -z "$BRANCH_URL" ]; then
+		local NOVA_REVISION=$(get_nova_pkg_revision)
+		[ -z "$NOVA_REVISION" ] && \
+			fail "Failed to obtain nova revision from dpkg."
+		echo "NOVA_REVISION=$NOVA_REVISION"
+	else
+		rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+			SERVER_NAME=nova1 || fail "Failed to build nova packages."
+	fi
+
+	# install Chef and the Chef Cookbooks
+	rake chef:push_repos && rake chef:install || \
+		{ rake chef:tail_logs; fail "Failed to install Chef server."; }
+
+	# poll for Chef clients to finish runnings
 	rake chef:poll_clients CHEF_TIMEOUT=600 || \
 		{ rake chef:tail_logs; fail "Chef client timeout."; }
 
-if [ -z "$BRANCH_URL" ]; then
-	local NOVA_REVISION=$(get_nova_pkg_revision)
-	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from dpkg."
-	echo "NOVA_REVISION=$NOVA_REVISION"
-else
-	rake nova:install_source SOURCE_DIR="$TMP_DIR/nova_source" \
-		SERVER_NAME=nova1 || fail "Failed to install nova source."
-fi
-
+	# run smoke tests
 	rake nova:smoke_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
 
@@ -80,4 +88,4 @@ fi
 
 }
 
-run_test
+run_job
