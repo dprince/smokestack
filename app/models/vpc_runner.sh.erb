@@ -40,7 +40,7 @@ function get_glance_source {
 	[ -z "$GLANCE_REVISION" ] && fail "Failed to obtain glance revision from bzr."
 	echo "GLANCE_REVISION=$GLANCE_REVISION"
 
-	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
 		cd glance_source || fail "Failed to cd into glance_source directory."
 		bzr merge lp:glance || fail "Failed to merge lp:glance."
 		cd $TMP_DIR
