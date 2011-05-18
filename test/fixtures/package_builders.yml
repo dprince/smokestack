@@ -1,0 +1,25 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+nova_builder_trunk:
+  type: NovaPackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
+glance_builder_trunk:
+  type: GlancePackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
+nova_builder_dev:
+  type: NovaPackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1
+
+glance_builder_dev:
+  type: GlancePackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1

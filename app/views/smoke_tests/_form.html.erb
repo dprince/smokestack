@@ -25,15 +25,33 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :branch_url %><br />
-    <%= f.text_field :branch_url %>
-  </div>
-  <div class="field">
     <%= f.label :description %><br />
     <%= f.text_field :description %>
   </div>
-  <div class="field">
-    <%= f.label "Merge lp:nova" %><br />
-    <%= f.check_box :merge_trunk %>
-  </div>
+<hr/>
+<table>
+<tr>
+<th>Builder Type</th>
+<th>URL</th>
+<th>Merge<br/>Trunk</th>
+</tr>
+
+  <%= f.fields_for :nova_package_builder do |nova_build_frm| %>
+	<tr>
+      <td>Nova Builder</td>
+      <td><%= nova_build_frm.text_field :url %></td>
+      <td><%= nova_build_frm.check_box :merge_trunk %></td>
+	</tr>
+  <% end %>
+
+  <%= f.fields_for :glance_package_builder do |glance_build_frm| %>
+	<tr>
+      <td>Glance Builder</td>
+      <td><%= glance_build_frm.text_field :url %></td>
+      <td><%= glance_build_frm.check_box :merge_trunk %></td>
+	</tr>
+  <% end %>
+
+</table>
+
 <% end %>

@@ -4,6 +4,7 @@ class JobTest < ActiveSupport::TestCase
 
   fixtures :jobs
   fixtures :smoke_tests
+  fixtures :package_builders
 
   test "create" do
     job = Job.create(
@@ -17,12 +18,11 @@ class JobTest < ActiveSupport::TestCase
     job = jobs(:one)
     job.update_attributes(
       :status => "Success",
-      :revision => "1234"
+      :nova_revision => "1234"
     )
     job = Job.find(jobs(:one).id)
     assert_equal "Success", job.status
-    assert_equal "1234", job.revision
-    assert_equal "1234", smoke_tests(:trunk).last_revision
+    assert_equal "1234", job.nova_revision
   end
 
   test "verify true job" do
@@ -57,9 +57,9 @@ class JobTest < ActiveSupport::TestCase
     assert_equal "Success", job.smoke_test.status
   end
 
-  test "parse revision" do
+  test "parse nova revision" do
     job = jobs(:two)
-    assert_equal "102", Job.parse_revision(job.stdout)
+    assert_equal "102", Job.parse_nova_revision(job.stdout)
   end
 
   test "parse message" do

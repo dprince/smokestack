@@ -22,7 +22,6 @@ class Job < ActiveRecord::Base
 
   def handle_after_save
     self.smoke_test.update_attributes(
-        :last_revision => self.revision,
         :status => self.status
     )
   end
@@ -43,13 +42,16 @@ class Job < ActiveRecord::Base
     script_file.write(script_text)
     script_file.flush
 
-    args = ["bash", script_file.path, job.smoke_test.branch_url,
-            job.smoke_test.merge_trunk.to_s]
+    nova_builder=job.smoke_test.nova_package_builder
+    glance_builder=job.smoke_test.glance_package_builder
+
+    args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s]
 
     Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp
         job.stderr=stderr.readlines.join.chomp
-        job.revision=Job.parse_revision(job.stdout)
+        job.nova_revision=Job.parse_nova_revision(job.stdout)
+        job.glance_revision=Job.parse_glance_revision(job.stdout)
         job.msg=Job.parse_last_message(job.stdout)
         job.save
         retval = wait_thr.value
@@ -66,10 +68,19 @@ class Job < ActiveRecord::Base
 
   end
 
-  def self.parse_revision(stdout)
+  def self.parse_nova_revision(stdout)
     stdout.each_line do |line|
       if line =~ /^NOVA_REVISION/ then
         return line.sub(/^NOVA_REVISION=/, "").chomp
+      end
+    end
+    return ""
+  end
+
+  def self.parse_glance_revision(stdout)
+    stdout.each_line do |line|
+      if line =~ /^GLANCE_REVISION/ then
+        return line.sub(/^GLANCE_REVISION=/, "").chomp
       end
     end
     return ""

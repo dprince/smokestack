@@ -2,7 +2,7 @@
 
 <p>
   <b>Branch name:</b>
-  <%= @smoke_test.branch_url %>
+  <%= @smoke_test.nova_package_builder.url %>
 </p>
 
 <p>
@@ -12,12 +12,14 @@
 
 <p>
   <b>Revision:</b>
-  <%= @smoke_test.last_revision %>
+  <% if @smoke_test.most_recent_job %>
+    <%= @smoke_test.most_recent_job.nova_revision %>
+  <% end %>
 </p>
 
 <p>
   <b>Merge trunk:</b>
-  <%= yes_no(@smoke_test.merge_trunk) %>
+  <%= yes_no(@smoke_test.nova_package_builder.merge_trunk) %>
 </p>
 <hr/>
 <% @jobs = @smoke_test.jobs %>

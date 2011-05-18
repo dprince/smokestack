@@ -1,0 +1,2 @@
+class GlancePackageBuilder < PackageBuilder
+end

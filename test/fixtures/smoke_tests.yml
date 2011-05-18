@@ -1,13 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 trunk:
-  branch_url: lp:nova
   description: Nova trunk
-  merge_trunk: true
   status: Pending
 
 dev1:
-  branch_url: lp:~dan-prince/nova/dev1
   description: Dev 1
-  merge_trunk: true
   status:

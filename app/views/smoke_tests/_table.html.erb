@@ -14,11 +14,15 @@
 
 <% @smoke_tests.each do |smoke_test| %>
   <tr id="smoke-test-tr-<%= smoke_test.id %>" class="<%= cycle "tr0", "tr1" %>">
-    <td><%= smoke_test.branch_url %></td>
+    <td><%= smoke_test.nova_package_builder.url %></td>
     <td><%= smoke_test.description %></td>
     <td><%= raw status_image(smoke_test.status) %></td>
-    <td><%= smoke_test.last_revision %></td>
-    <td><%= yes_no(smoke_test.merge_trunk) %></td>
+    <% if smoke_test.most_recent_job %>
+    <td><%= smoke_test.most_recent_job.nova_revision %></td>
+    <% else %>
+    <td>&nbsp;</td>
+    <% end %>
+    <td><%= yes_no(smoke_test.nova_package_builder.merge_trunk) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
     <% if is_user %>
       <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>

@@ -1,25 +1,11 @@
 #!/bin/bash
 # Script to run Openstack VPC jobs
 
-BRANCH_URL=$1
-MERGE_TRUNK=$2
+NOVA_URL=$1
+NOVA_MERGE_TRUNK=$2
+GLANCE_URL=$3
+GLANCE_MERGE_TRUNK=$4
 TMP_DIR=$(mktemp -d)
-
-# Shell into the VPC group and print out the nova-common version from dpkg
-function get_nova_pkg_revision {
-
-	local NOVA_REVISION=$(
-	rake ssh bash <<-EOF_BASH
-	ssh -t nova1 2> /dev/null <<-EOF_NOVA
-	echo ""
-	echo ""
-	dpkg -l nova-common | tail -n 1 | sed -e "s|.*bzr\([^-]*\).*|\1|"
-	EOF_NOVA
-	EOF_BASH
-	)
-	echo $NOVA_REVISION | tail -n 1 | sed -e "s|.* ||"
-
-}
 
 # Log to the job log and stdout
 function fail {
@@ -28,18 +14,35 @@ function fail {
 	exit 1
 }
 
-function get_source_code {
+function get_nova_source {
 #FIXME: need to implement a Git version of this function as well.
 
-	bzr branch "$BRANCH_URL" nova_source || \
+	bzr branch "$NOVA_URL" nova_source || \
 		fail "Failed to checkout bzr branch."
 	local NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
 	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
 	echo "NOVA_REVISION=$NOVA_REVISION"
 
-	if [[ "$MERGE_TRUNK" == "true" ]]; then
+	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
 		cd nova_source || fail "Failed to cd into nova_source directory."
 		bzr merge lp:nova || fail "Failed to merge lp:nova."
+		cd $TMP_DIR
+	fi
+
+}
+
+function get_glance_source {
+#FIXME: need to implement a Git version of this function as well.
+
+	bzr branch "$GLANCE_URL" glance_source || \
+		fail "Failed to checkout bzr branch."
+	local GLANCE_REVISION=$(bzr version-info glance_source | grep revno | sed -e "s|revno: ||")
+	[ -z "$GLANCE_REVISION" ] && fail "Failed to obtain glance revision from bzr."
+	echo "GLANCE_REVISION=$GLANCE_REVISION"
+
+	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+		cd glance_source || fail "Failed to cd into glance_source directory."
+		bzr merge lp:glance || fail "Failed to merge lp:glance."
 		cd $TMP_DIR
 	fi
 
@@ -51,7 +54,8 @@ chef-vpc-toolkit -v || \
 	fail "Please install the Chef VPC Toolkit."
 
 cd $TMP_DIR
-[ -n "$BRANCH_URL" ] && get_source_code
+[ -n "$NOVA_URL" ] && get_nova_source
+[ -n "$GLANCE_URL" ] && get_glance_source
 
 git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
@@ -59,15 +63,13 @@ git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
 trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
-	if [ -z "$BRANCH_URL" ]; then
-		local NOVA_REVISION=$(get_nova_pkg_revision)
-		[ -z "$NOVA_REVISION" ] && \
-			fail "Failed to obtain nova revision from dpkg."
-		echo "NOVA_REVISION=$NOVA_REVISION"
-	else
-		rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
-			SERVER_NAME=nova1 || fail "Failed to build nova packages."
-	fi
+	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+		DEB_PACKAGER_URL=<%= ENV['NOVA_DEB_PACKAGER_URL'] %> || \
+		fail "Failed to build nova packages."
+
+	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+		DEB_PACKAGER_URL=<%= ENV['GLANCE_DEB_PACKAGER_URL'] %> || \
+		fail "Failed to build glance packages."
 
 	# install Chef and the Chef Cookbooks
 	rake chef:push_repos && rake chef:install || \

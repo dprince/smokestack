@@ -1,0 +1,2 @@
+class NovaPackageBuilder < PackageBuilder
+end
