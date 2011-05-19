@@ -1,19 +1,26 @@
 body, p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
-  font-size:   12px;
+  font-size: 12px;
 }
 
 table.data tr.header {
-    color: #004276;
-    background-color: #cfcfcf;
+  font-size: 13px;
+  color: #333;
+  background-color: #DDD;
+}
+
+table.data tr td.header {
+  font-size: 13px;
+  color: #333;
+  font-weight: bold;
 }
 
 table.data tr.tr0 {
-    background-color: #FFF;
+  background-color: #FFF;
 }
 
 table.data tr.tr1 {
-    background-color: #DDD;
+  background-color: #DDD;
 }
 
 table.data tr.inactive {
@@ -22,7 +29,7 @@ table.data tr.inactive {
 }
 
 br.clear {
-	clear: both;
+  clear: both;
 }
 
 img.check_image {
@@ -32,39 +39,39 @@ img.status_image {
 }
 
 #header_font_div {
-	font-size:   20px;
-	font-weight:   bold;
-	margin-left: .3em;
-	margin-bottom: 0.2em;
-	float: left;
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: .3em;
+  margin-bottom: 0.2em;
+  float: left;
 }
 
 #login_div {
-	font-size:   14px;
-	text-align: center;
-	margin-top: 3.0em;
-	margin-bottom: 3.0em;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 3.0em;
+  margin-bottom: 3.0em;
 }
 
 #login_div table {
-	width: 400px;
-	margin: auto;
-	text-align: left;
+  width: 400px;
+  margin: auto;
+  text-align: left;
 }
 
 #login_header {
-	float: right;
+  float: right;
 }
 
 #footer_div {
-	float: right;
-	color: #333;
+  float: right;
+  color: #333;
 }
 
 .show {
-	display: inline;
+  display: inline;
 }
 
 .hide {
-	display: none;
+  display: none;
 }
