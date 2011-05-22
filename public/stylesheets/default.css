@@ -38,12 +38,9 @@ img.check_image {
 img.status_image {
 }
 
-#header_font_div {
-  font-size: 20px;
-  font-weight: bold;
-  margin-left: .3em;
-  margin-bottom: 0.2em;
-  float: left;
+#header_div {
+    float: left;
+    margin-bottom: 0.2em;
 }
 
 #login_div {
