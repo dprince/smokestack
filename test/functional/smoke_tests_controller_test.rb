@@ -5,6 +5,8 @@ class SmokeTestsControllerTest < ActionController::TestCase
   include AuthTestHelper
 
   fixtures :users
+  fixtures :smoke_tests
+  fixtures :config_templates
 
   setup do
     @smoke_test = smoke_tests(:trunk)
@@ -37,7 +39,11 @@ class SmokeTestsControllerTest < ActionController::TestCase
   test "should create smoke_test" do
     login_as(:bob)
     assert_difference('SmokeTest.count') do
-      post :create, :smoke_test => @smoke_test.attributes
+      smoke_test_attrs = {
+        :description => "Nova trunk",
+        :config_template_ids => [config_templates(:libvirt_psql).id]
+      }
+      post :create, :smoke_test => smoke_test_attrs
     end
 
     assert_redirected_to smoke_test_path(assigns(:smoke_test))

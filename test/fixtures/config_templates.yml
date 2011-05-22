@@ -1,0 +1,8 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+libvirt_psql:
+  name: Libvirt Postgres
+  description: Libvirt QEME w/ Postgres
+  cookbook_repo_url: http://a.b.c/blah
+  nodes_json: {}
+  server_group_json: {}

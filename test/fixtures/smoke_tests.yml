@@ -3,7 +3,9 @@
 trunk:
   description: Nova trunk
   status: Pending
+  config_templates: [:libvirt_psql]
 
 dev1:
   description: Dev 1
   status:
+  config_templates: [:libvirt_psql]

@@ -1,0 +1,30 @@
+<p>
+  <b>Name:</b>
+  <%= @config_template.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%= @config_template.description %>
+</p>
+
+<p>
+  <b>Chef Cookbook Repo URL:</b>
+  <%= @config_template.cookbook_repo_url %>
+</p>
+
+<p>
+  <b>Nodes JSON:</b>
+<br/>
+<textarea rows="10" cols="80">
+  <%= @config_template.nodes_json %>
+</textarea>
+</p>
+
+<p>
+  <b>Server Group JSON:</b>
+<br/>
+<textarea rows="10" cols="80">
+  <%= @config_template.server_group_json %>
+</textarea>
+</p>

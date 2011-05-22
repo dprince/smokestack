@@ -9,12 +9,7 @@ Smokestack::Application.routes.draw do
     end
   end
 
-  resources :users
-  resources :users do
-    member do
-      get 'password'
-    end
-  end
+  resources :config_templates
 
   resources :jobs
 
@@ -22,6 +17,13 @@ Smokestack::Application.routes.draw do
   resources :smoke_tests do
     member do
       post 'run_job'
+    end
+  end
+
+  resources :users
+  resources :users do
+    member do
+      get 'password'
     end
   end
 

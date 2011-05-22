@@ -37,21 +37,28 @@
 </tr>
 
   <%= f.fields_for :nova_package_builder do |nova_build_frm| %>
-	<tr>
+    <tr>
       <td class="header">Nova Builder</td>
       <td><%= nova_build_frm.text_field :url %>&nbsp;(Ex. lp:nova)</td>
       <td><%= nova_build_frm.check_box :merge_trunk %></td>
-	</tr>
+    </tr>
   <% end %>
 
   <%= f.fields_for :glance_package_builder do |glance_build_frm| %>
-	<tr>
+    <tr>
       <td class="header">Glance Builder</td>
       <td><%= glance_build_frm.text_field :url %>&nbsp;(Ex. lp:glance)</td>
       <td><%= glance_build_frm.check_box :merge_trunk %></td>
-	</tr>
+    </tr>
   <% end %>
 
 </table>
+<hr/>
+<b>Configurations:</b><br/>
+
+    <% ConfigTemplate.find(:all).each do |config_template| %>
+         <%= check_box_tag "smoke_test[config_template_ids][]", "#{config_template.id}", config_template_checked(config_template) -%>
+         <%= config_template.name %><br/>
+    <% end %>
 
 <% end %>

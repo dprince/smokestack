@@ -1,0 +1,22 @@
+<div id="config_templates" class="ui-widget">
+
+<%= link_to 'New Config Template', new_config_template_path, :id => "config-template-new-link" %>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+    config_template_selectors();
+    config_template_table_selectors();
+
+});
+
+</script>
+
+<%= form_tag('/config_templates/XX', :method => :delete, :id => "config-template-delete-form") %>
+
+<table id="config-templates-table" class="ui-widget ui-widget-content data">
+    <%= render :partial => 'table' %>
+</table>
+
+</div>

@@ -10,10 +10,22 @@ class SmokeTest < ActiveRecord::Base
   has_one :glance_package_builder
   accepts_nested_attributes_for :glance_package_builder
 
+  has_and_belongs_to_many :config_templates
+
   before_destroy :handle_before_destroy
   def handle_before_destroy
     self.jobs.each do |job|
       job.destroy
+    end
+  end
+
+  validate :handle_validate
+  def handle_validate
+    if self.config_templates.size == 0 then
+      errors.add(:base, "At least one configuration must be selected.")
+      return false
+    else
+      return true
     end
   end
 

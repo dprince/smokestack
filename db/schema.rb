@@ -10,7 +10,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 6) do
+ActiveRecord::Schema.define(:version => 8) do
+
+  create_table "config_templates", :force => true do |t|
+    t.string   "name",              :null => false
+    t.string   "description",       :null => false
+    t.string   "cookbook_repo_url", :null => false
+    t.text     "nodes_json",        :null => false
+    t.text     "server_group_json", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "config_templates_smoke_tests", :id => false, :force => true do |t|
+    t.integer "config_template_id", :null => false
+    t.integer "smoke_test_id",      :null => false
+  end
 
   create_table "jobs", :force => true do |t|
     t.string   "status",                                :default => "Pending"
