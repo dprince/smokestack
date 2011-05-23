@@ -13,7 +13,7 @@ class CreateConfigTemplates < ActiveRecord::Migration
     end
 
     ConfigTemplate.create(
-      :name => "libvirt_qemu_mysql",
+      :name => "Libvirt MySQL",
       :description => "Libvirt QEMU w/ MySQL",
       :cookbook_repo_url => "https://github.com/dprince/openstack_cookbooks/tarball/master",
       :nodes_json => %{

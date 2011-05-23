@@ -22,7 +22,7 @@
   <%= yes_no(@smoke_test.nova_package_builder.merge_trunk) %>
 </p>
 <hr/>
-<% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:job_group => :smoke_test]) %>
+<% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:config_template, {:job_group => :smoke_test}]) %>
 <script type="text/javascript">
 
 $(document).ready(function() {

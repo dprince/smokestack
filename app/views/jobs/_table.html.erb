@@ -1,6 +1,7 @@
   <tr class="ui-widget-header">
     <th>ID</th>
     <th>Smoke Test</th>
+    <th>Configuration</th>
     <th>Status</th>
     <th>Nova<br/>Revision</th>
     <th>Glance<br/>Revision</th>
@@ -19,6 +20,11 @@
     <td><%= job.id %></td>
     <% if job.job_group.smoke_test then %>
         <td><%= job.job_group.smoke_test.description %></td>
+    <% else %>
+        <td>&nbsp;</td>
+    <% end %>
+    <% if job.config_template then %>
+        <td><%= job.config_template.name %></td>
     <% else %>
         <td>&nbsp;</td>
     <% end %>
