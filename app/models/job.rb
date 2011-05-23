@@ -36,17 +36,34 @@ class Job < ActiveRecord::Base
     if script_text.nil?
         template = File.read(File.join(Rails.root, "app", "models", "vpc_runner.sh.erb"))
         eruby = Erubis::Eruby.new(template)
-        script_text=eruby.result(:job=>job)
+        script_text=eruby.result
     end
-
     script_file=Tempfile.new('smokestack')
     script_file.write(script_text)
     script_file.flush
 
+	#chef_installer.yml
+	chef_template = File.read(File.join(Rails.root, "app", "models", "chef_installer.yml.erb"))
+	eruby = Erubis::Eruby.new(chef_template)
+	chef_installer_text=eruby.result(:job => job)
+    chef_installer_file=Tempfile.new('smokestack_chef')
+    chef_installer_file.write(chef_installer_text)
+    chef_installer_file.flush
+
+	#nodes.json
+    nodes_json_file=Tempfile.new('smokestack_nodes_json')
+    nodes_json_file.write(job.config_template.nodes_json)
+    nodes_json_file.flush
+
+	#server_group.json
+    server_group_json_file=Tempfile.new('smokestack_server_group_json')
+    server_group_json_file.write(job.config_template.server_group_json)
+    server_group_json_file.flush
+
     nova_builder=job.job_group.smoke_test.nova_package_builder
     glance_builder=job.job_group.smoke_test.glance_package_builder
 
-    args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s]
+    args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s, chef_installer_file.path, nodes_json_file.path, server_group_json_file.path]
 
     Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
         job.stdout=stdout.readlines.join.chomp

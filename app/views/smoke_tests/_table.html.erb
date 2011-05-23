@@ -10,13 +10,15 @@
     <% end %>
   </tr>
 
+<% show_edit_links = is_user %>
+
 <% @smoke_tests.each do |smoke_test| %>
   <tr id="smoke-test-tr-<%= smoke_test.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%= smoke_test.nova_package_builder.url %></td>
     <td><%= smoke_test.description %></td>
     <td><%= raw status_image(smoke_test.status) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
-    <% if is_user %>
+    <% if show_edit_links %>
       <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
       <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
       <td><%= link_to 'Run Jobs', "/smoke_tests/#{smoke_test.id}/run_jobs", :method => :post, :class => "smoke-test-run-jobs" %></td>

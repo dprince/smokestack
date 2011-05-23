@@ -12,6 +12,8 @@
     <% end %>
   </tr>
 
+<% show_edit_links = is_user %>
+
 <% @jobs.each do |job| %>
   <tr id="job-tr-<%= job.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%= job.id %></td>
@@ -26,7 +28,7 @@
     <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>
     <td><%= link_to 'Show', job, :class => "job-show" %></td>
-    <% if is_user %>
+    <% if show_edit_links %>
       <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
     <% end %>
   </tr>

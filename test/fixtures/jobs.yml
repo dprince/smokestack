@@ -6,6 +6,7 @@ one:
   stderr: 
   msg: MyString
   job_group: one
+  config_template: libvirt_psql
 
 two:
   status: Success
@@ -18,3 +19,4 @@ two:
   stderr: 
   msg: MyString
   job_group: one
+  config_template: libvirt_psql

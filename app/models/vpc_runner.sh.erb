@@ -5,6 +5,11 @@ NOVA_URL=$1
 NOVA_MERGE_TRUNK=$2
 GLANCE_URL=$3
 GLANCE_MERGE_TRUNK=$4
+
+CHEF_INSTALLER_CONF=$5
+NODES_JSON_CONF=$6
+SERVER_GROUP_JSON_CONF=$7
+
 TMP_DIR=$(mktemp -d)
 
 # Log to the job log and stdout
@@ -59,6 +64,15 @@ cd $TMP_DIR
 
 git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
+
+cp "$CHEF_INSTALLER_CONF" config/chef_installer.yml || \
+	fail "Failed to copy chef_installer.yml"
+
+cp "$NODES_JSON_CONF" config/nodes.json || \
+	fail "Failed to copy nodes.json"
+
+cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
+	fail "Failed to copy server_group.json"
 
 trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
 if rake group:create && rake group:poll; then
