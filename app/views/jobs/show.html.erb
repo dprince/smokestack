@@ -2,12 +2,12 @@
 
 <p>
   <b>Smoke test:</b>
-  <%= @job.smoke_test.description %>
+  <%= @job.job_group.smoke_test.description %>
 </p>
 
-<% if not @job.smoke_test.nova_package_builder.url.empty? %>
+<% if not @job.job_group.smoke_test.nova_package_builder.url.empty? %>
   <b>Branch Url:</b>
-  <%= @job.smoke_test.nova_package_builder.url %>
+  <%= @job.job_group.smoke_test.nova_package_builder.url %>
 <% end %>
 
 <p>

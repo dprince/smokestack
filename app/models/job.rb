@@ -4,8 +4,9 @@ require 'open3'
 
 class Job < ActiveRecord::Base
 
-  validates_presence_of :smoke_test_id
-  belongs_to :smoke_test
+  validates_presence_of :job_group_id
+  belongs_to :job_group
+  belongs_to :config_template
   after_initialize :handle_after_init
   after_create :handle_after_create
   after_save :handle_after_save
@@ -21,12 +22,12 @@ class Job < ActiveRecord::Base
   end
 
   def handle_after_save
-    self.smoke_test.update_attributes(
+    self.job_group.update_attributes(
         :status => self.status
     )
   end
 
-  @queue=:job
+  @queue=:vpc
 
   def self.perform(id, script_text=nil)
     job = Job.find(id)
@@ -42,8 +43,8 @@ class Job < ActiveRecord::Base
     script_file.write(script_text)
     script_file.flush
 
-    nova_builder=job.smoke_test.nova_package_builder
-    glance_builder=job.smoke_test.glance_package_builder
+    nova_builder=job.job_group.smoke_test.nova_package_builder
+    glance_builder=job.job_group.smoke_test.glance_package_builder
 
     args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s]
 

@@ -2,8 +2,6 @@
     <th>Branch name</th>
     <th>Description</th>
     <th>Status</th>
-    <th>Revision</th>
-    <th>Merge<br/>Trunk</th>
     <th></th>
     <% if is_user %>
       <th></th>
@@ -17,17 +15,11 @@
     <td><%= smoke_test.nova_package_builder.url %></td>
     <td><%= smoke_test.description %></td>
     <td><%= raw status_image(smoke_test.status) %></td>
-    <% if smoke_test.most_recent_job %>
-    <td><%= smoke_test.most_recent_job.nova_revision %></td>
-    <% else %>
-    <td>&nbsp;</td>
-    <% end %>
-    <td><%= yes_no(smoke_test.nova_package_builder.merge_trunk) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
     <% if is_user %>
       <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
       <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
-      <td><%= link_to 'Run Job', "/smoke_tests/#{smoke_test.id}/run_job", :method => :post, :class => "smoke-test-run-job" %></td>
+      <td><%= link_to 'Run Jobs', "/smoke_tests/#{smoke_test.id}/run_jobs", :method => :post, :class => "smoke-test-run-jobs" %></td>
     <% end %>
   </tr>
 <% end %>

@@ -3,6 +3,8 @@ require 'test_helper'
 class SmokeTestTest < ActiveSupport::TestCase
 
   fixtures :config_templates
+  fixtures :jobs
+  fixtures :job_groups
 
   test "create" do
     smoke_test = SmokeTest.create(
@@ -27,11 +29,11 @@ class SmokeTestTest < ActiveSupport::TestCase
     assert_equal false, smoke_test.valid?
   end
 
-  test "destroy deletes jobs" do
+  test "destroy deletes job groups" do
     smoke_test=smoke_tests(:trunk)
     id=smoke_test.id
     smoke_test.destroy
-    assert_equal 0, Job.count(:conditions => ["smoke_test_id = ?", id])
+    assert_equal 0, JobGroup.count(:conditions => ["smoke_test_id = ?", id])
   end
 
 end

@@ -62,7 +62,7 @@ function smoke_test_table_selectors() {
     }
     );
 
-    $("a.smoke-test-run-job").button({
+    $("a.smoke-test-run-jobs").button({
         icons: {
             primary: 'ui-icon-play'
         }
@@ -173,7 +173,7 @@ function smoke_test_table_selectors() {
 
        });
 
-    $(".smoke-test-run-job").click(function(e){
+    $(".smoke-test-run-jobs").click(function(e){
          e.preventDefault();
 
         var post_data = $("#smoke-test-job-form").serialize();
@@ -183,7 +183,7 @@ function smoke_test_table_selectors() {
             type: 'POST',
             data: post_data,
             success: function(data) {
-                alert('Job scheduled.');
+                alert('Job(s) scheduled.');
                 reload_smoke_tests_table($("#smoke-tests-table"));
             },
             error: function(data) {

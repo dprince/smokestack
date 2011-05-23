@@ -7,6 +7,8 @@ class SmokeTestsControllerTest < ActionController::TestCase
   fixtures :users
   fixtures :smoke_tests
   fixtures :config_templates
+  fixtures :job_groups
+  fixtures :jobs
 
   setup do
     @smoke_test = smoke_tests(:trunk)
@@ -101,7 +103,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
     login_as(:bob)
     AsyncExec.jobs.clear
     assert_difference('Job.count') do
-      post :run_job, :id => @smoke_test.id
+      post :run_jobs, :id => @smoke_test.id
     end
     assert_not_nil AsyncExec.jobs[Job]
   end
@@ -109,7 +111,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
   test "should not run job" do
     AsyncExec.jobs.clear
     assert_no_difference('Job.count') do
-      post :run_job, :id => @smoke_test.id
+      post :run_jobs, :id => @smoke_test.id
     end
     assert_nil AsyncExec.jobs[Job]
   end

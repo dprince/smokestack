@@ -22,7 +22,7 @@ $(document).ready(function() {
     :value => form_authenticity_token) %>
 </form>
 
-<form action="/smoke_tests/XX/run_job" method="POST" id="smoke-test-job-form">
+<form action="/smoke_tests/XX/run_jobs" method="POST" id="smoke-test-job-form">
 <input type="hidden" name="_method" value="post"/>
 <%= tag(:input, :type => "hidden", 
     :name => request_forgery_protection_token.to_s, 

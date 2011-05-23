@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 8) do
+ActiveRecord::Schema.define(:version => 11) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",              :null => false
@@ -27,16 +27,24 @@ ActiveRecord::Schema.define(:version => 8) do
     t.integer "smoke_test_id",      :null => false
   end
 
+  create_table "job_groups", :force => true do |t|
+    t.string   "status",        :default => "Pending", :null => false
+    t.integer  "smoke_test_id",                        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "jobs", :force => true do |t|
-    t.string   "status",                                :default => "Pending"
-    t.text     "stdout",          :limit => 2147483647
-    t.text     "stderr",          :limit => 2147483647
+    t.string   "status",                                   :default => "Pending"
+    t.text     "stdout",             :limit => 2147483647
+    t.text     "stderr",             :limit => 2147483647
     t.string   "nova_revision"
     t.string   "msg"
-    t.integer  "smoke_test_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "glance_revision"
+    t.integer  "job_group_id",                                                    :null => false
+    t.integer  "config_template_id",                                              :null => false
   end
 
   create_table "package_builders", :force => true do |t|

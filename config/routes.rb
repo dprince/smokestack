@@ -16,7 +16,7 @@ Smokestack::Application.routes.draw do
   resources :smoke_tests
   resources :smoke_tests do
     member do
-      post 'run_job'
+      post 'run_jobs'
     end
   end
 

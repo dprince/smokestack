@@ -102,16 +102,16 @@ class SmokeTestsController < ApplicationController
     end
   end
 
-  # POST /smoke_tests/1/run_job
-  def run_job
+  # POST /smoke_tests/1/run_jobs
+  def run_jobs
     @smoke_test = SmokeTest.find(params[:id])
 
-    job=Job.create(
+    job=JobGroup.create(
         :smoke_test => @smoke_test
     )
 
     respond_to do |format|
-      format.html { redirect_to(job) }
+      format.html  { head :ok }
       format.json  { head :ok }
       format.xml  { head :ok }
     end

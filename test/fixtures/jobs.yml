@@ -5,7 +5,7 @@ one:
   stdout: 
   stderr: 
   msg: MyString
-  smoke_test: trunk
+  job_group: one
 
 two:
   status: Success
@@ -17,4 +17,4 @@ two:
     All tests passed successfully.
   stderr: 
   msg: MyString
-  smoke_test: trunk
+  job_group: one

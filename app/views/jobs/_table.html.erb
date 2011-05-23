@@ -15,8 +15,8 @@
 <% @jobs.each do |job| %>
   <tr id="job-tr-<%= job.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%= job.id %></td>
-    <% if job.smoke_test then %>
-        <td><%= job.smoke_test.description %></td>
+    <% if job.job_group.smoke_test then %>
+        <td><%= job.job_group.smoke_test.description %></td>
     <% else %>
         <td>&nbsp;</td>
     <% end %>

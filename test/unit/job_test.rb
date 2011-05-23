@@ -3,15 +3,18 @@ require 'test_helper'
 class JobTest < ActiveSupport::TestCase
 
   fixtures :jobs
+  fixtures :job_groups
   fixtures :smoke_tests
   fixtures :package_builders
+  fixtures :config_templates
 
   test "create" do
     job = Job.create(
-        :smoke_test => smoke_tests(:trunk)
+        :job_group => job_groups(:one),
+        :config_template => config_templates(:libvirt_psql)
     )
     assert_equal "Pending", job.status
-    assert_equal smoke_tests(:trunk), job.smoke_test
+    assert_equal job_groups(:one), job.job_group
   end
 
   test "update" do
@@ -54,7 +57,7 @@ class JobTest < ActiveSupport::TestCase
     )
     job = Job.find(jobs(:one).id)
     assert_equal "Success", job.status
-    assert_equal "Success", job.smoke_test.status
+    assert_equal "Success", job.job_group.status
   end
 
   test "parse nova revision" do
