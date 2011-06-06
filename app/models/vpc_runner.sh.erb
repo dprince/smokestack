@@ -93,6 +93,10 @@ if rake group:create && rake group:poll; then
 	rake chef:poll_clients CHEF_TIMEOUT=600 || \
 		{ rake chef:tail_logs; fail "Chef client timeout."; }
 
+	# run OS API v1.0 tests (Uses the Ruby openstack-compute gem)
+	rake nova:ruby_osapi_tests SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+
 	# run smoke tests
 	rake nova:smoke_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
