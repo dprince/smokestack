@@ -1,13 +1,13 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.6'
+gem 'rails', '3.0.7'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql'
 gem 'resque', '1.15.0'
-gem 'chef-vpc-toolkit'
+gem 'chef-vpc-toolkit', '2.6.1'
 
 # Use unicorn as the web server
 # gem 'unicorn'

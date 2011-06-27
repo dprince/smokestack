@@ -106,7 +106,7 @@ class SmokeTestsController < ApplicationController
   def run_jobs
     @smoke_test = SmokeTest.find(params[:id])
 
-    job=JobGroup.create(
+    job_group=JobGroup.create(
         :smoke_test => @smoke_test
     )
 

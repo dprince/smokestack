@@ -18,7 +18,10 @@
       </ul>
     </div>
   <% end %>
-
+  <div class="field">
+    <%= f.label :job_type %><br />
+	<%= f.select("job_type", ["VPC", "Xen"]) %>
+  </div>
   <div class="field">
     <%= f.label :name %><br />
     <%= f.text_field :name %>

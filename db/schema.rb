@@ -10,16 +10,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 11) do
+ActiveRecord::Schema.define(:version => 13) do
 
   create_table "config_templates", :force => true do |t|
-    t.string   "name",              :null => false
-    t.string   "description",       :null => false
-    t.string   "cookbook_repo_url", :null => false
-    t.text     "nodes_json",        :null => false
-    t.text     "server_group_json", :null => false
+    t.string   "name",                                    :null => false
+    t.string   "description",                             :null => false
+    t.string   "cookbook_repo_url",                       :null => false
+    t.text     "nodes_json",                              :null => false
+    t.text     "server_group_json",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "job_type",          :default => "JobVPC"
   end
 
   create_table "config_templates_smoke_tests", :id => false, :force => true do |t|
@@ -45,6 +46,7 @@ ActiveRecord::Schema.define(:version => 11) do
     t.string   "glance_revision"
     t.integer  "job_group_id",                                                    :null => false
     t.integer  "config_template_id",                                              :null => false
+    t.string   "type",                                     :default => "JobVPC"
   end
 
   create_table "package_builders", :force => true do |t|

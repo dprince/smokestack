@@ -1,13 +1,18 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Branch name:</b>
+  <b>Description:</b>
+  <%= @smoke_test.description %>
+</p>
+
+<p>
+  <b>Nova Branch:</b>
   <%= @smoke_test.nova_package_builder.url %>
 </p>
 
 <p>
-  <b>Description:</b>
-  <%= @smoke_test.description %>
+  <b>Nova Merge trunk:</b>
+  <%= yes_no(@smoke_test.nova_package_builder.merge_trunk) %>
 </p>
 
 <p>
@@ -18,9 +23,22 @@
 </p>
 
 <p>
-  <b>Merge trunk:</b>
-  <%= yes_no(@smoke_test.nova_package_builder.merge_trunk) %>
+  <b>Glance Branch:</b>
+  <%= @smoke_test.glance_package_builder.url %>
 </p>
+
+<p>
+  <b>Glance Merge trunk:</b>
+  <%= yes_no(@smoke_test.glance_package_builder.merge_trunk) %>
+</p>
+
+<p>
+  <b>Glance Revision (most recent):</b>
+  <% if @smoke_test.most_recent_job_group and @smoke_test.most_recent_job_group.most_recent_job %>
+    <%= @smoke_test.most_recent_job_group.most_recent_job.glance_revision %>
+  <% end %>
+</p>
+
 <hr/>
 <% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:config_template, {:job_group => :smoke_test}]) %>
 <script type="text/javascript">

@@ -105,7 +105,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_difference('Job.count') do
       post :run_jobs, :id => @smoke_test.id
     end
-    assert_not_nil AsyncExec.jobs[Job]
+    assert_not_nil AsyncExec.jobs[JobVPC]
   end
 
   test "should not run job" do
@@ -113,7 +113,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_no_difference('Job.count') do
       post :run_jobs, :id => @smoke_test.id
     end
-    assert_nil AsyncExec.jobs[Job]
+    assert_nil AsyncExec.jobs[JobVPC]
   end
 
 end

@@ -8,7 +8,6 @@ class Job < ActiveRecord::Base
   belongs_to :job_group
   belongs_to :config_template
   after_initialize :handle_after_init
-  after_create :handle_after_create
   after_save :handle_after_save
 
   def handle_after_init
@@ -17,72 +16,71 @@ class Job < ActiveRecord::Base
     end
   end
 
-  def handle_after_create
-    AsyncExec.run_job(Job, self.id)
-  end
-
   def handle_after_save
     self.job_group.update_attributes(
         :status => self.status
     )
   end
 
-  @queue=:vpc
-
-  def self.perform(id, script_text=nil)
-    job = Job.find(id)
+  def self.run_job(job, script_text=nil)
     job.update_attribute(:status, "Running")
 
-    if script_text.nil?
-        template = File.read(File.join(Rails.root, "app", "models", "vpc_runner.sh.erb"))
-        eruby = Erubis::Eruby.new(template)
-        script_text=eruby.result
-    end
-    script_file=Tempfile.new('smokestack')
-    script_file.write(script_text)
-    script_file.flush
+	begin
 
-	#chef_installer.yml
-	chef_template = File.read(File.join(Rails.root, "app", "models", "chef_installer.yml.erb"))
-	eruby = Erubis::Eruby.new(chef_template)
-	chef_installer_text=eruby.result(:job => job)
-    chef_installer_file=Tempfile.new('smokestack_chef')
-    chef_installer_file.write(chef_installer_text)
-    chef_installer_file.flush
+		if script_text.nil?
+			template = File.read(File.join(Rails.root, "app", "models", "vpc_runner.sh.erb"))
+			eruby = Erubis::Eruby.new(template)
+			script_text=eruby.result(:job => job)
+		end
+		script_file=Tempfile.new('smokestack')
+		script_file.write(script_text)
+		script_file.flush
 
-	#nodes.json
-    nodes_json_file=Tempfile.new('smokestack_nodes_json')
-    nodes_json_file.write(job.config_template.nodes_json)
-    nodes_json_file.flush
+		#chef_installer.yml
+		chef_template = File.read(File.join(Rails.root, "app", "models", "chef_installer.yml.erb"))
+		eruby = Erubis::Eruby.new(chef_template)
+		chef_installer_text=eruby.result(:job => job)
+		chef_installer_file=Tempfile.new('smokestack_chef')
+		chef_installer_file.write(chef_installer_text)
+		chef_installer_file.flush
 
-	#server_group.json
-    server_group_json_file=Tempfile.new('smokestack_server_group_json')
-    server_group_json_file.write(job.config_template.server_group_json)
-    server_group_json_file.flush
+		#nodes.json
+		nodes_json_file=Tempfile.new('smokestack_nodes_json')
+		nodes_json_file.write(job.config_template.nodes_json)
+		nodes_json_file.flush
 
-    nova_builder=job.job_group.smoke_test.nova_package_builder
-    glance_builder=job.job_group.smoke_test.glance_package_builder
+		#server_group.json
+		server_group_json_file=Tempfile.new('smokestack_server_group_json')
+		server_group_json_file.write(job.config_template.server_group_json)
+		server_group_json_file.flush
 
-    args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s, chef_installer_file.path, nodes_json_file.path, server_group_json_file.path]
+		nova_builder=job.job_group.smoke_test.nova_package_builder
+		glance_builder=job.job_group.smoke_test.glance_package_builder
 
-    Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
-        job.stdout=stdout.readlines.join.chomp
-        job.stderr=stderr.readlines.join.chomp
-        job.nova_revision=Job.parse_nova_revision(job.stdout)
-        job.glance_revision=Job.parse_glance_revision(job.stdout)
-        job.msg=Job.parse_last_message(job.stdout)
-        job.save
-        retval = wait_thr.value
-        if retval.success? 
-            job.update_attribute(:status, "Success")
-            return true
-        else
-            job.update_attribute(:status, "Failed")
-            return false
-        end
+		args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s, chef_installer_file.path, nodes_json_file.path, server_group_json_file.path]
 
-    end
-    script_file.close
+			Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
+				job.stdout=stdout.readlines.join.chomp
+				job.stderr=stderr.readlines.join.chomp
+				job.nova_revision=Job.parse_nova_revision(job.stdout)
+				job.glance_revision=Job.parse_glance_revision(job.stdout)
+				job.msg=Job.parse_last_message(job.stdout)
+				job.save
+				retval = wait_thr.value
+				if retval.success? 
+					job.update_attribute(:status, "Success")
+					return true
+				else
+					job.update_attribute(:status, "Failed")
+					return false
+				end
+
+			end
+			script_file.close
+	rescue Exception => e
+		job.update_attribute(:msg, e.message)
+		job.update_attribute(:status, "Failed")
+	end
 
   end
 

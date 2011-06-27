@@ -29,22 +29,22 @@ class JobTest < ActiveSupport::TestCase
   end
 
   test "verify true job" do
-    assert Job.perform(jobs(:one).id, "true")
+    assert Job.run_job(jobs(:one), "true")
   end
 
   test "verify false job" do
-    assert !Job.perform(jobs(:one).id, "false")
+    assert !Job.run_job(jobs(:one), "false")
   end
 
   test "verify stdout" do
-    assert Job.perform(jobs(:one).id, "echo 'yo'")
+    assert Job.run_job(jobs(:one), "echo 'yo'")
     job = Job.find(jobs(:one).id)
     assert_equal "yo", job.stdout
     assert_equal "", job.stderr
   end
 
   test "verify stderr" do
-    assert Job.perform(jobs(:one).id, "echo 'yo' > /dev/stderr")
+    assert Job.run_job(jobs(:one), "echo 'yo' > /dev/stderr")
     job = Job.find(jobs(:one).id)
     assert_equal "", job.stdout
     assert_equal "yo", job.stderr

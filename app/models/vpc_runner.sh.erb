@@ -53,26 +53,33 @@ function get_glance_source {
 
 }
 
+function setup {
+
+	chef-vpc-toolkit -v || \
+		fail "Please install the Chef VPC Toolkit."
+
+	cd $TMP_DIR
+	[ -n "$NOVA_URL" ] && get_nova_source
+	[ -n "$GLANCE_URL" ] && get_glance_source
+
+	git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
+		cd openstack_vpc || \
+		fail "Failed to checkout openstack VPC."
+
+	cp "$CHEF_INSTALLER_CONF" config/chef_installer.yml || \
+		fail "Failed to copy chef_installer.yml"
+
+	cp "$NODES_JSON_CONF" config/nodes.json || \
+		fail "Failed to copy nodes.json"
+
+	cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
+		fail "Failed to copy server_group.json"
+
+	rake chef:validate_json || fail "Invalid JSON config file(s).";
+
+}
+
 function run_job {
-
-chef-vpc-toolkit -v || \
-	fail "Please install the Chef VPC Toolkit."
-
-cd $TMP_DIR
-[ -n "$NOVA_URL" ] && get_nova_source
-[ -n "$GLANCE_URL" ] && get_glance_source
-
-git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && cd openstack_vpc || \
-	fail "Failed to checkout openstack VPC."
-
-cp "$CHEF_INSTALLER_CONF" config/chef_installer.yml || \
-	fail "Failed to copy chef_installer.yml"
-
-cp "$NODES_JSON_CONF" config/nodes.json || \
-	fail "Failed to copy nodes.json"
-
-cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
-	fail "Failed to copy server_group.json"
 
 trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
 if rake group:create && rake group:poll; then
@@ -108,4 +115,86 @@ fi
 
 }
 
+function run_xen_hybrid_job {
+
+[ -n "$SERVER_IP_LIST" ] || fail "Xen jobs require a SERVER_IP_LIST env variable."
+
+trap "{ rake xen:disconnect; rake group:delete; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+if rake group:create && rake group:poll; then
+
+	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+		DEB_PACKAGER_URL=<%= ENV['NOVA_DEB_PACKAGER_URL'] %> || \
+		fail "Failed to build nova packages."
+
+	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+		DEB_PACKAGER_URL=<%= ENV['GLANCE_DEB_PACKAGER_URL'] %> || \
+		fail "Failed to build glance packages."
+
+	# install Chef and the Chef Cookbooks
+	rake chef:push_repos && rake chef:install || \
+		{ rake chef:tail_logs; fail "Failed to install Chef server."; }
+
+
+	# Bootstrap all the Xen Servers
+	local COUNT=0
+	for SERVER_IP in $SERVER_IP_LIST; do
+		COUNT=$(($COUNT + 1))
+		local SERVER_NAME="xen$COUNT"
+		rake xen:bootstrap XENSERVER_IP=$SERVER_IP SERVER_NAME=$SERVER_NAME || \
+			fail "Failed to connect Xen Server: $SERVER_NAME to VPN group."
+		sleep 10
+		rake chef:install SERVER_NAME=$SERVER_NAME || \
+			fail "Failed to install Chef on $SERVER_NAME."
+		rake xen:install_plugins SERVER_NAME=$SERVER_NAME SOURCE_DIR="$TMP_DIR/nova_source" || \
+			fail "Failed to install Xen plugins on $SERVER_NAME."
+	done
+
+	# Poll Xen Servers to finish Chef'ing
+	COUNT=0
+	for SERVER_IP in $SERVER_IP_LIST; do
+		COUNT=$(($COUNT + 1))
+		local SERVER_NAME="xen$COUNT"
+		local COMPUTE_NAME="compute$COUNT"
+		rake chef:poll_clients SERVER_NAME=$SERVER_NAME || \
+			{ rake chef:tail_logs SERVER_NAME=$SERVER_NAME; fail "Chef client timeout: $SERVER_NAME"; }
+		rake ssh bash <<-EOF_BASH
+		if ! grep -c "$COMPUTE_NAME.vpc" /etc/hosts &> /dev/null; then
+		echo "172.19.0.10$COUNT     $COMPUTE_NAME.vpc $COMPUTE_NAME" >> /etc/hosts
+		fi
+		EOF_BASH
+		rake chef:install SERVER_NAME=$COMPUTE_NAME || \
+			fail "Failed to install Chef on $COMPUTE_NAME."
+	done
+
+	# Poll Compute nodes (dom0) to finish Chef'ing
+	COUNT=0
+	for SERVER_IP in $SERVER_IP_LIST; do
+		COUNT=$(($COUNT + 1))
+		# NOTE: we put .vpc on these because the agent doesn't seem to
+		# set the domain name correctly
+		local COMPUTE_NAME="compute$COUNT.vpc"
+		rake chef:poll_clients SERVER_NAME=$COMPUTE_NAME || \
+			{ rake chef:tail_logs SERVER_NAME=$COMPUTE_NAME; fail "Chef client timeout: $COMPUTE_NAME"; }
+	done
+
+	# run OS API v1.0 tests (Uses the Ruby openstack-compute gem)
+	rake nova:ruby_osapi_tests SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+
+	# run smoke tests
+	rake nova:smoke_tests SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
+
+else
+	rake chef:tail_logs
+	fail "Failed to create server group."
+fi
+
+}
+
+setup
+<% if job.type == "JobXenHybrid" %>
+run_xen_hybrid_job
+<% else %>
 run_job
+<% end %>

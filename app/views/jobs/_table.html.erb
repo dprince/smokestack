@@ -33,9 +33,9 @@
     <td><%= job.glance_revision %></td>
     <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>
-    <td><%= link_to 'Show', job, :class => "job-show" %></td>
+    <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
     <% if show_edit_links %>
-      <td><%= link_to 'Destroy', job, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
+      <td><%= link_to 'Destroy', "/jobs/#{job.id}", :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
     <% end %>
   </tr>
 <% end %>
