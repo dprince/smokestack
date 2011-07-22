@@ -186,10 +186,6 @@ if rake group:create && rake group:poll; then
 	rake nova:ruby_osapi_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
 
-	# run smoke tests
-	rake nova:smoke_tests SERVER_NAME=nova1 || \
-		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
-
 else
 	rake chef:tail_logs
 	fail "Failed to create server group."
