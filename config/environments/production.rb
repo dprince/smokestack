@@ -50,4 +50,4 @@ end
 
 ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~rackspace-titan/nova/ubuntu-nova-vpc"
-ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
+ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~rackspace-titan/glance/ubuntu-glance-vpc"
