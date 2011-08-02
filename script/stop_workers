@@ -1,5 +1,5 @@
 #!/bin/bash
-WORKER_PIDS=$(ps -e -o pid,command | grep [r]esque | cut -d " " -f 1 | xargs)
+WORKER_PIDS=$(resque list | sed -e "s|.*:\([0-9]*\):.*|\1|g" | xargs)
 kill -QUIT $WORKER_PIDS
 ret=$?
 if [ $ret -eq 0 ]; then
