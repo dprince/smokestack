@@ -15,6 +15,12 @@ table.data tr td.header {
   font-weight: bold;
 }
 
+table.data tr td font.header {
+  font-size: 13px;
+  color: #333;
+  font-weight: bold;
+}
+
 table.data tr.tr0 {
   background-color: #FFF;
 }

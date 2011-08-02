@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 13) do
+ActiveRecord::Schema.define(:version => 14) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                    :null => false
@@ -57,6 +57,8 @@ ActiveRecord::Schema.define(:version => 13) do
     t.integer  "smoke_test_id",                                   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "packager_url",  :default => ""
+    t.string   "revision_hash", :default => ""
   end
 
   create_table "smoke_tests", :force => true do |t|

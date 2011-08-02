@@ -55,9 +55,30 @@ class Job < ActiveRecord::Base
 		server_group_json_file.flush
 
 		nova_builder=job.job_group.smoke_test.nova_package_builder
-		glance_builder=job.job_group.smoke_test.glance_package_builder
+		nova_packager_url=nova_builder.packager_url
+		if nova_packager_url.blank? then
+			nova_packager_url=ENV['NOVA_DEB_PACKAGER_URL']
+		end
 
-		args = ["bash", script_file.path, nova_builder.url, nova_builder.merge_trunk.to_s, glance_builder.url, glance_builder.merge_trunk.to_s, chef_installer_file.path, nodes_json_file.path, server_group_json_file.path]
+		glance_builder=job.job_group.smoke_test.glance_package_builder
+		glance_packager_url=glance_builder.packager_url
+		if glance_packager_url.blank? then
+			glance_packager_url=ENV['GLANCE_DEB_PACKAGER_URL']
+		end
+
+		args = ["bash",
+				script_file.path,
+				nova_builder.url,
+				nova_builder.merge_trunk.to_s,
+				nova_builder.revision_hash,
+				nova_packager_url,
+				glance_builder.url,
+				glance_builder.merge_trunk.to_s,
+				glance_builder.revision_hash,
+				glance_packager_url,
+				chef_installer_file.path,
+				nodes_json_file.path,
+				server_group_json_file.path]
 
 			Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
 				job.stdout=stdout.readlines.join.chomp
@@ -78,6 +99,7 @@ class Job < ActiveRecord::Base
 			end
 			script_file.close
 	rescue Exception => e
+		raise e
 		job.update_attribute(:msg, e.message)
 		job.update_attribute(:status, "Failed")
 	end

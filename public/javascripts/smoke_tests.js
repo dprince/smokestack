@@ -36,8 +36,8 @@ function smoke_test_selectors() {
 
             $("#smoke-tests-dialog").dialog({
                 modal: true,
-                height: 400,
-                width: 600,
+                height: 450,
+                width: 650,
                 buttons: {
                     Create: function() { smoke_test_create_or_edit('POST') }
                 },
@@ -130,8 +130,8 @@ function smoke_test_table_selectors() {
 
             $("#smoke-tests-dialog").dialog({
                 modal: true,
-                height: 400,
-                width: 600,
+                height: 450,
+                width: 650,
                 buttons: {
                     Save: function() { smoke_test_create_or_edit('PUT'); }
                 },
@@ -156,8 +156,8 @@ function smoke_test_table_selectors() {
 
             $("#smoke-tests-dialog").dialog({
                 modal: true,
-                height: 400,
-                width: 600,
+                height: 450,
+                width: 650,
                 buttons: {
                     Close: function() {
                         $(this).dialog('close');

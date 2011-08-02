@@ -3,12 +3,17 @@
 
 NOVA_URL=$1
 NOVA_MERGE_TRUNK=$2
-GLANCE_URL=$3
-GLANCE_MERGE_TRUNK=$4
+NOVA_REVISION=$3
+NOVA_PACKAGER_URL=$4
 
-CHEF_INSTALLER_CONF=$5
-NODES_JSON_CONF=$6
-SERVER_GROUP_JSON_CONF=$7
+GLANCE_URL=$5
+GLANCE_MERGE_TRUNK=$6
+GLANCE_REVISION=$7
+GLANCE_PACKAGER_URL=$8
+
+CHEF_INSTALLER_CONF=$9
+NODES_JSON_CONF=${10}
+SERVER_GROUP_JSON_CONF=${11}
 
 TMP_DIR=$(mktemp -d)
 
@@ -24,8 +29,15 @@ function get_nova_source {
 
 	bzr branch "$NOVA_URL" nova_source || \
 		fail "Failed to checkout bzr branch."
-	local NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
-	[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
+    if [ -n "$NOVA_REVISION" ]; then
+        bzr revert --revision="$NOVA_REVISION" || \
+            fail "Failed to revert to revision $NOVA_REVISION."
+        bzr commit -m "Revert to revision $NOVA_REVISION." || \
+            fail "Failed to commit revert to revision $NOVA_REVISION."
+    else
+	    NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
+		[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
+	fi
 	echo "NOVA_REVISION=$NOVA_REVISION"
 
 	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
@@ -41,8 +53,15 @@ function get_glance_source {
 
 	bzr branch "$GLANCE_URL" glance_source || \
 		fail "Failed to checkout bzr branch."
-	local GLANCE_REVISION=$(bzr version-info glance_source | grep revno | sed -e "s|revno: ||")
-	[ -z "$GLANCE_REVISION" ] && fail "Failed to obtain glance revision from bzr."
+	if [ -n "$GLANCE_REVISION" ]; then
+		bzr revert --revision="$GLANCE_REVISION" || \
+			fail "Failed to revert to revision $GLANCE_REVISION."
+		bzr commit -m "Revert to revision $GLANCE_REVISION." || \
+			fail "Failed to commit revert to revision $GLANCE_REVISION."
+	else
+		GLANCE_REVISION=$(bzr version-info glance_source | grep revno | sed -e "s|revno: ||")
+		[ -z "$GLANCE_REVISION" ] && fail "Failed to obtain glance revision from bzr."
+	fi
 	echo "GLANCE_REVISION=$GLANCE_REVISION"
 
 	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
@@ -85,11 +104,11 @@ trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
-		DEB_PACKAGER_URL=<%= ENV['NOVA_DEB_PACKAGER_URL'] %> || \
+		DEB_PACKAGER_URL="$NOVA_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
-		DEB_PACKAGER_URL=<%= ENV['GLANCE_DEB_PACKAGER_URL'] %> || \
+		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
 	# install Chef and the Chef Cookbooks
@@ -123,20 +142,19 @@ trap "{ rake xen:disconnect; rake group:delete; cd /tmp; rm -Rf $TMP_DIR; }" INT
 if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
-		DEB_PACKAGER_URL=<%= ENV['NOVA_DEB_PACKAGER_URL'] %> || \
+		DEB_PACKAGER_URL="$NOVA_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
 
 	rake nova:build_rpms SOURCE_DIR="$TMP_DIR/nova_source" || \
 		fail "Failed to build Xen plugin RPMs."
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
-		DEB_PACKAGER_URL=<%= ENV['GLANCE_DEB_PACKAGER_URL'] %> || \
+		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
 	# install Chef and the Chef Cookbooks
 	rake chef:push_repos && rake chef:install || \
 		{ rake chef:tail_logs; fail "Failed to install Chef server."; }
-
 
 	# Bootstrap all the Xen Servers
 	local COUNT=0
