@@ -40,7 +40,7 @@
 </p>
 
 <hr/>
-<% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:config_template, {:job_group => :smoke_test}]) %>
+<% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC") %>
 <script type="text/javascript">
 
 $(document).ready(function() {
