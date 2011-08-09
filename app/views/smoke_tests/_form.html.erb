@@ -37,7 +37,7 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :description %>&nbsp;(Ex. Nova fix_api_extensions)<br />
+    <%= f.label :description %>&nbsp;(Ex. Nova fix_api_extensions)<br/>
     <%= f.text_field :description %>
   </div>
 <br/>
@@ -45,8 +45,9 @@
 <tr class="header">
 <th>&nbsp;</th>
 <th>URL</th>
-<th>Merge</br>Trunk</th>
-<th>Adv</br>Opts</th>
+<th>Branch<br/>(Git Only)</th>
+<th>Merge<br/>Trunk</th>
+<th>Adv<br/>Opts</th>
 </tr>
 
 <% if @smoke_test.nova_package_builder.packager_url.blank? and @smoke_test.nova_package_builder.revision_hash.blank? %>
@@ -60,15 +61,16 @@
   <%= f.fields_for :nova_package_builder do |nova_build_frm| %>
     <tr>
       <td class="header">Nova Builder</td>
-      <td><%= nova_build_frm.text_field :url, :style => 'width: 250px' %>&nbsp;(Ex. lp:nova)</td>
+      <td><%= nova_build_frm.text_field :url, :style => 'width: 300px' %></td>
+      <td><%= nova_build_frm.text_field :branch, :style => 'width: 150px' %></td>
       <td><%= nova_build_frm.check_box :merge_trunk %></td>
       <td><a title="Show/Hide Advanced Nova Build Options" class="smoke-test-edit-advanced <%= adv_nova_options_link %>" onclick='$("#nova-builder-adv-tr").toggle();'>&nbsp;</a></td>
     </tr>
     <tr class="<%= adv_nova_options_tr %>" id="nova-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= nova_build_frm.text_field :revision_hash, :style => 'width: 50px' %></br>
-        <font class="header">Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :packager_url, :style => 'width: 200px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= nova_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
+        <font class="header">Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :packager_url, :style => 'width: 300px' %>
       </td>
     </tr>
   <% end %>
@@ -84,15 +86,16 @@
   <%= f.fields_for :glance_package_builder do |glance_build_frm| %>
     <tr>
       <td class="header">Glance Builder</td>
-      <td><%= glance_build_frm.text_field :url, :style => 'width: 250px' %>&nbsp;(Ex. lp:glance)</td>
+      <td><%= glance_build_frm.text_field :url, :style => 'width: 300px' %></td>
+      <td><%= glance_build_frm.text_field :branch, :style => 'width: 150px' %></td>
       <td><%= glance_build_frm.check_box :merge_trunk %></td>
       <td><a title="Show/Hide Advanced Glance Build Options" class="smoke-test-edit-advanced <%= adv_glance_options_link %>" onclick='$("#glance-builder-adv-tr").toggle();'>&nbsp;</a></td>
     </tr>
     <tr class="<%= adv_glance_options_tr %>" id="glance-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= glance_build_frm.text_field :revision_hash, :style => 'width: 50px' %></br>
-        <font class="header">Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :packager_url, :style => 'width: 200px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= glance_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
+        <font class="header">Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :packager_url, :style => 'width: 300px' %>
       </td>
     </tr>
   <% end %>

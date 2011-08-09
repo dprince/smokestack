@@ -24,6 +24,9 @@ Smokestack::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 end
 
+ENV['NOVA_GIT_MASTER'] = "git://github.com/openstack/nova.git"
+ENV['GLANCE_GIT_MASTER'] = "git://github.com/openstack/glance.git"
+
 ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~rackspace-titan/nova/ubuntu-nova-vpc"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"

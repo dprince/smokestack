@@ -2,18 +2,20 @@
 # Script to run Openstack VPC jobs
 
 NOVA_URL=$1
-NOVA_MERGE_TRUNK=$2
-NOVA_REVISION=$3
-NOVA_PACKAGER_URL=$4
+NOVA_BRANCH=$2
+NOVA_MERGE_TRUNK=$3
+NOVA_REVISION=$4
+NOVA_PACKAGER_URL=$5
 
-GLANCE_URL=$5
-GLANCE_MERGE_TRUNK=$6
-GLANCE_REVISION=$7
-GLANCE_PACKAGER_URL=$8
+GLANCE_URL=$6
+GLANCE_BRANCH=$7
+GLANCE_MERGE_TRUNK=$8
+GLANCE_REVISION=$9
+GLANCE_PACKAGER_URL=${10}
 
-CHEF_INSTALLER_CONF=$9
-NODES_JSON_CONF=${10}
-SERVER_GROUP_JSON_CONF=${11}
+CHEF_INSTALLER_CONF=${11}
+NODES_JSON_CONF=${12}
+SERVER_GROUP_JSON_CONF=${13}
 
 TMP_DIR=$(mktemp -d)
 
@@ -24,8 +26,7 @@ function fail {
 	exit 1
 }
 
-function get_nova_source {
-#FIXME: need to implement a Git version of this function as well.
+function get_nova_source_bzr {
 
 	bzr branch "$NOVA_URL" nova_source || \
 		fail "Failed to checkout bzr branch."
@@ -50,8 +51,33 @@ function get_nova_source {
 
 }
 
-function get_glance_source {
-#FIXME: need to implement a Git version of this function as well.
+function get_nova_source_git {
+
+	git clone $NOVA_GIT_MASTER nova_source || \
+		fail "Failed to git clone nova."
+	cd nova_source
+	git fetch $NOVA_URL $NOVA_BRANCH || \
+		fail "Failed to git fetch branch $NOVA_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$NOVA_REVISION" ]; then
+		git co $NOVA_REVISION || \
+			fail "Failed to revert to revision $NOVA_REVISION."
+	else
+		NOVA_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$NOVA_REVISION" ] && \
+			fail "Failed to obtain nova revision from git."
+	fi
+	echo "NOVA_REVISION=$NOVA_REVISION"
+
+	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+		git merge master || fail "Failed to merge master."
+	fi
+
+	cd $TMP_DIR
+}
+
+function get_glance_source_bzr {
 
 	bzr branch "$GLANCE_URL" glance_source || \
 		fail "Failed to checkout bzr branch."
@@ -76,14 +102,53 @@ function get_glance_source {
 
 }
 
+function get_glance_source_git {
+
+	git clone $GLANCE_GIT_MASTER glance_source || \
+		fail "Failed to git clone glance."
+	cd glance_source
+	git fetch $GLANCE_URL $GLANCE_BRANCH || \
+		fail "Failed to git fetch branch $GLANCE_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$GLANCE_REVISION" ]; then
+		git co $GLANCE_REVISION || \
+			fail "Failed to revert to revision $GLANCE_REVISION."
+	else
+		GLANCE_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$GLANCE_REVISION" ] && \
+			fail "Failed to obtain glance revision from git."
+	fi
+	echo "GLANCE_REVISION=$GLANCE_REVISION"
+
+	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
+		git merge master || fail "Failed to merge master."
+	fi
+
+	cd $TMP_DIR
+}
+
 function setup {
 
 	chef-vpc-toolkit -v || \
 		fail "Please install the Chef VPC Toolkit."
 
 	cd $TMP_DIR
-	[ -n "$NOVA_URL" ] && get_nova_source
-	[ -n "$GLANCE_URL" ] && get_glance_source
+	if [ -n "$NOVA_URL" ]; then
+		if [[ ${NOVA_URL:0:2} == "lp" ]]; then
+			get_nova_source_bzr
+		else	
+			get_nova_source_git
+		fi
+	fi
+
+	if [ -n "$GLANCE_URL" ]; then
+		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
+			get_glance_source_bzr
+		else	
+			get_glance_source_git
+		fi
+	fi
 
 	git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
 		cd openstack_vpc || \
