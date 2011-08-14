@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+ruby_osapi:
+  description: Ruby Openstack Compute v1.0
+  name: RUBY_OSAPI_V10
+
+nova_smoke_tests:
+  description: Nova Smoke Tests
+  name: NOVA_SMOKE_TESTS
