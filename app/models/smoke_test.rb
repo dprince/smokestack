@@ -11,6 +11,7 @@ class SmokeTest < ActiveRecord::Base
   accepts_nested_attributes_for :glance_package_builder
 
   has_and_belongs_to_many :config_templates
+  has_and_belongs_to_many :test_suites
 
   before_destroy :handle_before_destroy
   def handle_before_destroy
@@ -24,9 +25,12 @@ class SmokeTest < ActiveRecord::Base
     if self.config_templates.size == 0 then
       errors.add(:base, "At least one configuration must be selected.")
       return false
-    else
-      return true
     end
+    if self.test_suites.size == 0 then
+      errors.add(:base, "At least one test suite must be selected.")
+      return false
+    end
+    return true
   end
 
 end

@@ -7,6 +7,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
   fixtures :users
   fixtures :smoke_tests
   fixtures :config_templates
+  fixtures :test_suites
   fixtures :job_groups
   fixtures :jobs
 
@@ -43,7 +44,8 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_difference('SmokeTest.count') do
       smoke_test_attrs = {
         :description => "Nova trunk",
-        :config_template_ids => [config_templates(:libvirt_psql).id]
+        :config_template_ids => [config_templates(:libvirt_psql).id],
+        :test_suite_ids => [test_suites(:ruby_osapi).id]
       }
       post :create, :smoke_test => smoke_test_attrs
     end

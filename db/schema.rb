@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 14) do
+ActiveRecord::Schema.define(:version => 16) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                    :null => false
@@ -64,6 +64,19 @@ ActiveRecord::Schema.define(:version => 14) do
   create_table "smoke_tests", :force => true do |t|
     t.string   "description"
     t.string   "status",      :default => "Pending"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "smoke_tests_test_suites", :id => false, :force => true do |t|
+    t.integer "smoke_test_id", :null => false
+    t.integer "test_suite_id", :null => false
+  end
+
+  create_table "test_suites", :force => true do |t|
+    t.string   "description",                   :null => false
+    t.string   "name",                          :null => false
+    t.boolean  "enabled",     :default => true, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

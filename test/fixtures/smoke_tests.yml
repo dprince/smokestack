@@ -4,8 +4,10 @@ trunk:
   description: Nova trunk
   status: Pending
   config_templates: [:libvirt_psql]
+  test_suites: [:ruby_osapi]
 
 dev1:
   description: Dev 1
   status:
   config_templates: [:libvirt_psql]
+  test_suites: [:ruby_osapi]

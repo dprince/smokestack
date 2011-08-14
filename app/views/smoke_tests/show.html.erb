@@ -4,11 +4,18 @@
   <b>Description:</b>
   <%= @smoke_test.description %>
 </p>
-
+<hr/>
 <p>
-  <b>Nova Branch:</b>
+  <b>Nova URL:</b>
   <%= @smoke_test.nova_package_builder.url %>
 </p>
+
+<% if not @smoke_test.nova_package_builder.branch.blank? then %>
+<p>
+  <b>Nova Branch:</b>
+  <%= @smoke_test.nova_package_builder.branch %>
+</p>
+<% end %>
 
 <p>
   <b>Nova Merge trunk:</b>
@@ -21,11 +28,18 @@
     <%= @smoke_test.most_recent_job_group.most_recent_job.nova_revision %>
   <% end %>
 </p>
-
+<hr/>
 <p>
-  <b>Glance Branch:</b>
+  <b>Glance URL:</b>
   <%= @smoke_test.glance_package_builder.url %>
 </p>
+
+<% if not @smoke_test.glance_package_builder.branch.blank? then %>
+<p>
+  <b>Glance Branch:</b>
+  <%= @smoke_test.glance_package_builder.branch %>
+</p>
+<% end %>
 
 <p>
   <b>Glance Merge trunk:</b>

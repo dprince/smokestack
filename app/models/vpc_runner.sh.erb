@@ -17,6 +17,10 @@ CHEF_INSTALLER_CONF=${11}
 NODES_JSON_CONF=${12}
 SERVER_GROUP_JSON_CONF=${13}
 
+<% job.job_group.smoke_test.test_suites.each do |suite| %>
+RUN_<%= suite.name %>=true
+<% end %>
+
 TMP_DIR=$(mktemp -d)
 
 # Log to the job log and stdout
@@ -189,12 +193,22 @@ if rake group:create && rake group:poll; then
 		{ rake chef:tail_logs; fail "Chef client timeout."; }
 
 	# run OS API v1.0 tests (Uses the Ruby openstack-compute gem)
+	if [ -n "RUN_RUBY_OSAPI_V10" ]; then
 	rake nova:ruby_osapi_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+	fi
 
 	# run smoke tests
+	if [ -n "RUN_NOVA_SMOKE_TESTS" ]; then
 	rake nova:smoke_tests SERVER_NAME=nova1 || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Smoke tests failed."; }
+	fi
+
+	# run stacktester
+	if [ -n "RUN_STACK_TESTER" ]; then
+	rake nova:stacktester SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Stacktester failed."; }
+	fi
 
 else
 	rake chef:tail_logs
@@ -270,8 +284,16 @@ if rake group:create && rake group:poll; then
 	done
 
 	# run OS API v1.0 tests (Uses the Ruby openstack-compute gem)
+	if [ -n "RUN_RUBY_OSAPI_V10" ]; then
 	rake nova:ruby_osapi_tests SERVER_NAME=nova1 MODE=xen || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+	fi
+
+	# run stacktester
+	if [ -n "RUN_STACK_TESTER" ]; then
+	rake nova:stacktester SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "Stacktester failed."; }
+	fi
 
 else
 	rake chef:tail_logs

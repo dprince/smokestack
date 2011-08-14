@@ -102,6 +102,9 @@
 
 </table>
 <hr/>
+<div>
+
+<div style="float: left; margin-right: 200px;">
 <b>Configurations:</b><br/>
 
     <% ConfigTemplate.find(:all).each do |config_template| %>
@@ -109,4 +112,15 @@
          <%= config_template.name %><br/>
     <% end %>
 
+</div>
+<div style="float: left;">
+<b>Test Suites:</b><br/>
+
+    <% TestSuite.find(:all).each do |suite| %>
+         <%= check_box_tag "smoke_test[test_suite_ids][]", "#{suite.id}", test_suite_checked(suite) -%>
+         <%= suite.description %><br/>
+    <% end %>
+
+</div>
+<div>
 <% end %>
