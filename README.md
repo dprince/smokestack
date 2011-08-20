@@ -51,8 +51,11 @@ At this point the web application should be running at http://localhost:3000.
     cp config/database.yml.sample config/database.yml
     bundle exec rake db:create db:migrate
 
+    # launch some workers
+    bundle exec rake resque:workers JOB="*" COUNT=3
+
     # run rails
     bundle exec rails server
 
-At this point you can view the website at http://localhost:3000.  The default 
-username / password is: admin / cloud.
+At this point you can view the website at http://localhost:3000 with
+username/password of admin/cloud
