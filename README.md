@@ -39,7 +39,7 @@ At this point the web application should be running at http://localhost:3000.
 ## Quickstart on Natty cloudserver
 
     # install ruby, gems & mysql
-    sudo apt-get install -y rubygems ruby-dev mysql-server \
+    sudo apt-get install -y rubygems ruby-dev mysql-server redis-server \
                          apt-getlibmysql-ruby libmysqlclient-dev
 
     # install bundler then install gems via bundle
