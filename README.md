@@ -51,11 +51,36 @@ At this point the web application should be running at http://localhost:3000.
     cp config/database.yml.sample config/database.yml
     bundle exec rake db:create db:migrate
 
-    # launch some workers
-    bundle exec rake resque:workers JOB="*" COUNT=3
+    # setup vpc
+    ssh-keygen # don't use passphrase
+    # FIXME(ja) - details on creating .chef_vpc_toolkit.conf
 
-    # run rails
+    # run under screen
+    sudo apt-get install screen
+
+    # in tab 1: launch some workers
+    bundle exec rake resque:workers QUEUE="*" COUNT=3
+
+    # in tab 2: run rails
     bundle exec rails server
 
 At this point you can view the website at http://localhost:3000 with
 username/password of admin/cloud
+
+### Serving via passenger
+
+    sudo gem install passenger
+
+    # install apache and libraries needed to run
+    sudo apt-get install -y libcurl4-openssl-dev libssl-dev libapr1-dev \
+                            apache2-mpm-prefork apache2-prefork-dev \
+                            libaprutil1-dev
+
+    sudo /var/lib/gems/1.8/bin/passenger-install-apache2-module
+
+    # follow instuctions to create a module & site entry in apache:
+    # sudo vi /etc/apache2/mods-enabled/passener.load
+    # sudo vi /etc/apache2/sites-enabled/000-default
+
+    # create a production db 
+    RAILS_ENV=production bundle exec rake db:create db:migrate
