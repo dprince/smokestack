@@ -33,3 +33,21 @@ Start the API server:
 	./script/rails server
 
 At this point the web application should be running at http://localhost:3000.
+
+== Quickstart on Natty cloudserver
+
+    # install ruby, gems & mysql
+    sudo apt-get install -y rubygems ruby-dev mysql-server \
+                         apt-getlibmysql-ruby libmysqlclient-dev
+    
+    # install bundler then install gems via bundle
+    sudo gem install -y bundle --no-ri --no-rdoc
+    sudo ln -s /var/lib/gems/1.8/bin/bundle /usr/local/bin
+    bundle install
+    
+    # initialize the db
+    cp config/database.yml.sample config/database.yml
+    bundle exec rake db:create db:migrate
+
+    # run rails
+    bundle exec rails server
