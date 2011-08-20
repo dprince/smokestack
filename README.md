@@ -4,7 +4,9 @@ WebUI to help smoke test the OpenStack
 
 ## Description
 
-A web application UI and REST API to run functional/integration smoke tests on the OpenStack. Uses Chef VPC Toolkit projects like openstack_vpc to spin up groups of servers in the cloud for testing.
+A web application UI and REST API to run functional/integration smoke tests
+on the OpenStack. Uses Chef VPC Toolkit projects like openstack_vpc to spin 
+up groups of servers in the cloud for testing.
 
 ## Installation
 
@@ -51,3 +53,6 @@ At this point the web application should be running at http://localhost:3000.
 
     # run rails
     bundle exec rails server
+
+At this point you can view the website at http://localhost:3000.  The default 
+username / password is: admin / cloud.
