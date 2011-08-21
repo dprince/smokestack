@@ -3,23 +3,23 @@ var usersIntervalId = setInterval(refreshUsers, 6000);
 
 function refreshUsers() { 
 
-	var selected = $("#tabs").tabs( "option", "selected" );
-	if (selected == usersTabId) {
-		reload_users_table($("#users-table"));
-	} 
+    var selected = $("#tabs").tabs( "option", "selected" );
+    if (selected == usersTabId) {
+        reload_users_table($("#users-table"));
+    } 
 
 }
 
 function reload_users_table(container) {
 
-	$.ajax({
-		url: '/users?table_only=true',
-		type: 'GET',
-		success: function(data) {
-			container.html(data);
-			user_table_selectors();
-		}
-	});
+    $.ajax({
+        url: '/users?table_only=true',
+        type: 'GET',
+        success: function(data) {
+            container.html(data);
+            user_table_selectors();
+        }
+    });
 
 }
 
@@ -41,10 +41,10 @@ function user_selectors() {
                 buttons: {
                     Create: function() { user_create_or_edit('POST') }
                 },
-				close: function(data) {
-					$(this).html("");
-					$(this).dialog('destroy');
-				}
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
             });
 
         });
@@ -55,62 +55,62 @@ function user_selectors() {
 
 function user_table_selectors() {
 
-	$("#user-new-link").button({
-				icons: {
-					primary: 'ui-icon-circle-plus'
-				}
-	}
-	);
+    $("#user-new-link").button({
+                icons: {
+                    primary: 'ui-icon-circle-plus'
+                }
+    }
+    );
 
-	$("a.user-destroy").button({
-		icons: {
-			primary: 'ui-icon-trash'
-		},
-		text: false
-	}
-	);
+    $("a.user-destroy").button({
+        icons: {
+            primary: 'ui-icon-trash'
+        },
+        text: false
+    }
+    );
 
-	$("a.user-edit").button({
-		icons: {
-			primary: 'ui-icon-wrench'
-		},
-		text: false
-	}
-	);
+    $("a.user-edit").button({
+        icons: {
+            primary: 'ui-icon-wrench'
+        },
+        text: false
+    }
+    );
 
-	$("a.user-show").button({
-		icons: {
-			primary: 'ui-icon-circle-zoomin'
-		},
-		text: false
-	}
-	);
+    $("a.user-show").button({
+        icons: {
+            primary: 'ui-icon-circle-zoomin'
+        },
+        text: false
+    }
+    );
 
-	$(".user-destroy").click(function(e){
+    $(".user-destroy").click(function(e){
 
-		e.preventDefault();
+        e.preventDefault();
 
-		if (!confirm("Delete user?")) {
-			return;
-		}
+        if (!confirm("Delete user?")) {
+            return;
+        }
 
         var post_data = $("#user-delete-form").serialize();
 
-		$.ajax({
-			url: $(this).attr("href"),
-			type: 'POST',
-			dataType: 'xml',
-			data: post_data,
-			success: function(data) {
-				id=$("id", data).text();
-				$("#user-tr-"+id).remove();
-			},
-			error: function(data) {
-				alert('Error: Failed to destroy user.');
-			}
-		});
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            dataType: 'xml',
+            data: post_data,
+            success: function(data) {
+                id=$("id", data).text();
+                $("#user-tr-"+id).remove();
+            },
+            error: function(data) {
+                alert('Error: Failed to destroy user.');
+            }
+        });
 
-	});
+    });
 
     $(".user-edit").click(function(e){
          e.preventDefault();
@@ -128,10 +128,10 @@ function user_table_selectors() {
                 buttons: {
                     Save: function() { user_create_or_edit('PUT'); }
                 },
-				close: function(data) {
-					$(this).html("");
-					$(this).dialog('destroy');
-				}
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
             });
 
          });
@@ -153,13 +153,13 @@ function user_table_selectors() {
                 width: 600,
                 buttons: {
                     Close: function() {
-						$(this).dialog('close');
-					}
+                        $(this).dialog('close');
+                    }
                 },
-				close: function(data) {
-					$(this).html("");
-					$(this).dialog('destroy');
-				}
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
             });
 
          });
@@ -179,7 +179,7 @@ function user_create_or_edit(method) {
         success: function(data) {
             id=$("id", data).text();
             $("#users-dialog").dialog('close');
-			reload_users_table($("#users-table"));
+            reload_users_table($("#users-table"));
         },
         error: function(data) {
             err_html="<ul>";

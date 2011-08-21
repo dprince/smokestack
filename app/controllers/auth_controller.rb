@@ -4,10 +4,10 @@ class AuthController < ApplicationController
 
     def index
         if session[:user_id] then
-			head :ok
+            head :ok
         else
             respond_to do |format|
-              format.html # show.html.erb
+                format.html # show.html.erb
             end
         end
     end
@@ -18,7 +18,7 @@ class AuthController < ApplicationController
             if user and user.is_active then
                 session[:user_id] = user.id
                 flash[:notice] = nil
-				head :ok
+                head :ok
             else
                 render :text => "Authentication failed.", :status => 401
             end
