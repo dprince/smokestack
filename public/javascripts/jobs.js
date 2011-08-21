@@ -12,60 +12,60 @@ function refreshJobs() {
 
 function reload_jobs_table(container) {
 
-	$.ajax({
-		url: '/jobs?table_only=true',
-		type: 'GET',
-		success: function(data) {
-			container.html(data);
-			job_table_selectors();
-		}
-	});
+    $.ajax({
+        url: '/jobs?table_only=true',
+        type: 'GET',
+        success: function(data) {
+            container.html(data);
+            job_table_selectors();
+        }
+    });
 
 }
 
 function job_table_selectors() {
 
-	$("a.job-destroy").button({
-		icons: {
-			primary: 'ui-icon-trash'
-		},
-		text: false
-	}
-	);
+    $("a.job-destroy").button({
+        icons: {
+            primary: 'ui-icon-trash'
+        },
+        text: false
+    }
+    );
 
-	$("a.job-show").button({
-		icons: {
-			primary: 'ui-icon-circle-zoomin'
-		},
-		text: false
-	}
-	);
+    $("a.job-show").button({
+        icons: {
+            primary: 'ui-icon-circle-zoomin'
+        },
+        text: false
+    }
+    );
 
-	$(".job-destroy").click(function(e){
+    $(".job-destroy").click(function(e){
 
-		e.preventDefault();
+        e.preventDefault();
 
-		if (!confirm("Delete job?")) {
-			return;
-		}
+        if (!confirm("Delete job?")) {
+            return;
+        }
 
         var post_data = $("#job-delete-form").serialize();
 
-		$.ajax({
-			url: $(this).attr("href"),
-			type: 'POST',
-			dataType: 'xml',
-			data: post_data,
-			success: function(data) {
-				id=$("id", data).text();
-				$("#job-tr-"+id).remove();
-			},
-			error: function(data) {
-				alert('Error: Failed to destroy job.');
-			}
-		});
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            dataType: 'xml',
+            data: post_data,
+            success: function(data) {
+                id=$("id", data).text();
+                $("#job-tr-"+id).remove();
+            },
+            error: function(data) {
+                alert('Error: Failed to destroy job.');
+            }
+        });
 
-	});
+    });
 
     $(".job-show").click(function(e){
          e.preventDefault();
@@ -82,13 +82,13 @@ function job_table_selectors() {
                 width: 700,
                 buttons: {
                     Close: function() {
-						$(this).dialog('close');
-					}
+                        $(this).dialog('close');
+                    }
                 },
-				close: function(data) {
-					$(this).html("");
-					$(this).dialog('destroy');
-				}
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
             });
 
          });
