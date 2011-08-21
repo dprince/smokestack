@@ -71,7 +71,7 @@ class Job < ActiveRecord::Base
         script_file.path,
         nova_builder.url,
         nova_builder.branch || "",
-        nova_builder.merge_trunk.to_
+        nova_builder.merge_trunk.to_s,
         nova_builder.revision_hash,
         nova_packager_url,
         glance_builder.url,
