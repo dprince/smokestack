@@ -101,9 +101,9 @@ class Job < ActiveRecord::Base
 			end
 			script_file.close
 	rescue Exception => e
-		raise e
 		job.update_attribute(:msg, e.message)
 		job.update_attribute(:status, "Failed")
+		raise e
 	end
 
   end
