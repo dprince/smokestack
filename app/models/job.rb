@@ -1,6 +1,6 @@
 require 'erubis'
 require 'tempfile'
-require 'open3'
+require 'open4'
 
 class Job < ActiveRecord::Base
 
@@ -83,21 +83,23 @@ class Job < ActiveRecord::Base
         nodes_json_file.path,
         server_group_json_file.path]
 
-      Open3.popen3(*args) do |stdin, stdout, stderr, wait_thr|
+
+      status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
+        stdin.close 
         job.stdout=stdout.readlines.join.chomp
         job.stderr=stderr.readlines.join.chomp
+
         job.nova_revision=Job.parse_nova_revision(job.stdout)
         job.glance_revision=Job.parse_glance_revision(job.stdout)
         job.msg=Job.parse_last_message(job.stdout)
         job.save
-        retval = wait_thr.value
-        if retval.success? 
-          job.update_attribute(:status, "Success")
-          return true
-        else
-          job.update_attribute(:status, "Failed")
-          return false
-        end
+      end
+      if status.exitstatus == 0
+        job.update_attribute(:status, "Success")
+        return true
+      else
+        job.update_attribute(:status, "Failed")
+        return false
       end
 
       script_file.close

@@ -5,6 +5,7 @@ gem 'rails', '3.0.7'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
+gem 'popen4'
 gem 'mysql'
 gem 'resque', '1.15.0'
 gem 'chef-vpc-toolkit', '2.6.1'
