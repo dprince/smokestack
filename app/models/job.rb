@@ -67,6 +67,12 @@ class Job < ActiveRecord::Base
         glance_packager_url=ENV['GLANCE_DEB_PACKAGER_URL']
       end
 
+      keystone_builder=job.job_group.smoke_test.keystone_package_builder
+      keystone_packager_url=keystone_builder.packager_url
+      if keystone_packager_url.blank? then
+        keystone_packager_url=ENV['KEYSTONE_DEB_PACKAGER_URL']
+      end
+
       args = ["bash",
         script_file.path,
         nova_builder.url,
@@ -74,6 +80,11 @@ class Job < ActiveRecord::Base
         nova_builder.merge_trunk.to_s,
         nova_builder.revision_hash,
         nova_packager_url,
+        keystone_builder.url,
+        keystone_builder.branch || "",
+        keystone_builder.merge_trunk.to_s,
+        keystone_builder.revision_hash,
+        keystone_packager_url,
         glance_builder.url,
         glance_builder.branch || "",
         glance_builder.merge_trunk.to_s,
@@ -83,7 +94,6 @@ class Job < ActiveRecord::Base
         nodes_json_file.path,
         server_group_json_file.path]
 
-
       status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
         stdin.close 
         job.stdout=stdout.readlines.join.chomp
@@ -91,6 +101,7 @@ class Job < ActiveRecord::Base
 
         job.nova_revision=Job.parse_nova_revision(job.stdout)
         job.glance_revision=Job.parse_glance_revision(job.stdout)
+        job.keystone_revision=Job.parse_keystone_revision(job.stdout)
         job.msg=Job.parse_last_message(job.stdout)
         job.save
       end
@@ -124,6 +135,15 @@ class Job < ActiveRecord::Base
     stdout.each_line do |line|
       if line =~ /^GLANCE_REVISION/ then
         return line.sub(/^GLANCE_REVISION=/, "").chomp
+      end
+    end
+    return ""
+  end
+
+  def self.parse_keystone_revision(stdout)
+    stdout.each_line do |line|
+      if line =~ /^KEYSTONE_REVISION/ then
+        return line.sub(/^KEYSTONE_REVISION=/, "").chomp
       end
     end
     return ""

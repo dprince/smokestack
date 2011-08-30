@@ -6,6 +6,12 @@ nova_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+keystone_builder_trunk:
+  type: KeystonePackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
 glance_builder_trunk:
   type: GlancePackageBuilder
   url: trunk
@@ -14,6 +20,12 @@ glance_builder_trunk:
 
 nova_builder_dev:
   type: NovaPackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1
+
+keystone_builder_dev:
+  type: KeystonePackageBuilder
   url: dev
   merge_trunk: true
   smoke_test: dev1

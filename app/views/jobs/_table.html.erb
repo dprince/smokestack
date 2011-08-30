@@ -4,6 +4,7 @@
     <th>Configuration</th>
     <th>Status</th>
     <th>Nova<br/>Revision</th>
+    <th>Keystone<br/>Revision</th>
     <th>Glance<br/>Revision</th>
     <th>Runtime</th>
     <th>Msg</th>
@@ -30,6 +31,7 @@
     <% end %>
     <td nowrap><%= raw(status_image(job.status)) %></td>
     <td><%= job.nova_revision %></td>
+    <td><%= job.keystone_revision %></td>
     <td><%= job.glance_revision %></td>
     <td><%= job_runtime(job) %></td>
     <td><%= job.msg %></td>

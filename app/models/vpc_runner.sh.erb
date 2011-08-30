@@ -7,15 +7,21 @@ NOVA_MERGE_TRUNK=$3
 NOVA_REVISION=$4
 NOVA_PACKAGER_URL=$5
 
-GLANCE_URL=$6
-GLANCE_BRANCH=$7
-GLANCE_MERGE_TRUNK=$8
-GLANCE_REVISION=$9
-GLANCE_PACKAGER_URL=${10}
+KEYSTONE_URL=$6
+KEYSTONE_BRANCH=$7
+KEYSTONE_MERGE_TRUNK=$8
+KEYSTONE_REVISION=$9
+KEYSTONE_PACKAGER_URL=${10}
 
-CHEF_INSTALLER_CONF=${11}
-NODES_JSON_CONF=${12}
-SERVER_GROUP_JSON_CONF=${13}
+GLANCE_URL=${11}
+GLANCE_BRANCH=${12}
+GLANCE_MERGE_TRUNK=${13}
+GLANCE_REVISION=${14}
+GLANCE_PACKAGER_URL=${15}
+
+CHEF_INSTALLER_CONF=${16}
+NODES_JSON_CONF=${17}
+SERVER_GROUP_JSON_CONF=${18}
 
 <% job.job_group.smoke_test.test_suites.each do |suite| %>
 RUN_<%= suite.name %>=true
@@ -75,6 +81,58 @@ function get_nova_source_git {
 	echo "NOVA_REVISION=$NOVA_REVISION"
 
 	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+		git merge master || fail "Failed to merge master."
+	fi
+
+	cd $TMP_DIR
+}
+
+function get_keystone_source_bzr {
+   #NOTE: Does anyone uses bzr for Keystone development?
+	bzr branch "$KEYSTONE_URL" keystone_source || \
+		fail "Failed to checkout bzr branch."
+	if [ -n "$KEYSTONE_REVISION" ]; then
+		cd keystone_source
+		bzr revert --revision="$KEYSTONE_REVISION" || \
+			fail "Failed to revert to revision $KEYSTONE_REVISION."
+		bzr commit -m "Revert to revision $KEYSTONE_REVISION." || \
+			fail "Failed to commit revert to revision $KEYSTONE_REVISION."
+		cd -
+	else
+		KEYSTONE_REVISION=$(bzr version-info keystone_source | grep revno | sed -e "s|revno: ||")
+		[ -z "$KEYSTONE_REVISION" ] && fail "Failed to obtain keystone revision from bzr."
+	fi
+	echo "KEYSTONE_REVISION=$KEYSTONE_REVISION"
+
+	if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
+		cd keystone_source || fail "Failed to cd into keystone_source directory."
+        #NOTE: this may fail (I'm not sure there is an lp:keystone)
+		bzr merge lp:keystone || fail "Failed to merge lp:keystone."
+		cd $TMP_DIR
+	fi
+
+}
+
+function get_keystone_source_git {
+
+	git clone $KEYSTONE_GIT_MASTER keystone_source || \
+		fail "Failed to git clone keystone."
+	cd keystone_source
+	git fetch $KEYSTONE_URL $KEYSTONE_BRANCH || \
+		fail "Failed to git fetch branch $KEYSTONE_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$KEYSTONE_REVISION" ]; then
+		git co $KEYSTONE_REVISION || \
+			fail "Failed to revert to revision $KEYSTONE_REVISION."
+	else
+		KEYSTONE_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$KEYSTONE_REVISION" ] && \
+			fail "Failed to obtain keystone revision from git."
+	fi
+	echo "KEYSTONE_REVISION=$KEYSTONE_REVISION"
+
+	if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
 		git merge master || fail "Failed to merge master."
 	fi
 
@@ -146,6 +204,14 @@ function setup {
 		fi
 	fi
 
+	if [ -n "$KEYSTONE_URL" ]; then
+		if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
+			get_keystone_source_bzr
+		else	
+			get_keystone_source_git
+		fi
+	fi
+
 	if [ -n "$GLANCE_URL" ]; then
 		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
 			get_glance_source_bzr
@@ -179,6 +245,10 @@ if rake group:create && rake group:poll; then
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
 		DEB_PACKAGER_URL="$NOVA_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
+
+	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
+		fail "Failed to build keystone packages."
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
@@ -230,6 +300,10 @@ if rake group:create && rake group:poll; then
 
 	rake nova:build_rpms SOURCE_DIR="$TMP_DIR/nova_source" || \
 		fail "Failed to build Xen plugin RPMs."
+
+	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
+		fail "Failed to build keystone packages."
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \

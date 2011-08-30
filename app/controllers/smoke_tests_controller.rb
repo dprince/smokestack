@@ -6,7 +6,7 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests.json
   # GET /smoke_tests.xml
   def index
-    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder])
+    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder])
 
     if params[:table_only] then
       render :partial => "table"
@@ -38,6 +38,7 @@ class SmokeTestsController < ApplicationController
     @smoke_test = SmokeTest.new
     @smoke_test.build_nova_package_builder
     @smoke_test.build_glance_package_builder
+    @smoke_test.build_keystone_package_builder
 
     respond_to do |format|
       format.html # new.html.erb
