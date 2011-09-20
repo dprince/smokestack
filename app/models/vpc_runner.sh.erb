@@ -71,7 +71,7 @@ function get_nova_source_git {
 	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
 
 	if [ -n "$NOVA_REVISION" ]; then
-		git co $NOVA_REVISION || \
+		git checkout $NOVA_REVISION || \
 			fail "Failed to revert to revision $NOVA_REVISION."
 	else
 		NOVA_REVISION=$(git rev-parse --short HEAD)
@@ -123,7 +123,7 @@ function get_keystone_source_git {
 	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
 
 	if [ -n "$KEYSTONE_REVISION" ]; then
-		git co $KEYSTONE_REVISION || \
+		git checkout $KEYSTONE_REVISION || \
 			fail "Failed to revert to revision $KEYSTONE_REVISION."
 	else
 		KEYSTONE_REVISION=$(git rev-parse --short HEAD)
@@ -174,7 +174,7 @@ function get_glance_source_git {
 	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
 
 	if [ -n "$GLANCE_REVISION" ]; then
-		git co $GLANCE_REVISION || \
+		git checkout $GLANCE_REVISION || \
 			fail "Failed to revert to revision $GLANCE_REVISION."
 	else
 		GLANCE_REVISION=$(git rev-parse --short HEAD)
