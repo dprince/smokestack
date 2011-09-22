@@ -190,6 +190,20 @@ function get_glance_source_git {
 	cd $TMP_DIR
 }
 
+function delete_group {
+	XEN_DISCONNECT=$1
+
+	#for debugging purposes you can touch this file to hang the group
+	rake ssh bash <<-EOF_BASH
+	until [ ! -f /tmp/do_not_delete ]; do
+		sleep 1
+	done
+	EOF_BASH
+
+	[ -n "$XEN_DISCONNECT" ] && rake xen:disconnect
+	rake group:delete
+}
+
 function setup {
 
 	chef-vpc-toolkit -v || \
@@ -239,7 +253,7 @@ function setup {
 
 function run_job {
 
-trap "rake group:delete && cd /tmp && rm -Rf $TMP_DIR" INT TERM EXIT
+trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
@@ -291,7 +305,7 @@ function run_xen_hybrid_job {
 
 [ -n "$SERVER_IP_LIST" ] || fail "Xen jobs require a SERVER_IP_LIST env variable."
 
-trap "{ rake xen:disconnect; rake group:delete; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+trap "{ delete_group 'xen_discon'; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
