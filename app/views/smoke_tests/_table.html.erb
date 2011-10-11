@@ -16,7 +16,7 @@
   <tr id="smoke-test-tr-<%= smoke_test.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%=raw chop_for_html(smoke_test.description, 60) %></td>
     <td><%=raw chop_for_html(smoke_test.nova_package_builder.branch) %></td>
-    <td><%= raw status_image(smoke_test.status) %></td>
+    <td><%=raw status_image(smoke_test.status) %></td>
     <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
     <% if show_edit_links %>
       <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>

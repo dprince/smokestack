@@ -4,12 +4,12 @@ module ApplicationHelper
 
         image_name = case status
         when "Failed" then "failed"
-        when "Running" then "pending"
+        when "Running" then "running"
         when "Success" then "success"
         else "pending"
         end
 
-        if show_image then
+        if show_image and status != "Pending" then
             return "<img class=\"status_image\" src=\"/images/#{image_name}.png\"/>&nbsp;#{status}"
         else
             return status
