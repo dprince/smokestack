@@ -44,4 +44,16 @@ module ApplicationHelper
 
     end
 
+    def chop_for_html(string, max_length=24)
+        if not string.nil? then
+            if string.length <= max_length
+                h(string)
+            else
+                "<font title=\"#{h(string)}\">#{h(string[0,max_length])}...</font>"
+            end
+        else
+            string
+        end
+    end
+
 end

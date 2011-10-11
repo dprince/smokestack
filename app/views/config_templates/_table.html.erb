@@ -8,8 +8,8 @@
 
 <% @config_templates.each do |config_template| %>
   <tr id="config-template-tr-<%= config_template.id %>" class="<%= cycle "tr0", "tr1" %>">
-    <td><%= config_template.name %></td>
-    <td><%= config_template.description %></td>
+    <td><%= raw(chop_for_html(config_template.name, 40)) %></td>
+    <td><%= raw(chop_for_html(config_template.description, 60)) %></td>
     <td><%= link_to 'Show', config_template, :class => "config-template-show" %></td>
     <td><%= link_to 'Edit', edit_config_template_path(config_template), :class => "config-template-edit" %></td>
     <td><%= link_to 'Destroy', config_template, :confirm => 'Are you sure?', :method => :delete, :class => "config-template-destroy" %></td>

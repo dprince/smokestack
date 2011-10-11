@@ -11,9 +11,9 @@
 
 <% @users.each do |user| %>
   <tr id="user-tr-<%= user.id %>" class="<%= cycle "tr0", "tr1" %>">
-    <td><%= user.username %></td>
-    <td><%= user.first_name %></td>
-    <td><%= user.last_name %></td>
+    <td><%= raw(chop_for_html(user.username)) %></td>
+    <td><%= raw(chop_for_html(user.first_name)) %></td>
+    <td><%= raw(chop_for_html(user.last_name)) %></td>
     <td><%= yes_no user.is_active %></td>
     <td><%= yes_no user.is_admin %></td>
     <td><%= link_to 'Show', user, :class => "user-show" %></td>
