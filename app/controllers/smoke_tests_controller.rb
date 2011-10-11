@@ -13,8 +13,8 @@ class SmokeTestsController < ApplicationController
     else
       respond_to do |format|
         format.html # index.html.erb
-        format.json  { render :json => @smoke_tests }
-        format.xml  { render :xml => @smoke_tests }
+        format.json  { render :json => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
+        format.xml  { render :xml => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
       end
     end
   end
