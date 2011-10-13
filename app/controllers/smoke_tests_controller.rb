@@ -23,12 +23,12 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests/1.json
   # GET /smoke_tests/1.xml
   def show
-    @smoke_test = SmokeTest.find(params[:id])
+    @smoke_test = SmokeTest.find(params[:id], :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder])
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json  { render :json => @smoke_test }
-      format.xml  { render :xml => @smoke_test }
+      format.json  { render :json => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
+      format.xml  { render :xml => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
     end
   end
 
