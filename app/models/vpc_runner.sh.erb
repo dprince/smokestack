@@ -282,6 +282,12 @@ if rake group:create && rake group:poll; then
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
 	fi
 
+	# run OS API v1.1 tests (Uses the Ruby openstack-compute gem)
+	if [ -n "$RUN_RUBY_OSAPI_V11" ]; then
+	rake nova:ruby_osapi_v11_tests SERVER_NAME=nova1 || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+	fi
+
 	# run smoke tests
 	if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
 	rake nova:smoke_tests SERVER_NAME=nova1 || \
@@ -374,6 +380,12 @@ if rake group:create && rake group:poll; then
 	# run OS API v1.0 tests (Uses the Ruby openstack-compute gem)
 	if [ -n "$RUN_RUBY_OSAPI_V10" ]; then
 	rake nova:ruby_osapi_tests SERVER_NAME=nova1 MODE=xen || \
+		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
+	fi
+
+	# run OS API v1.1 tests (Uses the Ruby openstack-compute gem)
+	if [ -n "$RUN_RUBY_OSAPI_V11" ]; then
+	rake nova:ruby_osapi_v11_tests SERVER_NAME=nova1 MODE=xen || \
 		{ rake nova:tail_logs SERVER_NAME=nova1; fail "OS API tests failed."; }
 	fi
 
