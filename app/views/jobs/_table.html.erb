@@ -30,9 +30,9 @@
         <td>&nbsp;</td>
     <% end %>
     <td nowrap><%= raw(status_image(job.status)) %></td>
-    <td><%= job.nova_revision %></td>
-    <td><%= job.keystone_revision %></td>
-    <td><%= job.glance_revision %></td>
+    <td><%= raw(chop_for_html(job.nova_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.keystone_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.glance_revision, 7)) %></td>
     <td><%= job_runtime(job) %></td>
     <td><%= raw(chop_for_html(job.msg, 40)) %></td>
     <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
