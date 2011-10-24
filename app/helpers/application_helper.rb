@@ -1,16 +1,17 @@
 module ApplicationHelper
 
-    def status_image(status, show_image=true)
+    def status_image(status, show_image = true)
 
         image_name = case status
         when "Failed" then "failed"
         when "Running" then "running"
         when "Success" then "success"
-        else "pending"
+        else
+          false
         end
 
-        if show_image and status != "Pending" then
-            return "<img class=\"status_image\" src=\"/images/#{image_name}.png\"/>&nbsp;#{status}"
+        if show_image and image_name then
+            return "<img class=\"status_image\" src=\"/assets/#{image_name}.png\"/>&nbsp;#{status}"
         else
             return status
         end
