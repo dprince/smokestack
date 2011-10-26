@@ -37,7 +37,7 @@ ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 
 # Default Debian packager URLS
 # These get used if the smoke tests don't specify a custom packager URL
-ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~rackspace-titan/nova/ubuntu-nova-vpc"
+ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
 ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~dan-prince/keystone/ubuntu-keystone-nodoc"
 
