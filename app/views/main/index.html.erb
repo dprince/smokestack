@@ -43,7 +43,7 @@ $(document).ready(function() {
 <div id="config-templates-dialog"></div>
 <div id="change-password-dialog"></div>
 
-<div id="header_div"><img src="assets/smokestack-logo.png" /></div>
+<div id="header_div"><a href="https://github.com/dprince/smokestack" title="Fork me"><img src="assets/smokestack-logo.png" /></a></div>
 <%
 login_style=is_user ? "hide" : "show"
 logout_style=is_user ? "show" : "hide"
@@ -51,7 +51,7 @@ logout_style=is_user ? "show" : "hide"
 <div id="login_header">
 <%= form_tag('/auth/logout', :method => :post, :id => "logout-form") %>
 
-<a id="login-link" href="/auth" class="login_link <%= login_style %>">Log In</a><a id="logout-link" href="/auth/logout" class="logout_link <%= logout_style %>">Log out</a>/<a id="help_link" href="help.html" class="help_link">Help</a><br/><a id="change-password-link" href="/users/<%= session[:user_id] %>/password" class="user-password-link <%= logout_style %>">Change Password</a>
+<a id="login-link" href="/auth" class="login_link <%= login_style %>">Log In</a><a id="logout-link" href="/auth/logout" class="logout_link <%= logout_style %>">Log out</a>/<a id="about_link" href="about.html" class="about_link">About</a><br/><a id="change-password-link" href="/users/<%= session[:user_id] %>/password" class="user-password-link <%= logout_style %>">Change Password</a>
 </div>
 <br class="clear"/>
 
