@@ -32,6 +32,11 @@ GEM
       multi_json (~> 1.0)
     arel (2.2.1)
     builder (3.0.0)
+    chef-vpc-toolkit (2.7.1)
+      builder
+      json
+      rake
+      uuidtools
     erubis (2.7.0)
     hike (1.2.1)
     i18n (0.6.0)
@@ -99,6 +104,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.30)
+    uuidtools (2.1.2)
     vegas (0.1.8)
       rack (>= 1.0.0)
 
@@ -106,6 +112,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  chef-vpc-toolkit
   mysql
   popen4
   rails (= 3.1.1)
