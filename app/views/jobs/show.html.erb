@@ -1,41 +1,70 @@
-<p id="notice"><%= notice %></p>
+<script type="text/javascript">
 
+$(document).ready(function() {
+
+  $("#job_accordion").accordion({ fillSpace: false, autoHeight: false, clearStyle: true });
+
+  $("input.paste-site").button({
+      icons: {
+          primary: 'ui-icon-extlink'
+      }
+  });
+
+});
+
+</script>
+
+<% if notice then %>
+<p id="notice"><%= notice %></p>
+<% end %>
 <p>
-  <b>Smoke test:</b>
+  <b>Job ID <%= @job.id %>:</b>
   <%= @job.job_group.smoke_test.description %>
 </p>
-
 <% if not @job.job_group.smoke_test.nova_package_builder.url.empty? %>
   <b>Branch Url:</b>
   <%= @job.job_group.smoke_test.nova_package_builder.url %>
 <% end %>
-
 <p>
   <b>Status:</b>
   <%= @job.status %>
 </p>
-
 <p>
   <b>Msg:</b>
   <%= @job.msg %>
 </p>
+</div>
+<% if @job.stdout or @job.stderr then %>
+<div id="job_accordion">
 
-<p>
-  <b>Stdout:</b>
 <% if @job.stdout then %>
-<br/>
-<textarea rows="10" cols="80">
-  <%= @job.stdout %>
-</textarea>
+<h3><a href="#">Standard Out</a></h3>
+<div>
+<form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
+<input type="hidden" name="language" value="text"/>
+<% if ENV['PASTE_SITE_URL'] %>
+<input type="submit" name="paste" value="Create Paste" class="paste-site" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'"/><br/>
 <% end %>
-</p>
+<textarea name="code" rows="15" cols="100">
+<%= @job.stdout %>
+</textarea>
+</form>
+</div>
+<% end %>
 
-<p>
-  <b>Stderr:</b>
 <% if @job.stderr then %>
-<br/>
-<textarea rows="10" cols="80">
-  <%= @job.stderr %>
-</textarea>
+<h3><a href="#">Standard Error</a></h3>
+<div>
+<form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
+<input type="hidden" name="language" value="text"/>
+<% if ENV['PASTE_SITE_URL'] %>
+<input type="submit" name="paste" value="Create Paste" class="paste-site" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'" /><br/>
 <% end %>
-</p>
+<textarea name="code" rows="15" cols="100">
+<%= @job.stderr %>
+</textarea>
+</form>
+</div>
+<% end %>
+</div>
+<% end %>

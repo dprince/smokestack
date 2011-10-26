@@ -36,8 +36,8 @@ function config_template_selectors() {
 
             $("#config-templates-dialog").dialog({
                 modal: true,
-                height: 500,
-                width: 600,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
                 buttons: {
                     Create: function() { config_template_create_or_edit('POST') }
                 },

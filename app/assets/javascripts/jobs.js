@@ -78,8 +78,8 @@ function job_table_selectors() {
 
             $("#jobs-dialog").dialog({
                 modal: true,
-                height: 400,
-                width: 700,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
                 buttons: {
                     Close: function() {
                         $(this).dialog('close');
