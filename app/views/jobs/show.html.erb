@@ -18,11 +18,10 @@ $(document).ready(function() {
 <p id="notice"><%= notice %></p>
 <% end %>
 <p>
-  <b>Job ID <%= @job.id %>:</b>
-  <%= @job.job_group.smoke_test.description %>
+  <b>Job ID:</b> <%= @job.id %>
 &nbsp; &nbsp; &nbsp; &nbsp;
   <b>Description:</b>
-  <%= @job.job_group.smoke_test.description %>
+  <%=raw chop_for_html(@job.job_group.smoke_test.description, 80) %>
 <p>
   <b>Status:</b>
   <%= @job.status %>
