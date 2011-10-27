@@ -57,4 +57,8 @@ module ApplicationHelper
         end
     end
 
+    def timestamp(dts)
+        return dts.strftime('%Y-%m-%d %I:%M%p')
+    end
+
 end

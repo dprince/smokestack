@@ -4,6 +4,15 @@
   <b>Description:</b>
   <%= @smoke_test.description %>
 </p>
+
+<p>
+  <b>Created at:</b> <%= timestamp(@smoke_test.created_at.in_time_zone) %>
+</p>
+
+<p>
+  <b>Updated at:</b> <%= timestamp(@smoke_test.created_at.in_time_zone) %>
+</p>
+
 <hr/>
 <p>
   <b>Nova URL:</b>
@@ -91,6 +100,6 @@ $(document).ready(function() {
 
 </script>
 <table id="jobs-table" class="ui-widget ui-widget-content data">
-    <%= render :partial => '/jobs/table' %>
+    <%= render(:partial => '/jobs/table', :locals => {:show_updated_at => true, :show_description => false}) %>
 </table>
 

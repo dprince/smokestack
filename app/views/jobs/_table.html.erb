@@ -1,12 +1,17 @@
   <tr class="ui-widget-header">
     <th>ID</th>
+<% if local_assigns[:show_description] %>
     <th>Smoke Test</th>
+<% end %>
     <th>Configuration</th>
     <th>Status</th>
     <th>Nova<br/>Revision</th>
     <th>Keystone<br/>Revision</th>
     <th>Glance<br/>Revision</th>
     <th>Runtime</th>
+<% if local_assigns[:show_updated_at] %>
+    <th>Updated at</th>
+<% end %>
     <th>Msg</th>
     <th></th>
     <% if is_user %>
@@ -19,10 +24,12 @@
 <% @jobs.each do |job| %>
   <tr id="job-tr-<%= job.id %>" class="<%= cycle "tr0", "tr1" %>">
     <td><%= job.id %></td>
-    <% if job.job_group.smoke_test then %>
+    <% if local_assigns[:show_description] %>
+      <% if job.job_group.smoke_test then %>
         <td><%= raw(chop_for_html(job.job_group.smoke_test.description, 60)) %></td>
-    <% else %>
+      <% else %>
         <td>&nbsp;</td>
+      <% end %>
     <% end %>
     <% if job.config_template then %>
         <td><%= raw(chop_for_html(job.config_template.name, 40)) %></td>
@@ -34,6 +41,9 @@
     <td><%= raw(chop_for_html(job.keystone_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.glance_revision, 7)) %></td>
     <td><%= job_runtime(job) %></td>
+    <% if local_assigns[:show_updated_at] %>
+      <td><%= timestamp(job.updated_at.in_time_zone) %></td>
+	<% end %>
     <td><%= raw(chop_for_html(job.msg, 40)) %></td>
     <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
     <% if show_edit_links %>

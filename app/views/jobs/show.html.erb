@@ -20,19 +20,21 @@ $(document).ready(function() {
 <p>
   <b>Job ID <%= @job.id %>:</b>
   <%= @job.job_group.smoke_test.description %>
-</p>
-<% if not @job.job_group.smoke_test.nova_package_builder.url.empty? %>
-  <b>Branch Url:</b>
-  <%= @job.job_group.smoke_test.nova_package_builder.url %>
-<% end %>
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <b>Description:</b>
+  <%= @job.job_group.smoke_test.description %>
 <p>
   <b>Status:</b>
   <%= @job.status %>
+&nbsp; &nbsp; &nbsp; &nbsp;
+  <b>Updated at:</b>:<%= timestamp(@job.updated_at.in_time_zone) %>
 </p>
+<% if not @job.msg.blank? %>
 <p>
   <b>Msg:</b>
   <%= @job.msg %>
 </p>
+<% end %>
 </div>
 <% if @job.stdout or @job.stderr then %>
 <div id="job_accordion">
