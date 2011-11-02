@@ -32,6 +32,9 @@ class SmokeTestsControllerTest < ActionController::TestCase
     login_as(:bob) 
     get :new
     assert_response :success
+    assert_select 'input#smoke_test_nova_package_builder_attributes_merge_trunk[checked]', { :count => 0 }
+    assert_select 'input#smoke_test_keystone_package_builder_attributes_merge_trunk[checked]', { :count => 0 }
+    assert_select 'input#smoke_test_glance_package_builder_attributes_merge_trunk[checked]', { :count => 0 }
   end
 
   test "should not get new" do

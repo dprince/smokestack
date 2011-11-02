@@ -11,7 +11,7 @@ class PackageBuilderTest < ActiveSupport::TestCase
 		:smoke_test => smoke_tests(:trunk)
     )
     assert_equal "lp:nova", builder.url
-    assert_equal false, builder.merge_trunk
+    assert_equal true, builder.merge_trunk
   end
 
   test "create fails without url" do

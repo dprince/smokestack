@@ -37,8 +37,11 @@ class SmokeTestsController < ApplicationController
   def new
     @smoke_test = SmokeTest.new
     @smoke_test.build_nova_package_builder
+    @smoke_test.nova_package_builder.merge_trunk = false
     @smoke_test.build_glance_package_builder
+    @smoke_test.glance_package_builder.merge_trunk = false
     @smoke_test.build_keystone_package_builder
+    @smoke_test.keystone_package_builder.merge_trunk = false
 
     respond_to do |format|
       format.html # new.html.erb
