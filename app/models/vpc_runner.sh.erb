@@ -29,11 +29,24 @@ RUN_<%= suite.name %>=true
 
 TMP_DIR=$(mktemp -d)
 
+#Global Chef settings
+export CHEF_TIMEOUT=900
+export CHEF_RESTART_ON_FAILURE="true"
+
 # Log to the job log and stdout
 function fail {
 	local MSG=$1
 	echo "FAILURE_MSG=$MSG"
 	exit 1
+}
+
+function copy_hosts {
+# Copy hosts file to each node
+rake ssh bash <<-"EOF_COPY_HOSTS"
+for IP in $(cat /etc/hosts | cut -f 1); do
+[[ "$IP" != "127.0.0.1" ]] && scp /etc/hosts $IP:/etc/hosts
+done
+EOF_COPY_HOSTS
 }
 
 function get_nova_source_bzr {
@@ -261,21 +274,22 @@ if rake group:create && rake group:poll; then
 		DEB_PACKAGER_URL="$NOVA_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
 
-	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
-		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
-		fail "Failed to build keystone packages."
-
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
+	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
+		fail "Failed to build keystone packages."
+
 	# install Chef and the Chef Cookbooks
+	copy_hosts
 	rake chef:push_repos && rake chef:install || \
-		{ rake chef:tail_logs; fail "Failed to install Chef server."; }
+		{ rake tail_logs; fail "Failed to install Chef server."; }
 
 	# poll for Chef clients to finish runnings
-	rake chef:poll_clients CHEF_TIMEOUT=600 || \
-		{ rake chef:tail_logs; fail "Chef client timeout."; }
+	rake chef:poll_clients || \
+		{ rake tail_logs; fail "Chef client timeout."; }
 
 	# run Torpedo API tests (Uses the Ruby openstack-compute gem)
 	if [ -n "$RUN_TORPEDO" ]; then
@@ -308,7 +322,7 @@ if rake group:create && rake group:poll; then
 	fi
 
 else
-	rake chef:tail_logs
+	rake tail_logs
 	fail "Failed to create server group."
 fi
 
@@ -328,17 +342,18 @@ if rake group:create && rake group:poll; then
 	rake nova:build_rpms SOURCE_DIR="$TMP_DIR/nova_source" || \
 		fail "Failed to build Xen plugin RPMs."
 
-	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
-		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
-		fail "Failed to build keystone packages."
-
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
+	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
+		fail "Failed to build keystone packages."
+
 	# install Chef and the Chef Cookbooks
+	copy_hosts
 	rake chef:push_repos && rake chef:install || \
-		{ rake chef:tail_logs; fail "Failed to install Chef server."; }
+		{ rake tail_logs; fail "Failed to install Chef server."; }
 
 	# Bootstrap all the Xen Servers
 	local COUNT=0
@@ -348,13 +363,14 @@ if rake group:create && rake group:poll; then
 		rake xen:bootstrap XENSERVER_IP=$SERVER_IP SERVER_NAME=$SERVER_NAME || \
 			fail "Failed to connect Xen Server: $SERVER_NAME to VPN group."
 		sleep 10
+		copy_hosts
 		rake chef:install SERVER_NAME=$SERVER_NAME || \
 			fail "Failed to install Chef on $SERVER_NAME."
 	done
 
 	#FIXME: this can come out when compute1.vpc gets a proper domain name
 	rake chef:poll_clients SERVER_NAME=nova1 || \
-		{ rake chef:tail_logs SERVER_NAME=nova1; fail "Chef client timeout: nova1"; }
+		{ rake tail_logs SERVER_NAME=nova1; fail "Chef client timeout: nova1"; }
 
 	# Poll Xen Servers to finish Chef'ing
 	COUNT=0
@@ -363,12 +379,13 @@ if rake group:create && rake group:poll; then
 		local SERVER_NAME="xen$COUNT"
 		local COMPUTE_NAME="compute$COUNT"
 		rake chef:poll_clients SERVER_NAME=$SERVER_NAME || \
-			{ rake chef:tail_logs SERVER_NAME=$SERVER_NAME; fail "Chef client timeout: $SERVER_NAME"; }
+			{ rake tail_logs SERVER_NAME=$SERVER_NAME; fail "Chef client timeout: $SERVER_NAME"; }
 		rake ssh bash <<-EOF_BASH
 		if ! grep -c "$COMPUTE_NAME.vpc" /etc/hosts &> /dev/null; then
-		echo "172.19.0.10$COUNT     $COMPUTE_NAME.vpc $COMPUTE_NAME" >> /etc/hosts
+		echo "172.19.0.10$COUNT	$COMPUTE_NAME.vpc	$COMPUTE_NAME" >> /etc/hosts
 		fi
 		EOF_BASH
+		copy_hosts
 		rake chef:install SERVER_NAME=$COMPUTE_NAME || \
 			fail "Failed to install Chef on $COMPUTE_NAME."
 	done
@@ -381,7 +398,7 @@ if rake group:create && rake group:poll; then
 		# set the domain name correctly
 		local COMPUTE_NAME="compute$COUNT.vpc"
 		rake chef:poll_clients SERVER_NAME=$COMPUTE_NAME || \
-			{ rake chef:tail_logs SERVER_NAME=$COMPUTE_NAME; fail "Chef client timeout: $COMPUTE_NAME"; }
+			{ rake tail_logs SERVER_NAME=$COMPUTE_NAME; fail "Chef client timeout: $COMPUTE_NAME"; }
 	done
 
 	# run Torpedo API tests (Uses the Ruby openstack-compute gem)
@@ -409,7 +426,7 @@ if rake group:create && rake group:poll; then
 	fi
 
 else
-	rake chef:tail_logs
+	rake tail_logs
 	fail "Failed to create server group."
 fi
 
