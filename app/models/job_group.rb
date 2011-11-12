@@ -28,14 +28,15 @@ class JobGroup < ActiveRecord::Base
 
   after_create :handle_after_create
   def handle_after_create
+    unittested = false
     smoke_test.config_templates.each do |ct|
-      if smoke_test.unit_tests then
+      if smoke_test.unit_tests and not unittested then
+        unittested = true
         JobUnitTester.create(:job_group => self, :config_template => ct)
-        #JobVPC.create(:job_group => self, :config_template => ct)
       end
       if ct.job_type == "Xen" then
         JobXenHybrid.create(:job_group => self, :config_template => ct)
-      else
+      elsif ct.job_type == "VPC" then
         JobVPC.create(:job_group => self, :config_template => ct)
       end
     end

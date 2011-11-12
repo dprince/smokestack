@@ -38,25 +38,30 @@ class Job < ActiveRecord::Base
       script_file.write(script_text)
       script_file.flush
 
-      #chef_installer.yml
-      chef_template = File.read(File.join(Rails.root, "app", "templates", "chef_installer.yml.erb"))
-      eruby = Erubis::Eruby.new(chef_template)
-      chef_installer_text=eruby.result(:job => job)
+        #chef_installer.yml
+      chef_installer_text = ""
+      unless job.config_template.nil?
+        chef_template = File.read(File.join(Rails.root, "app", "templates", "chef_installer.yml.erb"))
+        eruby = Erubis::Eruby.new(chef_template)
+        chef_installer_text=eruby.result(:job => job)
+      end
       chef_installer_file=Tempfile.new('smokestack_chef')
       chef_installer_file.write(chef_installer_text)
       chef_installer_file.flush
 
+      #nodes.json
+      nodes_json_file=Tempfile.new('smokestack_nodes_json')
       unless job.config_template.nil?
-        #nodes.json
-        nodes_json_file=Tempfile.new('smokestack_nodes_json')
         nodes_json_file.write(job.config_template.nodes_json)
-        nodes_json_file.flush
-
-        #server_group.json
-        server_group_json_file=Tempfile.new('smokestack_server_group_json')
-        server_group_json_file.write(job.config_template.server_group_json)
-        server_group_json_file.flush
       end
+      nodes_json_file.flush
+
+      #server_group.json
+      server_group_json_file=Tempfile.new('smokestack_server_group_json')
+      unless job.config_template.nil?
+        server_group_json_file.write(job.config_template.server_group_json)
+      end
+      server_group_json_file.flush
 
       nova_builder=job.job_group.smoke_test.nova_package_builder
       nova_packager_url=nova_builder.packager_url

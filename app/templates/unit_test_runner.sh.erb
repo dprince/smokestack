@@ -1,18 +1,10 @@
-#!/bin/bash
-MASTER_NOVA_URL="git://github.com/openstack/nova.git"
+set -x
+MASTER_NOVA_URL=<%= ENV['NOVA_GIT_MASTER'] %>
+MASTER_GLANCE_URL=<%= ENV['GLANCE_GIT_MASTER'] %>
+MASTER_KEYSTONE_URL=<%= ENV['KEYSTONE_GIT_MASTER'] %>
+
 TMP_DIR=$(mktemp -d)
 #
-##Global Chef settings
-#export CHEF_TIMEOUT=900
-#export CHEF_RESTART_ON_FAILURE="true"
-#
-## Log to the job log and stdout
-function fail {
-	local MSG=$1
-	echo "FAILURE_MSG=$MSG"
-	exit 1
-}
-
 function setup {
 	cd $TMP_DIR
 	if [ -n "$NOVA_URL" ]; then
@@ -41,7 +33,7 @@ function setup {
 }
 
 function is_master {
-  if [["$1" -eq "$2"] -a ["$3" -eq "master"]]; then
+  if [ ["$1" -eq "$2"] -a ["$3" -eq "master"] ]; then
     return 1
   else
     return 0
@@ -52,18 +44,20 @@ function run_job {
 
 trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 export PIP_DOWNLOAD_CACHE="~/.pip/unittest_runner_cache"
-#nova_master=is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"
-nova_master=0
 return_code=0
 tests_run=0
-if [ $nova_master -ne 1 ]; then
+return_msg=""
+
+#nova_master=is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"
+#nova_master=0
+if ! is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"; then
+#if [ $nova_master -ne 1 ]; then
   tests_run=1
   cd $TMP_DIR/nova_source
-  #./run_tests.sh -V -f 1>nova.out.log
+  ./run_tests.sh -V -f 1>nova.out.log
   nova_status=$?
   ./run_tests.sh -V -p 1>nova_pep8.out.log
   nova_pep8_status=$?
-  return_msg="Depth charge hit: "
   if [ "$nova_status" -ne "0" ]; then
      return_code=1
      return_msg="${return_msg}nova tests failed "
@@ -77,6 +71,52 @@ if [ $nova_master -ne 1 ]; then
   fi
 fi
 
+if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
+#glance_master=is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"
+#glance_master=0
+#if [ $glance_master -ne 1 ]; then
+  tests_run=1
+  cd $TMP_DIR/glance_source
+  ./run_tests.sh -V -f 1>glance.out.log
+  glance_status=$?
+  ./run_tests.sh -V -p 1>glance_pep8.out.log
+  glance_pep8_status=$?
+  if [ "$glance_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}glance tests failed "
+     grep "Creating venv... done." -m 1 -h -A`wc -l glance.out.log | cut -d' ' -f1` glance.out.log
+  fi
+  
+  if [ "$glance_pep8_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}glance pep8 failed "
+     grep "Running pep8" -m 1 -h -A`wc -l glance_pep8.out.log | cut -d' ' -f1` glance_pep8.out.log
+  fi
+fi
+
+if ! is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"; then
+#keystone_master=is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"
+#keystone_master=0
+#if [ $keystone_master -ne 1 ]; then
+  tests_run=1
+  cd $TMP_DIR/keystone_source
+  ./run_tests.sh -V -f 1>keystone.out.log
+  keystone_status=$?
+  ./run_tests.sh -V -p 1>keystone_pep8.out.log
+  keystone_pep8_status=$?
+  if [ "$keystone_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}keystone tests failed "
+     grep "Creating venv... done." -m 1 -h -A`wc -l keystone.out.log | cut -d' ' -f1` keystone.out.log
+  fi
+  
+  if [ "$keystone_pep8_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}keystone pep8 failed "
+     grep "Running pep8" -m 1 -h -A`wc -l keystone_pep8.out.log | cut -d' ' -f1` keystone_pep8.out.log
+  fi
+fi
+
 if [ $return_code -ne 0 ]; then
   #return_msg=$return_code
   fail "$return_msg"
@@ -85,16 +125,6 @@ fi
 if [ $tests_run -eq 0 ]; then
   FAILURE_MSG="Warning: no unit tests run!"
 fi
-#cd $TMP_DIR/glance_source
-#./run_tests.sh -V -f
-#glance_status=$?
-#./run_tests.sh -V -p
-#glance_pep8_status=$?
-#cd $TMP_DIR/keystone_source
-#./run_tests.sh -V -f
-#keystone_status=$?
-#./run_tests.sh -V -p
-#keystone_pep8_status=$?
 }
 
 
