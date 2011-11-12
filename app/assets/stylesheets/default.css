@@ -44,6 +44,10 @@ img.check_image {
 img.status_image {
 }
 
+textarea {
+  font-family: terminal, "VT-100", monospace;
+}
+
 #header_div {
     float: left;
     margin-bottom: 0.2em;

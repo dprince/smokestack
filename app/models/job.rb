@@ -46,15 +46,17 @@ class Job < ActiveRecord::Base
       chef_installer_file.write(chef_installer_text)
       chef_installer_file.flush
 
-      #nodes.json
-      nodes_json_file=Tempfile.new('smokestack_nodes_json')
-      nodes_json_file.write(job.config_template.nodes_json)
-      nodes_json_file.flush
+      unless job.config_template.nil?
+        #nodes.json
+        nodes_json_file=Tempfile.new('smokestack_nodes_json')
+        nodes_json_file.write(job.config_template.nodes_json)
+        nodes_json_file.flush
 
-      #server_group.json
-      server_group_json_file=Tempfile.new('smokestack_server_group_json')
-      server_group_json_file.write(job.config_template.server_group_json)
-      server_group_json_file.flush
+        #server_group.json
+        server_group_json_file=Tempfile.new('smokestack_server_group_json')
+        server_group_json_file.write(job.config_template.server_group_json)
+        server_group_json_file.flush
+      end
 
       nova_builder=job.job_group.smoke_test.nova_package_builder
       nova_packager_url=nova_builder.packager_url

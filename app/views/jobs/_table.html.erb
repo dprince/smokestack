@@ -31,7 +31,9 @@
         <td>&nbsp;</td>
       <% end %>
     <% end %>
-    <% if job.config_template then %>
+    <% if job.type == "JobUnitTester" then %>
+        <td>Unit Tests</td>
+    <% elsif job.config_template then %>
         <td><%= raw(chop_for_html(job.config_template.name, 40)) %></td>
     <% else %>
         <td>&nbsp;</td>

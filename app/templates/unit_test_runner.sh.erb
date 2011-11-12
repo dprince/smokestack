@@ -1,0 +1,102 @@
+#!/bin/bash
+MASTER_NOVA_URL="git://github.com/openstack/nova.git"
+TMP_DIR=$(mktemp -d)
+#
+##Global Chef settings
+#export CHEF_TIMEOUT=900
+#export CHEF_RESTART_ON_FAILURE="true"
+#
+## Log to the job log and stdout
+function fail {
+	local MSG=$1
+	echo "FAILURE_MSG=$MSG"
+	exit 1
+}
+
+function setup {
+	cd $TMP_DIR
+	if [ -n "$NOVA_URL" ]; then
+		if [[ ${NOVA_URL:0:2} == "lp" ]]; then
+			get_nova_source_bzr
+		else	
+			get_nova_source_git
+		fi
+	fi
+
+	if [ -n "$KEYSTONE_URL" ]; then
+		if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
+			get_keystone_source_bzr
+		else	
+			get_keystone_source_git
+		fi
+	fi
+
+	if [ -n "$GLANCE_URL" ]; then
+		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
+			get_glance_source_bzr
+		else	
+			get_glance_source_git
+		fi
+	fi
+}
+
+function is_master {
+  if [["$1" -eq "$2"] -a ["$3" -eq "master"]]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+function run_job {
+
+trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+export PIP_DOWNLOAD_CACHE="~/.pip/unittest_runner_cache"
+#nova_master=is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"
+nova_master=0
+return_code=0
+tests_run=0
+if [ $nova_master -ne 1 ]; then
+  tests_run=1
+  cd $TMP_DIR/nova_source
+  #./run_tests.sh -V -f 1>nova.out.log
+  nova_status=$?
+  ./run_tests.sh -V -p 1>nova_pep8.out.log
+  nova_pep8_status=$?
+  return_msg="Depth charge hit: "
+  if [ "$nova_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}nova tests failed "
+     grep "Creating venv... done." -m 1 -h -A`wc -l nova.out.log | cut -d' ' -f1` nova.out.log
+  fi
+  
+  if [ "$nova_pep8_status" -ne "0" ]; then
+     return_code=1
+     return_msg="${return_msg}nova pep8 failed "
+     grep "Running pep8" -m 1 -h -A`wc -l nova_pep8.out.log | cut -d' ' -f1` nova_pep8.out.log
+  fi
+fi
+
+if [ $return_code -ne 0 ]; then
+  #return_msg=$return_code
+  fail "$return_msg"
+fi
+
+if [ $tests_run -eq 0 ]; then
+  FAILURE_MSG="Warning: no unit tests run!"
+fi
+#cd $TMP_DIR/glance_source
+#./run_tests.sh -V -f
+#glance_status=$?
+#./run_tests.sh -V -p
+#glance_pep8_status=$?
+#cd $TMP_DIR/keystone_source
+#./run_tests.sh -V -f
+#keystone_status=$?
+#./run_tests.sh -V -p
+#keystone_pep8_status=$?
+}
+
+
+setup
+run_job

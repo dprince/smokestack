@@ -137,7 +137,7 @@
     <% end %>
 
 </div>
-<div style="float: left;">
+<div style="float: left; margin-right: 200px;">
 <b>Test Suites:</b><br/>
 
     <% TestSuite.find(:all).each do |suite| %>
@@ -145,6 +145,10 @@
          <%= suite.description %><br/>
     <% end %>
 
+</div>
+<div style="float: left;">
+<b>Miscellaneous:</b><br/>
+    <%= f.check_box :unit_tests %>Unit tests
 </div>
 </div>
 <% end %>
