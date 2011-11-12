@@ -22,15 +22,16 @@ class Job < ActiveRecord::Base
     )
   end
 
-  def self.run_job(job, script_text=nil)
+  def self.run_job(job, template_name="vpc_runner.sh.erb", script_text=nil)
     job.update_attribute(:status, "Running")
 
     begin
 
       if script_text.nil?
-        template = File.read(File.join(Rails.root, "app", "models", "vpc_runner.sh.erb"))
+        script_text = File.read(File.join(Rails.root, "app", "templates", "common.sh"))
+        template = File.read(File.join(Rails.root, "app", "templates", template_name))
         eruby = Erubis::Eruby.new(template)
-        script_text=eruby.result(:job => job)
+        script_text += eruby.result(:job => job)
       end
 
       script_file=Tempfile.new('smokestack')
@@ -38,7 +39,7 @@ class Job < ActiveRecord::Base
       script_file.flush
 
       #chef_installer.yml
-      chef_template = File.read(File.join(Rails.root, "app", "models", "chef_installer.yml.erb"))
+      chef_template = File.read(File.join(Rails.root, "app", "templates", "chef_installer.yml.erb"))
       eruby = Erubis::Eruby.new(chef_template)
       chef_installer_text=eruby.result(:job => job)
       chef_installer_file=Tempfile.new('smokestack_chef')
