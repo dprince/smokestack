@@ -26,11 +26,16 @@ class SmokeTest < ActiveRecord::Base
   validate :handle_validate
   def handle_validate
     retval=true
-    if self.config_templates.size == 0 then
-      errors.add(:base, "At least one configuration must be selected.")
-      retval=false
-    end
-    if self.test_suites.size == 0 then
+    if self.config_templates.size > 0 or self.test_suites.size > 0 then
+      if self.config_templates.size == 0 then
+        errors.add(:base, "At least one configuration must be selected.")
+        retval=false
+      end
+      if self.test_suites.size == 0 then
+        errors.add(:base, "At least one test suite must be selected.")
+        retval=false
+      end
+    elsif not self.unit_tests
       errors.add(:base, "At least one test suite must be selected.")
       retval=false
     end

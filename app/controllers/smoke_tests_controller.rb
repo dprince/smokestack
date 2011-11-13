@@ -78,8 +78,14 @@ class SmokeTestsController < ApplicationController
   def update
     @smoke_test = SmokeTest.find(params[:id])
 
+    if not params[:smoke_test][:test_suite_ids] and not params[:smoke_test][:config_templates]
+      @smoke_test.config_templates.clear
+      @smoke_test.test_suites.clear
+    end
     respond_to do |format|
       if @smoke_test.update_attributes(params[:smoke_test])
+
+        @smoke_test.test_suites.clear if @smoke_test.test_suites.size == 0
         format.html { redirect_to(@smoke_test, :notice => 'Smoke test was successfully updated.') }
         format.json  { head :ok }
         format.xml  { head :ok }

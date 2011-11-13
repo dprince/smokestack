@@ -1,0 +1,117 @@
+MASTER_NOVA_URL="<%= ENV['NOVA_GIT_MASTER'] %>"
+MASTER_GLANCE_URL="<%= ENV['GLANCE_GIT_MASTER'] %>"
+MASTER_KEYSTONE_URL="<%= ENV['KEYSTONE_GIT_MASTER'] %>"
+
+TMP_DIR=$(mktemp -d)
+
+function is_master {
+  local PROJ_URL=$1
+  local MASTER_URL=$2
+  local BRANCH=$3
+  [ "$PROJ_URL" == "$MASTER_URL" ] && [ "$BRANCH" == "master" ]
+}
+
+function line_count {
+local FILENAME=$1
+echo "$(wc -l $FILENAME | cut -d' ' -f1)"
+}
+
+function run_job {
+
+trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+export PIP_DOWNLOAD_CACHE="~/.pip/unittest_runner_cache"
+local RETVAL=0
+local TESTS_RUN=0
+local MSG=""
+cd $TMP_DIR
+
+if ! is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"; then
+  TESTS_RUN=1
+  if [ -n "$NOVA_URL" ]; then
+    if [[ ${NOVA_URL:0:2} == "lp" ]]; then
+      get_nova_source_bzr
+    else
+      get_nova_source_git
+    fi
+  fi
+  cd $TMP_DIR/nova_source
+  ./run_tests.sh -V -f &> nova.out.log
+  local NOVA_STATUS=$?
+  ./run_tests.sh -V -p &> nova_pep8.out.log
+  local NOVA_PEP8_STATUS=$?
+  if [ "$NOVA_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Nova tests failed. "
+     grep "Creating venv... done." -m 1 -h -A$(line_count 'nova.out.log') nova.out.log
+  fi
+  if [ "$NOVA_PEP8_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Nova pep8 failed. "
+     grep "Running pep8" -m 1 -h -A$(line_count 'nova_pep8.out.log') nova_pep8.out.log
+  fi
+fi
+
+if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
+
+  TESTS_RUN=1
+  if [ -n "$GLANCE_URL" ]; then
+    if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
+      get_glance_source_bzr
+    else
+      get_glance_source_git
+    fi
+  fi
+  cd $TMP_DIR/glance_source
+  ./run_tests.sh -V -f &> glance.out.log
+  local GLANCE_STATUS=$?
+  ./run_tests.sh -V -p &> glance_pep8.out.log
+  local GLANCE_PEP8_STATUS=$?
+  if [ "$GLANCE_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Glance tests failed. "
+     grep "Creating venv... done." -m 1 -h -A$(line_count 'glance.out.log') glance.out.log
+  fi
+  if [ "$GLANCE_PEP8_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Glance pep8 failed. "
+     grep "Running pep8" -m 1 -h -A$(line_count 'glance_pep8.out.log') glance_pep8.out.log
+  fi
+
+fi
+
+if ! is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"; then
+  TESTS_RUN=1
+  if [ -n "$KEYSTONE_URL" ]; then
+    if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
+      get_keystone_source_bzr
+    else
+      get_keystone_source_git
+    fi
+  fi
+  cd $TMP_DIR/keystone_source
+  ./run_tests.sh -V -f &> keystone.out.log
+  local KEYSTONE_STATUS=$?
+  ./run_tests.sh -V -p &> keystone_pep8.out.log
+  local KEYSTONE_PEP8_STATUS=$?
+  if [ "$KEYSTONE_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Keystone tests failed. "
+     grep "Creating venv... done." -m 1 -h -A$(line_count 'keystone.out.log') keystone.out.log
+  fi
+  if [ "$KEYSTONE_PEP8_STATUS" -ne "0" ]; then
+     RETVAL=1
+     MSG="${MSG}Keystone pep8 failed. "
+     grep "Running pep8" -m 1 -h -A$(line_count 'keystone_pep8.out.log') keystone_pep8.out.log
+  fi
+fi
+
+if [ $RETVAL -ne 0 ]; then
+  fail "$MSG"
+fi
+
+if [ $TESTS_RUN -eq 0 ]; then
+  echo "Warning: no unit tests ran!"
+fi
+}
+
+run_job

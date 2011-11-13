@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 19) do
+ActiveRecord::Schema.define(:version => 21) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                 :null => false
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(:version => 19) do
     t.datetime "updated_at"
     t.string   "glance_revision"
     t.integer  "job_group_id",                                                    :null => false
-    t.integer  "config_template_id",                                              :null => false
+    t.integer  "config_template_id"
     t.string   "type",                                     :default => "JobVPC"
     t.string   "keystone_revision"
   end
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 19) do
     t.string   "status",      :default => "Pending"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "unit_tests",  :default => true
   end
 
   create_table "smoke_tests_test_suites", :id => false, :force => true do |t|

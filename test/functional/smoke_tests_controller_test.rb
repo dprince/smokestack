@@ -107,7 +107,8 @@ class SmokeTestsControllerTest < ActionController::TestCase
   test "should run job" do
     login_as(:bob)
     AsyncExec.jobs.clear
-    assert_difference('Job.count') do
+    # 2 jobs (one unit test and one functional)
+    assert_difference('Job.count', 2) do
       post :run_jobs, :id => @smoke_test.id
     end
     assert_not_nil AsyncExec.jobs[JobVPC]

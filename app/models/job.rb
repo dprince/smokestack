@@ -38,7 +38,7 @@ class Job < ActiveRecord::Base
       script_file.write(script_text)
       script_file.flush
 
-        #chef_installer.yml
+      #chef_installer.yml
       chef_installer_text = ""
       unless job.config_template.nil?
         chef_template = File.read(File.join(Rails.root, "app", "templates", "chef_installer.yml.erb"))

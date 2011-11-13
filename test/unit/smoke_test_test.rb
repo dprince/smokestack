@@ -17,11 +17,12 @@ class SmokeTestTest < ActiveSupport::TestCase
     assert_equal 1, smoke_test.config_templates.count
   end
 
-  test "create fails without config template" do
+  test "create with only unit tests" do
     smoke_test = SmokeTest.create(
-        :description => "Nova trunk"
+        :description => "Nova trunk",
+        :unit_tests => true
     )
-    assert_equal false, smoke_test.valid?
+    assert_equal true, smoke_test.valid?
   end
 
   test "create fails without description" do
