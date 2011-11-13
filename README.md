@@ -4,15 +4,21 @@ WebUI to help smoke test the OpenStack
 
 ## Description
 
-A web application UI and REST API to run functional/integration smoke tests
-on the OpenStack. Uses Chef VPC Toolkit projects like openstack_vpc to spin 
-up groups of servers in the cloud for testing.
+A web application with a REST based HTTP interface to help smoke test the OpenStack. SmokeStack is focused on integration testing of OpenStack services and currently supports Nova, Keystone, and Glance. SmokeStack is built on:
+
+* Rails 3.1
+* Resque: a redis backed job queue
+* Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well. (add more job runners for: PXE, Crowbar, etc.)
+* Configuration management to install and configure everything (Chef!)
+* Packages to install software (currently supports Ubuntu)
+
+For more information and examples see the wiki: http://wiki.openstack.org/smokestack
 
 ## Installation
 
-Requires a Ruby, Rubygems, and Ruby on Rails 3.0+.
+Requires Ruby, Rubygems, and Ruby on Rails 3.1+.
 
-    gem install rails -v3.0
+    gem install rails -v3.1.1
 
 The application was developed with MySQL. The following gems are required:
 
@@ -28,7 +34,7 @@ Unpack the rails app and run the following commands to create the database.
 Start some linux workers to configure Linux machines:
 
     mkdir tmp/pids
-    rake resque:workers QUEUE=job COUNT=3
+    rake resque:workers QUEUE=vpc COUNT=3
 
 Start the API server:
 
@@ -53,7 +59,7 @@ At this point the web application should be running at http://localhost:3000.
 
     # setup vpc
     ssh-keygen # don't use passphrase
-    # FIXME(ja) - details on creating .chef_vpc_toolkit.conf
+    # FIXME - add details on creating .chef_vpc_toolkit.conf for running VPC jobs
 
     # run under screen
     sudo apt-get install screen
