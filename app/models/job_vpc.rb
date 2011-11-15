@@ -2,9 +2,9 @@ class JobVPC < Job
 
   @queue=:vpc
 
-  def self.perform(id, script_text=nil)
+  def self.perform(id)
     job=JobVPC.find(id)
-    JobVPC.run_job(job, script_text)
+    JobVPC.run_job(job)
   end
 
   after_create :handle_after_create

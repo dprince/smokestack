@@ -2,9 +2,9 @@ class JobXenHybrid < Job
 
   @queue=:xen
 
-  def self.perform(id, script_text=nil)
+  def self.perform(id)
     job=JobXenHybrid.find(id)
-    self.run_job(job, script_text)
+    self.run_job(job)
   end
 
   after_create :handle_after_create
