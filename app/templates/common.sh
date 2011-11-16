@@ -74,7 +74,7 @@ function get_nova_source_git {
 	echo "NOVA_REVISION=$NOVA_REVISION"
 
 	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
-		git merge master || fail "Failed to merge master."
+		git rebase master || fail "Failed to rebase master."
 	fi
 
 	popd
@@ -126,7 +126,7 @@ function get_keystone_source_git {
 	echo "KEYSTONE_REVISION=$KEYSTONE_REVISION"
 
 	if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
-		git merge master || fail "Failed to merge master."
+		git rebase master || fail "Failed to rebase master."
 	fi
 
 	popd
@@ -177,7 +177,7 @@ function get_glance_source_git {
 	echo "GLANCE_REVISION=$GLANCE_REVISION"
 
 	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
-		git merge master || fail "Failed to merge master."
+		git rebase master || fail "Failed to rebase master."
 	fi
 
     popd
