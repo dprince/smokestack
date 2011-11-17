@@ -123,8 +123,8 @@ function config_template_table_selectors() {
 
             $("#config-templates-dialog").dialog({
                 modal: true,
-                height: 500,
-                width: 600,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
                 buttons: {
                     Save: function() { config_template_create_or_edit('PUT'); }
                 },
@@ -149,8 +149,8 @@ function config_template_table_selectors() {
 
             $("#config-templates-dialog").dialog({
                 modal: true,
-                height: 400,
-                width: 600,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
                 buttons: {
                     Close: function() {
                         $(this).dialog('close');
