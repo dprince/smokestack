@@ -39,6 +39,6 @@ ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 # These get used if the smoke tests don't specify a custom packager URL
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
-ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~dan-prince/keystone/ubuntu-keystone-nodoc"
+ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubuntu"
 
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
