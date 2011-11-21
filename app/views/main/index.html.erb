@@ -27,6 +27,26 @@ $(document).ready(function() {
     login_selectors();
     change_password_selector();
 
+    <% if @go %>
+         $.get("<%= @go %>", function(html_snippet) {
+
+           $("#go-dialog").html(
+                html_snippet
+           );
+
+            $("#go-dialog").dialog({
+                modal: true,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
+            });
+
+         });
+    <% end %>
+
 });
 
 </script>
@@ -42,6 +62,7 @@ $(document).ready(function() {
 <div id="users-dialog"></div>
 <div id="config-templates-dialog"></div>
 <div id="change-password-dialog"></div>
+<div id="go-dialog"></div>
 
 <div id="header_div"><a href="https://github.com/dprince/smokestack" title="Fork me"><img src="assets/smokestack-logo.png" /></a></div>
 <%
