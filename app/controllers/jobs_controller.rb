@@ -5,7 +5,10 @@ class JobsController < ApplicationController
   # GET /jobs
   # GET /jobs.xml
   def index
-    @jobs = Job.find(:all, :select => "id, status, type, job_group_id, nova_revision, glance_revision, keystone_revision, msg, config_template_id, created_at, updated_at", :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC")
+
+    limit=params[:limit].nil? ? 50 : params[:limit]
+
+    @jobs = Job.find(:all, :select => "id, status, type, job_group_id, nova_revision, glance_revision, keystone_revision, msg, config_template_id, created_at, updated_at", :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC", :limit => limit)
 
     if params[:table_only] then
       render(:partial => "table", :locals => {:show_updated_at => false, :show_description => true})
