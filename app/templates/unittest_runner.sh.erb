@@ -43,6 +43,9 @@ if ! is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"; then
      RETVAL=1
      MSG="${MSG}Nova tests failed. "
      grep "Creating venv... done." -m 1 -h -A$(line_count 'nova.out.log') nova.out.log
+     if [ $? -ne 0 ]; then
+        cat nova.out.log
+     fi
   fi
   if [ "$NOVA_PEP8_STATUS" -ne "0" ]; then
      RETVAL=1
@@ -70,6 +73,9 @@ if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
      RETVAL=1
      MSG="${MSG}Glance tests failed. "
      grep "Creating venv... done." -m 1 -h -A$(line_count 'glance.out.log') glance.out.log
+     if [ $? -ne 0 ]; then
+        cat glance.out.log
+     fi
   fi
   if [ "$GLANCE_PEP8_STATUS" -ne "0" ]; then
      RETVAL=1
@@ -97,6 +103,9 @@ if ! is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"; then
      RETVAL=1
      MSG="${MSG}Keystone tests failed. "
      grep "Creating venv... done." -m 1 -h -A$(line_count 'keystone.out.log') keystone.out.log
+     if [ $? -ne 0 ]; then
+        cat keystone.out.log
+     fi
   fi
   if [ "$KEYSTONE_PEP8_STATUS" -ne "0" ]; then
      RETVAL=1
