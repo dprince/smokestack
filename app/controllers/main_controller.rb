@@ -7,10 +7,9 @@ class MainController < ApplicationController
       end
   end
 
-  # GET /main
-  def main
+  def index
     respond_to do |format|
-      format.html # main.html.erb
+      format.html # index.html.erb
     end
   end
 
