@@ -17,9 +17,7 @@ class Job < ActiveRecord::Base
   end
 
   def handle_after_save
-    self.job_group.update_attributes(
-        :status => self.status
-    )
+    self.job_group.update_status
   end
 
   def self.run_job(job, template_name="vpc_runner.sh.erb", script_text=nil)

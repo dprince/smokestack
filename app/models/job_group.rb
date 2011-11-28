@@ -40,4 +40,22 @@ class JobGroup < ActiveRecord::Base
     end
   end
 
+  def update_status
+    status = 'Success'
+    count = 0
+    self.jobs.each do |job|
+      count += 1
+      if job.status == 'Failed' then
+        status = 'Failed'
+        break
+      end
+      if job.status == 'Pending' then
+        status = 'Pending'
+      end
+    end
+    if count > 0
+      self.update_attributes(:status => status)
+    end
+  end
+
 end
