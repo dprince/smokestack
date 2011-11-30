@@ -8,6 +8,14 @@
     }
     );
 
+    $("a.smoke-test-cookbook-url").button({
+        icons: {
+            primary: 'ui-icon-gear'
+        },
+        text: true
+    }
+    );
+
 </script>
 
 <div id="smoke-test-error-messages" class="ui-widget" style="display: none">
@@ -39,7 +47,22 @@
   <div class="field">
     <%= f.label :description %>&nbsp;(Ex. Nova fix_api_extensions)<br/>
     <%= f.text_field :description %>
+
+<% if @smoke_test.cookbook_url.blank? %>
+  <% cookbook_url_div = "hide" %>
+   <a style="float: right" title="Override Chef Cookbook URL" class="smoke-test-cookbook-url" onclick='$("#cookbook-url-div").toggle(); $(this).hide();'>Override Chef Cookbook URL</a>
+<% else %>
+  <% cookbook_url_div = "" %>
+<% end %>
+
   </div>
+
+  <div id="cookbook-url-div" class="field <%= cookbook_url_div %>">
+    <%= f.label 'Cookbook URL (optional/override)' %>&nbsp;<br/>
+    <%= f.text_field :cookbook_url, :size => 60 %>
+  </div>
+
+
 <br/>
 <table class="data" width="100%">
 <tr class="header">

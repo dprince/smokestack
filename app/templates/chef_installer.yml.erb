@@ -1,7 +1,11 @@
 # Options for the Chef Installer.
 
 # Public cookbook repo. (Full URL)
+<% if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then %>
+chef_cookbook_repos: <%= job.job_group.smoke_test.cookbook_url %>
+<% else %>
 chef_cookbook_repos: <%= job.config_template.cookbook_repo_url %>
+<% end %>
 
 # Shared Chef cookbook repository hosted in Rackspace Cloud Files.
 #chef_cookbook_repos: CookbookRepos/cookbook-repo1.tar.gz
