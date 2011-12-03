@@ -29,8 +29,8 @@ class JobsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json  { render :json => @job }
-      format.xml  { render :xml => @job }
+      format.json  { render :json => @job, :include => :job_group }
+      format.xml  { render :xml => @job, :include => :job_group }
     end
   end
 
