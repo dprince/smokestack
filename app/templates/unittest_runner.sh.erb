@@ -16,6 +16,18 @@ local FILENAME=$1
 echo "$(wc -l $FILENAME | cut -d' ' -f1)"
 }
 
+function handle_venv_results {
+  local PROJECT=$1
+  local FILENAME=$2
+  SEARCH_STR="$PROJECT development environment setup is complete"
+  grep -q "$SEARCH_STR" $FILENAME
+  if [ $? -eq 0 ]; then # print from SEARCH_STR to end of the file
+    perl -ne "print if /$SEARCH_STR/ .. 0" $FILENAME
+  else
+    cat $FILENAME
+  fi
+}
+
 function run_job {
 
 trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
@@ -40,17 +52,14 @@ if ! is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"; then
   ./run_tests.sh -V -p &> nova_pep8.out.log
   local NOVA_PEP8_STATUS=$?
   if [ "$NOVA_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Nova tests failed. "
-     grep "Creating venv... done." -m 1 -h -A$(line_count 'nova.out.log') nova.out.log
-     if [ $? -ne 0 ]; then
-        cat nova.out.log
-     fi
+    RETVAL=1
+    MSG="${MSG}Nova tests failed. "
+    handle_venv_results Nova nova.out.log
   fi
   if [ "$NOVA_PEP8_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Nova pep8 failed. "
-     grep "Running pep8" -m 1 -h -A$(line_count 'nova_pep8.out.log') nova_pep8.out.log
+    RETVAL=1
+    MSG="${MSG}Nova pep8 failed. "
+    cat nova_pep8.out.log
   fi
 fi
 
@@ -72,17 +81,14 @@ if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
   ./run_tests.sh -V -p &> glance_pep8.out.log
   local GLANCE_PEP8_STATUS=$?
   if [ "$GLANCE_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Glance tests failed. "
-     grep "Creating venv... done." -m 1 -h -A$(line_count 'glance.out.log') glance.out.log
-     if [ $? -ne 0 ]; then
-        cat glance.out.log
-     fi
+    RETVAL=1
+    MSG="${MSG}Glance tests failed. "
+    handle_venv_results Glance glance.out.log
   fi
   if [ "$GLANCE_PEP8_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Glance pep8 failed. "
-     grep "Running pep8" -m 1 -h -A$(line_count 'glance_pep8.out.log') glance_pep8.out.log
+    RETVAL=1
+    MSG="${MSG}Glance pep8 failed. "
+    cat glance_pep8.out.log
   fi
 
 fi
@@ -102,17 +108,14 @@ if ! is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"; then
   ./run_tests.sh -V -p &> keystone_pep8.out.log
   local KEYSTONE_PEP8_STATUS=$?
   if [ "$KEYSTONE_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Keystone tests failed. "
-     grep "Creating venv... done." -m 1 -h -A$(line_count 'keystone.out.log') keystone.out.log
-     if [ $? -ne 0 ]; then
-        cat keystone.out.log
-     fi
+    RETVAL=1
+    MSG="${MSG}Keystone tests failed. "
+    handle_venv_results Keystone keystone.out.log
   fi
   if [ "$KEYSTONE_PEP8_STATUS" -ne "0" ]; then
-     RETVAL=1
-     MSG="${MSG}Keystone pep8 failed. "
-     grep "Running pep8" -m 1 -h -A$(line_count 'keystone_pep8.out.log') keystone_pep8.out.log
+    RETVAL=1
+    MSG="${MSG}Keystone pep8 failed. "
+    cat keystone_pep8.out.log
   fi
 fi
 
