@@ -65,6 +65,8 @@ if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
     fi
   fi
   cd $TMP_DIR/glance_source
+  #NOTE: temp fix for "File exists: '/tmp/glance-tests'" errors
+  rm -Rf /tmp/glance-tests*
   ./run_tests.sh -V -f &> glance.out.log
   local GLANCE_STATUS=$?
   ./run_tests.sh -V -p &> glance_pep8.out.log
