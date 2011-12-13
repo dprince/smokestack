@@ -19,7 +19,7 @@ echo "$(wc -l $FILENAME | cut -d' ' -f1)"
 function handle_venv_results {
   local PROJECT=$1
   local FILENAME=$2
-  SEARCH_STR="$PROJECT development environment setup is complete"
+  local SEARCH_STR="$PROJECT development environment setup is complete"
   grep -q "$SEARCH_STR" $FILENAME
   if [ $? -eq 0 ]; then # print from SEARCH_STR to end of the file
     perl -ne "print if /$SEARCH_STR/ .. 0" $FILENAME
