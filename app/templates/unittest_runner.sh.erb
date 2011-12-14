@@ -11,11 +11,6 @@ function is_master {
   [ "$PROJ_URL" == "$MASTER_URL" ] && [ "$BRANCH" == "master" ]
 }
 
-function line_count {
-local FILENAME=$1
-echo "$(wc -l $FILENAME | cut -d' ' -f1)"
-}
-
 function handle_venv_results {
   local PROJECT=$1
   local FILENAME=$2
