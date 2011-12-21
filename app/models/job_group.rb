@@ -3,7 +3,7 @@ class JobGroup < ActiveRecord::Base
   validates_presence_of :status
   belongs_to :smoke_test
   has_many :jobs
-  has_one :most_recent_job, :class_name => "Job", :order => 'created_at DESC'
+  has_one :most_recent_job, :class_name => "Job", :order => 'id DESC'
 
   after_initialize :handle_after_init
   def handle_after_init
@@ -14,9 +14,11 @@ class JobGroup < ActiveRecord::Base
 
   after_save :handle_after_save
   def handle_after_save
-    self.smoke_test.update_attributes(
-        :status => self.status
-    )
+    if JobGroup.count(:all, :conditions => ["id > ? AND smoke_test_id = ?", self.id, self.smoke_test_id]) == 0 then
+      self.smoke_test.update_attributes(
+          :status => self.status
+      )
+    end
   end
 
   before_destroy :handle_before_destroy
@@ -38,6 +40,9 @@ class JobGroup < ActiveRecord::Base
     if smoke_test.unit_tests then
       JobUnitTester.create(:job_group => self)
     end
+    self.smoke_test.update_attributes(
+        :status => self.status
+    )
   end
 
   def update_status
@@ -49,7 +54,9 @@ class JobGroup < ActiveRecord::Base
         status = 'Failed'
         break
       end
-      if job.status == 'Pending' then
+      if job.status == 'Running' then
+        status = 'Running'
+      elsif job.status == 'Pending' then
         status = 'Pending'
       end
     end

@@ -22,6 +22,7 @@ class SmokeTestTest < ActiveSupport::TestCase
         :description => "Nova trunk",
         :unit_tests => true
     )
+    assert_equal true, smoke_test.unit_tests?
     assert_equal true, smoke_test.valid?
   end
 
@@ -37,6 +38,72 @@ class SmokeTestTest < ActiveSupport::TestCase
     id=smoke_test.id
     smoke_test.destroy
     assert_equal 0, JobGroup.count(:conditions => ["smoke_test_id = ?", id])
+  end
+
+  test "run jobs changes status" do
+    smoke_test = create_smoke_test
+    smoke_test.update_attributes(:status => "")
+    job_group = JobGroup.create(
+      :smoke_test => smoke_test
+    )
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Pending", smoke_test.status
+
+    #status success 
+    job_group = JobGroup.find(job_group.id)
+    job_group.jobs.each do |job|
+      job.update_attributes(:status => "Success")
+    end
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Success", smoke_test.status
+
+    #status failed
+    job_group = JobGroup.find(job_group.id)
+    job_group.jobs.each do |job|
+      job.update_attributes(:status => "Failed")
+    end
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Failed", smoke_test.status
+
+    #new job group
+    job_group2 = JobGroup.create(
+      :smoke_test => smoke_test
+    )
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Pending", smoke_test.status
+
+    #status success 
+    job_group2 = JobGroup.find(job_group2.id)
+    job_group2.jobs.each do |job|
+      job.update_attributes(:status => "Success")
+    end
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Success", smoke_test.status
+
+    #initial job group shouldn't change status
+    job_group = JobGroup.find(job_group.id)
+    job_group.jobs.each do |job|
+      job.update_attributes(:status => "Failed")
+    end
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Success", smoke_test.status
+
+    #status running (single job)
+    job_group2 = JobGroup.find(job_group2.id)
+    job_group2.jobs[0].update_attributes(:status => "Running")
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Running", smoke_test.status
+
+  end
+
+  private
+  def create_smoke_test
+    smoke_test = SmokeTest.create(
+        :description => "Nova trunk",
+        :config_template_ids => [config_templates(:libvirt_psql).id],
+        :test_suite_ids => [test_suites(:ruby_osapi).id],
+        :unit_tests => true
+    )
   end
 
 end
