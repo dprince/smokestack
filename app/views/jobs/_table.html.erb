@@ -50,7 +50,7 @@
     <td><%= raw(chop_for_html(job.msg, 40)) %></td>
     <td align="center">
 <% if session[:user_id] %>
-    <%= form_tag("/jobs/#{job.id}", :method => "PUT", :id => "job-update-form-#{job.id}") do -%>
+    <%= form_tag("/jobs/#{job.id}", :method => "PUT", :id => "job-update-form-#{job.id}") do %>
       <%= check_box_tag "job[approved]", "1", approved?(job), :onchange => "job_update('#{job.id}',$('#job-update-form-#{job.id}').serialize());", :title => "Approved by: #{approved_by(job)}" %>
     <% end -%>
 <% else %>

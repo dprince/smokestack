@@ -22,7 +22,7 @@ class Job < ActiveRecord::Base
   end
 
   def self.run_job(job, template_name="vpc_runner.sh.erb", script_text=nil)
-    job.update_attribute(:status, "Running")
+    job.update_attributes(:status => "Running", :start_time => Time.now)
 
     begin
 
@@ -125,6 +125,8 @@ class Job < ActiveRecord::Base
       job.update_attribute(:msg, e.message)
       job.update_attribute(:status, "Failed")
       raise e
+    ensure
+      job.update_attribute(:finish_time, Time.now)
     end
 
   end

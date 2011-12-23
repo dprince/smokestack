@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(:version => 23) do
     t.string   "type",                                     :default => "JobVPC"
     t.string   "keystone_revision"
     t.integer  "approved_by"
+    t.datetime "start_time"
+    t.datetime "finish_time"
   end
 
   create_table "package_builders", :force => true do |t|
