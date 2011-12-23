@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 22) do
+ActiveRecord::Schema.define(:version => 23) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                 :null => false
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(:version => 22) do
     t.integer  "config_template_id"
     t.string   "type",                                     :default => "JobVPC"
     t.string   "keystone_revision"
+    t.integer  "approved_by"
   end
 
   create_table "package_builders", :force => true do |t|

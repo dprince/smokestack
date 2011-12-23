@@ -16,4 +16,16 @@ module JobsHelper
         return sprintf("%02d:%02d:%02d", hours, minutes, seconds)
     end
 
+    def approved?(job)
+        begin
+            if job.approved_by and job.approved_by > 0 then
+                return true
+            else
+                return false
+            end
+        rescue
+            return false
+        end
+    end
+
 end

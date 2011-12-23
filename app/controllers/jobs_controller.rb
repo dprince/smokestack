@@ -52,6 +52,30 @@ class JobsController < ApplicationController
     end
   end
 
+  # PUT /jobs/1
+  # PUT /jobs/1.xml
+  def update
+    @job = Job.find(params[:id])
+    approved_by = nil
+    if params[:job] and params[:job][:approved] then
+      approved_by = session[:user_id]
+    end
+
+    respond_to do |format|
+      # We only allow the approval to be updated on jobs
+      if Job.update_attribute(:approved_by, approved_by)
+        format.html { redirect_to(@job, :notice => 'Job was successfully created.') }
+        format.json  { render :json => @job, :location => @job }
+        format.xml  { render :xml => @job, :location => @job }
+      else
+        format.html { render :action => "new" }
+        format.json  { render :json => @job.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @job.errors, :status => :unprocessable_entity }
+      end
+    end
+
+  end
+
   # DELETE /jobs/1
   # DELETE /jobs/1.xml
   def destroy
