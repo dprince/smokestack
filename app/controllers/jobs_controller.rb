@@ -8,7 +8,7 @@ class JobsController < ApplicationController
 
     limit=params[:limit].nil? ? 50 : params[:limit]
 
-    @jobs = Job.find(:all, :select => "id, status, type, job_group_id, nova_revision, glance_revision, keystone_revision, msg, config_template_id, created_at, updated_at", :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC", :limit => limit)
+    @jobs = Job.find(:all, :select => "id, status, type, job_group_id, nova_revision, glance_revision, keystone_revision, msg, config_template_id, created_at, updated_at, approved_by", :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC", :limit => limit)
 
     if params[:table_only] then
       render(:partial => "table", :locals => {:show_updated_at => false, :show_description => true})
@@ -34,24 +34,6 @@ class JobsController < ApplicationController
     end
   end
 
-  # POST /jobs
-  # POST /jobs.xml
-  def create
-    @job = Job.new(params[:job])
-
-    respond_to do |format|
-      if @job.save
-        format.html { redirect_to(@job, :notice => 'Job was successfully created.') }
-        format.json  { render :json => @job, :status => :created, :location => @job }
-        format.xml  { render :xml => @job, :status => :created, :location => @job }
-      else
-        format.html { render :action => "new" }
-        format.json  { render :json => @job.errors, :status => :unprocessable_entity }
-        format.xml  { render :xml => @job.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   # PUT /jobs/1
   # PUT /jobs/1.xml
   def update
@@ -63,10 +45,10 @@ class JobsController < ApplicationController
 
     respond_to do |format|
       # We only allow the approval to be updated on jobs
-      if Job.update_attribute(:approved_by, approved_by)
-        format.html { redirect_to(@job, :notice => 'Job was successfully created.') }
-        format.json  { render :json => @job, :location => @job }
-        format.xml  { render :xml => @job, :location => @job }
+      if @job.update_attribute(:approved_by, approved_by)
+        format.html { redirect_to("/jobs/#{@job.id}", :notice => 'Job was successfully created.') }
+        format.json  { render :json => @job }
+        format.xml  { render :xml => @job }
       else
         format.html { render :action => "new" }
         format.json  { render :json => @job.errors, :status => :unprocessable_entity }

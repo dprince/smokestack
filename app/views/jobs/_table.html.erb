@@ -48,10 +48,20 @@
       <td><%= timestamp(job.updated_at.in_time_zone) %></td>
     <% end %>
     <td><%= raw(chop_for_html(job.msg, 40)) %></td>
-    <td>
-<form method="PUT" action="/jobs/#{job.id}">
-      <%= check_box_tag "job[approved]", "1", approved?(job), :onclick => "alert('hi');" %>
-</form>
+    <td align="center">
+<% if session[:user_id] %>
+    <%= form_tag("/jobs/#{job.id}", :method => "PUT", :id => "job-update-form-#{job.id}") do -%>
+      <%= check_box_tag "job[approved]", "1", approved?(job), :onchange => "job_update('#{job.id}',$('#job-update-form-#{job.id}').serialize());", :title => "Approved by: #{approved_by(job)}" %>
+    <% end -%>
+<% else %>
+<font title="Approved by: <%= approved_by(job) %>">
+  <% if approved?(job) %>
+    Yes
+  <% else %>
+    No
+  <% end %>
+</font>
+<% end %>
     </td>
     <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
     <% if show_edit_links %>

@@ -23,6 +23,23 @@ function reload_jobs_table(container) {
 
 }
 
+function job_update(job_id, post_data) {
+
+    $.ajax({
+        url: '/jobs/'+job_id,
+        type: 'PUT',
+        dataType: 'xml',
+        data: post_data,
+        success: function(data) {
+            id=$("id", data).text();
+        },
+        error: function(data) {
+            alert('Error: Failed to update job.');
+        }
+    });
+
+}
+
 function job_table_selectors() {
 
     $("a.job-destroy").button({

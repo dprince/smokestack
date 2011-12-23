@@ -23,19 +23,27 @@ class JobsControllerTest < ActionController::TestCase
     assert_not_nil assigns(:jobs)
   end
 
-  test "should create job" do
+  test "should approve job" do
     login_as(:bob)
-    assert_difference('Job.count') do
-      post :create, :job => @job.attributes
-    end
-
-    assert_redirected_to job_path(assigns(:job))
+    @request.accept = 'text/xml'
+    response=put :update, :id => @job.id, :job => {:approved => true}
+    job = Job.find(@job.id)
+    assert_equal users(:bob).id, job.approved_by
+    assert_response 200
   end
 
-  test "should not create job" do
-    assert_no_difference('Job.count') do
-      post :create, :job => @job.attributes
-    end
+  test "should disapprove job" do
+    login_as(:bob)
+    @request.accept = 'text/xml'
+    response=put :update, :id => @job.id, :job => {:approved => false}
+    job = Job.find(@job.id)
+    assert_nil job.approved_by
+    assert_response 200
+  end
+
+  test "should not update job" do
+    put :update, :id => @job.to_param, :job => {:approved => true}
+    assert_response 302
   end
 
   test "should show job" do

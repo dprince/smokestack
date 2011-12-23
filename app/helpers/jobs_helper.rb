@@ -17,15 +17,15 @@ module JobsHelper
     end
 
     def approved?(job)
-        begin
-            if job.approved_by and job.approved_by > 0 then
-                return true
-            else
-                return false
-            end
-        rescue
+        if job.approved_by and job.approved_by > 0 then
+            return true
+        else
             return false
         end
+    end
+
+    def approved_by(job)
+        approved?(job) ? job.approved_by_user.username : ""
     end
 
 end

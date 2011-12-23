@@ -7,6 +7,7 @@ class Job < ActiveRecord::Base
   validates_presence_of :job_group_id
   belongs_to :job_group
   belongs_to :config_template
+  belongs_to :approved_by_user, :class_name => "User", :foreign_key => "approved_by"
   after_initialize :handle_after_init
   after_save :handle_after_save
 
