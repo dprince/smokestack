@@ -56,7 +56,9 @@ class JobGroup < ActiveRecord::Base
       end
       if job.status == 'Running' then
         status = 'Running'
-      elsif job.status == 'Pending' then
+        break
+      end
+      if job.status == 'Pending' then
         status = 'Pending'
       end
     end

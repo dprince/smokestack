@@ -94,6 +94,12 @@ class SmokeTestTest < ActiveSupport::TestCase
     smoke_test = SmokeTest.find(smoke_test.id)
     assert_equal "Running", smoke_test.status
 
+    #status failed (single job)
+    job_group2 = JobGroup.find(job_group2.id)
+    job_group2.jobs[0].update_attributes(:status => "Failed")
+    smoke_test = SmokeTest.find(smoke_test.id)
+    assert_equal "Failed", smoke_test.status
+
   end
 
   private
