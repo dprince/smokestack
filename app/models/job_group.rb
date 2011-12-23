@@ -48,7 +48,8 @@ class JobGroup < ActiveRecord::Base
   def update_status
     status = 'Success'
     count = 0
-    self.jobs.each do |job|
+    job_group=JobGroup.find(self.id)
+    job_group.jobs.each do |job|
       count += 1
       if job.status == 'Failed' then
         status = 'Failed'
