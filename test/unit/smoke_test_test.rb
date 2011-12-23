@@ -90,7 +90,7 @@ class SmokeTestTest < ActiveSupport::TestCase
 
     #status running (single job)
     job_group2 = JobGroup.find(job_group2.id)
-    job_group2.jobs[0].update_attributes(:status => "Running")
+    job_group2.jobs[1].update_attributes(:status => "Running")
     smoke_test = SmokeTest.find(smoke_test.id)
     assert_equal "Running", smoke_test.status
 

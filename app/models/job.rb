@@ -7,6 +7,7 @@ class Job < ActiveRecord::Base
   validates_presence_of :job_group_id
   belongs_to :job_group
   belongs_to :config_template
+  belongs_to :approved_by_user, :class_name => "User", :foreign_key => "approved_by"
   after_initialize :handle_after_init
   after_save :handle_after_save
 
@@ -21,7 +22,7 @@ class Job < ActiveRecord::Base
   end
 
   def self.run_job(job, template_name="vpc_runner.sh.erb", script_text=nil)
-    job.update_attribute(:status, "Running")
+    job.update_attributes(:status => "Running", :start_time => Time.now)
 
     begin
 
@@ -124,6 +125,8 @@ class Job < ActiveRecord::Base
       job.update_attribute(:msg, e.message)
       job.update_attribute(:status, "Failed")
       raise e
+    ensure
+      job.update_attribute(:finish_time, Time.now)
     end
 
   end

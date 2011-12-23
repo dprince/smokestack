@@ -71,6 +71,7 @@ logout_style=is_user ? "show" : "hide"
 %>
 <div id="login_header">
 <%= form_tag('/auth/logout', :method => :post, :id => "logout-form") %>
+</form>
 
 <a id="login-link" href="/auth" class="login_link <%= login_style %>">Log In</a><a id="logout-link" href="/auth/logout" class="logout_link <%= logout_style %>">Log out</a>/<a id="about_link" href="/about" class="about_link">About</a><br/><a id="change-password-link" href="/users/<%= session[:user_id] %>/password" class="user-password-link <%= logout_style %>">Change Password</a>
 </div>
