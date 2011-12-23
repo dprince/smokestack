@@ -23,7 +23,7 @@
 <% show_edit_links = is_user %>
 
 <% @jobs.each do |job| %>
-  <tr id="job-tr-<%= job.id %>" class="<%= cycle "tr0", "tr1" %>">
+  <tr class="job-tr-<%= job.id %> <%= cycle "tr0", "tr1" %>">
     <td><%= job.id %></td>
     <% if local_assigns[:show_description] %>
       <% if job.job_group.smoke_test then %>
@@ -65,7 +65,7 @@
     </td>
     <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
     <% if show_edit_links %>
-      <td><%= link_to 'Destroy', "/jobs/#{job.id}", :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
+      <td><%= link_to 'Destroy',  {:controller => 'jobs', :action => 'destroy', :id => job.id, :authenticity_token => form_authenticity_token()}, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
     <% end %>
   </tr>
 <% end %>

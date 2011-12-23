@@ -66,16 +66,13 @@ function job_table_selectors() {
             return;
         }
 
-        var post_data = $("#job-delete-form").serialize();
-
         $.ajax({
             url: $(this).attr("href"),
-            type: 'POST',
+            type: 'DELETE',
             dataType: 'xml',
-            data: post_data,
             success: function(data) {
                 id=$("id", data).text();
-                $("#job-tr-"+id).remove();
+                $(".job-tr-"+id).remove();
             },
             error: function(data) {
                 alert('Error: Failed to destroy job.');
