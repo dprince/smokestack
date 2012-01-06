@@ -32,7 +32,7 @@ GEM
       multi_json (~> 1.0)
     arel (2.2.1)
     builder (3.0.0)
-    chef-vpc-toolkit (2.7.1)
+    chef-vpc-toolkit (2.8.1)
       builder
       json
       rake
