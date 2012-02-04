@@ -4,6 +4,15 @@ MASTER_KEYSTONE_URL="<%= ENV['KEYSTONE_GIT_MASTER'] %>"
 
 TMP_DIR=$(mktemp -d)
 
+function override_sudo {
+  # test suites should stub out sudo. If it is called return an exit status.
+  mkdir "$TMP_DIR/bin" && cd "$TMP_DIR/bin"
+  echo "#!/bin/bash" > sudo
+  echo "/bin/false" >> sudo
+  chmod 755 sudo
+  export PATH="$TMP_DIR/bin:$PATH"
+}
+
 function is_master {
   local PROJ_URL=$1
   local MASTER_URL=$2
@@ -26,6 +35,7 @@ function handle_venv_results {
 function run_job {
 
 trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+override_sudo
 export PIP_DOWNLOAD_CACHE="~/.pip/unittest_runner_cache"
 export PIP_USE_MIRRORS=true
 local RETVAL=0
