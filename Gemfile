@@ -10,6 +10,14 @@ gem 'mysql'
 gem 'resque', '1.19.0'
 gem 'chef-vpc-toolkit'
 
+# Gems used only for assets and not required
+# in production environments by default.
+group :assets do
+  gem 'sass-rails',   '~> 3.1.4'
+  gem 'coffee-rails', '~> 3.1.1'
+  gem 'uglifier', '>= 1.0.3'
+end
+
 # Use unicorn as the web server
 # gem 'unicorn'
 
