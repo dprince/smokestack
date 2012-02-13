@@ -246,7 +246,7 @@ fi
 }
 
 setup
-<% if job.type == "JobXenHybrid" %>
+<% if job.type == Job::CHEF_VPC_XEN %>
 run_xen_hybrid_job
 <% else %>
 run_job

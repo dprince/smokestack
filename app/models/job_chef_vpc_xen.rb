@@ -1,12 +1,12 @@
-class JobVPC < Job
+class JobChefVpcXen < Job
 
-  @queue=:vpc
+  @queue=:xen
 
   def self.perform(id)
     5.times do 
       begin
-        job=JobVPC.find(id)
-        JobVPC.run_job(job)
+        job=JobChefVpcXen.find(id)
+        self.run_job(job)
         break
       rescue ActiveRecord::RecordNotFound
         sleep 5
@@ -16,7 +16,7 @@ class JobVPC < Job
 
   after_create :handle_after_create
   def handle_after_create
-    AsyncExec.run_job(JobVPC, self.id)
+    AsyncExec.run_job(JobChefVpcXen, self.id)
   end
 
 end

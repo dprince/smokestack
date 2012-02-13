@@ -4,6 +4,11 @@ require 'open4'
 
 class Job < ActiveRecord::Base
 
+  CHEF_VPC = "Chef Vpc"
+  CHEF_VPC_XEN = "Chef Vpc Xen"
+  PUPPET_VPC = "Puppet Vpc"
+  JOB_TYPES = [CHEF_VPC, CHEF_VPC_XEN, PUPPET_VPC]
+
   validates_presence_of :job_group_id
   belongs_to :job_group
   belongs_to :config_template
@@ -21,7 +26,7 @@ class Job < ActiveRecord::Base
     self.job_group.update_status
   end
 
-  def self.run_job(job, template_name="vpc_runner.sh.erb", script_text=nil)
+  def self.run_job(job, template_name="chef_vpc_runner.sh.erb", script_text=nil)
     job.update_attributes(:status => "Running", :start_time => Time.now)
 
     begin

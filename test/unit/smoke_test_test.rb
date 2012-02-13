@@ -6,6 +6,7 @@ class SmokeTestTest < ActiveSupport::TestCase
   fixtures :test_suites
   fixtures :jobs
   fixtures :job_groups
+  fixtures :smoke_tests
 
   test "create" do
     smoke_test = SmokeTest.create(

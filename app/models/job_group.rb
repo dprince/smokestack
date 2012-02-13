@@ -31,11 +31,7 @@ class JobGroup < ActiveRecord::Base
   after_create :handle_after_create
   def handle_after_create
     smoke_test.config_templates.each do |ct|
-      if ct.job_type == "Xen" then
-        JobXenHybrid.create(:job_group => self, :config_template => ct)
-      elsif ct.job_type == "VPC" then
-        JobVPC.create(:job_group => self, :config_template => ct)
-      end
+      Kernel.const_get('Job'+ct.job_type.gsub(/\s+/, "")).create(:job_group => self, :config_template => ct)
     end
     if smoke_test.unit_tests then
       JobUnitTester.create(:job_group => self)

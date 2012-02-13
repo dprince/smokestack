@@ -12,7 +12,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
   fixtures :jobs
 
   setup do
-    @smoke_test = smoke_tests(:trunk)
+    @smoke_test = get_smoke_test
   end
 
   test "should get index" do
@@ -111,7 +111,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_difference('Job.count', 2) do
       post :run_jobs, :id => @smoke_test.id
     end
-    assert_not_nil AsyncExec.jobs[JobVPC]
+    assert_not_nil AsyncExec.jobs[JobChefVpc]
   end
 
   test "should not run job" do
@@ -119,7 +119,17 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_no_difference('Job.count') do
       post :run_jobs, :id => @smoke_test.id
     end
-    assert_nil AsyncExec.jobs[JobVPC]
+    assert_nil AsyncExec.jobs[JobChefVpc]
+  end
+
+  private
+  def get_smoke_test
+    smoke_test = SmokeTest.find(:first, :conditions => ["description = ?", "Nova trunk"])
+    smoke_test.update_attributes(
+        :config_template_ids => [config_templates(:libvirt_psql).id],
+        :test_suite_ids => [test_suites(:ruby_osapi).id]
+    )
+    smoke_test
   end
 
 end

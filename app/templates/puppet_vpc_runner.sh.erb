@@ -1,0 +1,112 @@
+#Global Chef settings
+TMP_DIR=$(mktemp -d)
+
+<% job.job_group.smoke_test.test_suites.each do |suite| %>
+RUN_<%= suite.name %>=true
+<% end %>
+
+function copy_hosts {
+# Copy hosts file to each node
+rake ssh bash <<-"EOF_COPY_HOSTS"
+for IP in $(cat /etc/hosts | cut -f 1); do
+[[ "$IP" != "127.0.0.1" ]] && scp /etc/hosts $IP:/etc/hosts
+done
+EOF_COPY_HOSTS
+}
+
+function delete_group {
+
+	#for debugging purposes you can touch this file to hang the group
+	rake ssh bash <<-EOF_BASH
+	until [ ! -f /tmp/do_not_delete ]; do
+		sleep 1
+	done
+	EOF_BASH
+	rake group:delete
+}
+
+function setup {
+
+	chef-vpc-toolkit -v || \
+		fail "Please install the Chef VPC Toolkit."
+
+	cd $TMP_DIR
+	if [ -n "$NOVA_URL" ]; then
+		if [[ ${NOVA_URL:0:2} == "lp" ]]; then
+			get_nova_source_bzr
+		else	
+			get_nova_source_git
+		fi
+	fi
+
+	if [ -n "$KEYSTONE_URL" ]; then
+		if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
+			get_keystone_source_bzr
+		else	
+			get_keystone_source_git
+		fi
+	fi
+
+	if [ -n "$GLANCE_URL" ]; then
+		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
+			get_glance_source_bzr
+		else	
+			get_glance_source_git
+		fi
+	fi
+
+		GIT_ASKPASS=echo \
+		git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
+		cd openstack_vpc || \
+		fail "Failed to checkout openstack VPC."
+
+	cp "$NODES_JSON_CONF" config/nodes.json || \
+		fail "Failed to copy nodes.json"
+
+	cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
+		fail "Failed to copy server_group.json"
+
+
+}
+
+function run_job {
+
+trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+if rake group:create && rake group:poll; then
+
+	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+		DEB_PACKAGER_URL="$NOVA_PACKAGER_URL" || \
+		fail "Failed to build nova packages."
+
+	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+		DEB_PACKAGER_URL="$GLANCE_PACKAGER_URL" || \
+		fail "Failed to build glance packages."
+
+	#rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+	#	DEB_PACKAGER_URL="$KEYSTONE_PACKAGER_URL" || \
+	#	fail "Failed to build keystone packages."
+
+	# Copy hosts file to all nodes
+	copy_hosts
+	rake puppet:install
+
+	# run Torpedo API tests (Uses the Ruby openstack-compute gem)
+	if [ -n "$RUN_TORPEDO" ]; then
+	rake torpedo SERVER_NAME=nova1 || \
+		{ rake tail_logs; fail "Hit by Torpedo."; }
+	fi
+
+	# run smoke tests
+	if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
+	rake nova:smoke_tests SERVER_NAME=nova1 || \
+		{ rake tail_logs; fail "Smoke tests failed."; }
+	fi
+
+else
+	rake tail_logs
+	fail "Failed to create server group."
+fi
+
+}
+
+run_job
