@@ -4,8 +4,8 @@ end
 class ConvertJobTypes < ActiveRecord::Migration
 
   def self.up
-    ConfigTemplate.where('job_type = ?', 'VPC').update_all(:job_type => 'Chef VPC')
-    ConfigTemplate.where('job_type = ?', 'Xen').update_all(:job_type => 'Chef VPC Xen')
+    ConfigTemplate.where('job_type = ?', 'VPC').update_all(:job_type => 'Chef Vpc')
+    ConfigTemplate.where('job_type = ?', 'Xen').update_all(:job_type => 'Chef Vpc Xen')
     execute "UPDATE jobs SET type = 'JobChefVpc' WHERE type = 'JobVPC'"
     execute "UPDATE jobs SET type = 'JobChefVpcXen' WHERE type = 'JobXenHybrid'"
     change_column :jobs, :type, :string, :default => ""
@@ -14,8 +14,8 @@ class ConvertJobTypes < ActiveRecord::Migration
   end
 
   def self.down
-    ConfigTemplate.where('job_type = ?', 'Chef VPC').update_all(:job_type => 'VPC')
-    ConfigTemplate.where('job_type = ?', 'Chef VPC Xen').update_all(:job_type => 'Xen')
+    ConfigTemplate.where('job_type = ?', 'Chef Vpc').update_all(:job_type => 'VPC')
+    ConfigTemplate.where('job_type = ?', 'Chef Vpc Xen').update_all(:job_type => 'Xen')
     execute "UPDATE jobs SET type = 'JobVPC' WHERE type = 'JobChefVpc'"
     execute "UPDATE jobs SET type = 'JobXenHybrid' WHERE type = 'JobChefVpcXen'"
     change_column :jobs, :type, :string, :default => "JobChefVPC"
