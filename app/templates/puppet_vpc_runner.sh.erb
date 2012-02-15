@@ -27,38 +27,12 @@ function delete_group {
 
 function setup {
 
-	chef-vpc-toolkit -v || \
-		fail "Please install the Chef VPC Toolkit."
-
 	cd $TMP_DIR
-	if [ -n "$NOVA_URL" ]; then
-		if [[ ${NOVA_URL:0:2} == "lp" ]]; then
-			get_nova_source_bzr
-		else	
-			get_nova_source_git
-		fi
-	fi
 
-	if [ -n "$KEYSTONE_URL" ]; then
-		if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
-			get_keystone_source_bzr
-		else	
-			get_keystone_source_git
-		fi
-	fi
-
-	if [ -n "$GLANCE_URL" ]; then
-		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
-			get_glance_source_bzr
-		else	
-			get_glance_source_git
-		fi
-	fi
-
-		GIT_ASKPASS=echo \
-		git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
-		cd openstack_vpc || \
-		fail "Failed to checkout openstack VPC."
+	GIT_ASKPASS=echo \
+	git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
+	cd openstack_vpc || \
+	fail "Failed to checkout openstack VPC."
 
 	cp "$NODES_JSON_CONF" config/nodes.json || \
 		fail "Failed to copy nodes.json"
@@ -75,14 +49,17 @@ trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
-		DEB_PACKAGER_URL="$NOVA_DEB_PACKAGER_URL" || \
-		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
+		SOURCE_URL="$NOVA_URL" \
+		SOURCE_BRANCH="$NOVA_BRANCH" || \
 		fail "Failed to build nova packages."
-
+    
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
-		DEB_PACKAGER_URL="$GLANCE_DEB_PACKAGER_URL" || \
-		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
+		SOURCE_URL="$GLANCE_URL" \
+		SOURCE_BRANCH="$GLANCE_BRANCH" || \
 		fail "Failed to build glance packages."
+    
 
 	#rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
 	#	DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
@@ -91,20 +68,22 @@ if rake group:create && rake group:poll; then
 
 	# Copy hosts file to all nodes
 	copy_hosts
-	rake puppet:install
-
-	# run Torpedo API tests (Uses the Ruby openstack-compute gem)
+    
+	PUPPETMODULES_URL=$(grep "^chef_cookbook_repos" $CHEF_INSTALLER_CONF | sed -e 's/.* //g')
+	rake puppet:install PUPPETMODULES_URL=$PUPPETMODULES_URL
+    
+	#run Torpedo API tests (Uses the Ruby openstack-compute gem)
 	if [ -n "$RUN_TORPEDO" ]; then
-	rake torpedo SERVER_NAME=nova1 || \
-		{ rake tail_logs; fail "Hit by Torpedo."; }
+		rake torpedo SERVER_NAME=nova1 PLATFORM=FEDORA|| \
+			{ fail "Hit by Torpedo."; }
 	fi
-
+               
 	# run smoke tests
 	if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
-	rake nova:smoke_tests SERVER_NAME=nova1 || \
-		{ rake tail_logs; fail "Smoke tests failed."; }
+		rake nova:smoke_tests SERVER_NAME=nova1 PLATFORM=FEDORA || \
+		{ fail "Smoke tests failed."; }
 	fi
-
+               
 else
 	rake tail_logs
 	fail "Failed to create server group."
@@ -112,4 +91,5 @@ fi
 
 }
 
+setup
 run_job
