@@ -85,14 +85,17 @@ if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
 		DEB_PACKAGER_URL="$NOVA_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
 	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
 		DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" || \
 		fail "Failed to build keystone packages."
 
 	# install Chef and the Chef Cookbooks
@@ -150,6 +153,7 @@ if rake group:create && rake group:poll; then
 
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
 		DEB_PACKAGER_URL="$NOVA_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" || \
 		fail "Failed to build nova packages."
 
 	rake nova:build_rpms SOURCE_DIR="$TMP_DIR/nova_source" || \
@@ -157,10 +161,12 @@ if rake group:create && rake group:poll; then
 
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		DEB_PACKAGER_URL="$GLANCE_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
 	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
 		DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
+		RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" || \
 		fail "Failed to build keystone packages."
 
 	# install Chef and the Chef Cookbooks
