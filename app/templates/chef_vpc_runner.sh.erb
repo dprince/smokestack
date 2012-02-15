@@ -103,6 +103,8 @@ if rake group:create && rake group:poll; then
 	rake chef:push_repos && rake chef:install || \
 		{ rake tail_logs; fail "Failed to install Chef server."; }
 
+	rake chef_test || fail "Chef Client/Server setup is invalid!"
+
 	# poll for Chef clients to finish runnings
 	rake chef:poll_clients || \
 		{ rake tail_logs; fail "Chef client timeout."; }
@@ -174,6 +176,8 @@ if rake group:create && rake group:poll; then
 	rake chef:push_repos && rake chef:install || \
 		{ rake tail_logs; fail "Failed to install Chef server."; }
 
+	rake chef_test || fail "Chef Client/Server setup is invalid!"
+
 	# Bootstrap all the Xen Servers
 	local COUNT=0
 	for SERVER_IP in $SERVER_IP_LIST; do
@@ -188,8 +192,11 @@ if rake group:create && rake group:poll; then
 	done
 
 	#FIXME: this can come out when compute1.vpc gets a proper domain name
+	# Ideally we could just use rake:poll_clients (to poll them all)
 	rake chef:poll_clients SERVER_NAME=nova1 || \
 		{ rake tail_logs SERVER_NAME=nova1; fail "Chef client timeout: nova1"; }
+	rake chef:poll_clients SERVER_NAME=glance1 || \
+		{ rake tail_logs SERVER_NAME=glance1; fail "Chef client timeout: glance1"; }
 
 	# Poll Xen Servers to finish Chef'ing
 	COUNT=0
