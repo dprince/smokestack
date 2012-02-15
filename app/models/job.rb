@@ -68,21 +68,39 @@ class Job < ActiveRecord::Base
       server_group_json_file.flush
 
       nova_builder=job.job_group.smoke_test.nova_package_builder
-      nova_packager_url=nova_builder.packager_url
-      if nova_packager_url.blank? then
-        nova_packager_url=ENV['NOVA_DEB_PACKAGER_URL']
+      #DEB 
+      nova_deb_packager_url=nova_builder.deb_packager_url
+      if nova_deb_packager_url.blank? then
+        nova_deb_packager_url=ENV['NOVA_DEB_PACKAGER_URL']
+      end
+      #RPM
+      nova_rpm_packager_url=nova_builder.rpm_packager_url
+      if nova_rpm_packager_url.blank? then
+        nova_rpm_packager_url=ENV['NOVA_RPM_PACKAGER_URL']
       end
 
       glance_builder=job.job_group.smoke_test.glance_package_builder
-      glance_packager_url=glance_builder.packager_url
-      if glance_packager_url.blank? then
-        glance_packager_url=ENV['GLANCE_DEB_PACKAGER_URL']
+      #DEB
+      glance_deb_packager_url=glance_builder.deb_packager_url
+      if glance_deb_packager_url.blank? then
+        glance_deb_packager_url=ENV['GLANCE_DEB_PACKAGER_URL']
+      end
+      #RPM
+      glance_rpm_packager_url=glance_builder.rpm_packager_url
+      if glance_rpm_packager_url.blank? then
+        glance_rpm_packager_url=ENV['GLANCE_RPM_PACKAGER_URL']
       end
 
       keystone_builder=job.job_group.smoke_test.keystone_package_builder
-      keystone_packager_url=keystone_builder.packager_url
-      if keystone_packager_url.blank? then
-        keystone_packager_url=ENV['KEYSTONE_DEB_PACKAGER_URL']
+      #DEB
+      keystone_deb_packager_url=keystone_builder.deb_packager_url
+      if keystone_deb_packager_url.blank? then
+        keystone_deb_packager_url=ENV['KEYSTONE_DEB_PACKAGER_URL']
+      end
+      #RPM
+      keystone_rpm_packager_url=keystone_builder.rpm_packager_url
+      if keystone_rpm_packager_url.blank? then
+        keystone_rpm_packager_url=ENV['KEYSTONE_RPM_PACKAGER_URL']
       end
 
       args = ["bash",
@@ -91,17 +109,20 @@ class Job < ActiveRecord::Base
         nova_builder.branch || "",
         nova_builder.merge_trunk.to_s,
         nova_builder.revision_hash,
-        nova_packager_url,
+        nova_deb_packager_url,
+        nova_rpm_packager_url,
         keystone_builder.url,
         keystone_builder.branch || "",
         keystone_builder.merge_trunk.to_s,
         keystone_builder.revision_hash,
-        keystone_packager_url,
+        keystone_deb_packager_url,
+        keystone_rpm_packager_url,
         glance_builder.url,
         glance_builder.branch || "",
         glance_builder.merge_trunk.to_s,
         glance_builder.revision_hash,
-        glance_packager_url,
+        glance_deb_packager_url,
+        glance_rpm_packager_url,
         chef_installer_file.path,
         nodes_json_file.path,
         server_group_json_file.path]

@@ -65,8 +65,12 @@ ENV['KEYSTONE_GIT_MASTER'] = "git://github.com/openstack/keystone.git"
 
 ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 
-# Default Debian packager URLS
-# These get used if the smoke tests don't specify a custom packager URL
+# Default RPM packager URLS
+ENV['NOVA_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-nova.git"
+ENV['GLANCE_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-glance.git"
+ENV['KEYSTONE_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-keystone.git"
+
+# Default DEB packager URLS
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
 ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubuntu"

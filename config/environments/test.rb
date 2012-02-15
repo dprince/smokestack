@@ -39,5 +39,13 @@ Smokestack::Application.configure do
 end
 
 ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
-ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~rackspace-titan/nova/ubuntu-nova-vpc"
+
+# Default RPM packager URLS
+ENV['NOVA_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-nova.git"
+ENV['GLANCE_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-glance.git"
+ENV['KEYSTONE_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-keystone.git"
+
+# Default DEB packager URLS
+ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
+ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubuntu"
