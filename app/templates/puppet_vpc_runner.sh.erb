@@ -114,11 +114,17 @@ if rake group:create && rake group:poll; then
 		rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
 		{ rake tail_logs; fail "Smoke tests failed."; }
 
-		# Only cache rpms if smoketests pass 
-		rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
-
 	fi
-               
+
+	# run Tempest
+	if [ -n "$RUN_TEMPEST" ]; then
+		rake tempest SERVER_NAME=nova1 || \
+		{ rake tail_logs; fail "Caught in a Tempest."; }
+	fi
+
+	# Cache rpms if tests pass
+	rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
+
 else
 	rake tail_logs
 	fail "Failed to create server group."
