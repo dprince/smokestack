@@ -11,17 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 26) do
+ActiveRecord::Schema.define(:version => 27) do
 
   create_table "config_templates", :force => true do |t|
-    t.string   "name",                              :null => false
-    t.string   "description",                       :null => false
-    t.string   "cookbook_repo_url",                 :null => false
-    t.text     "nodes_json",                        :null => false
-    t.text     "server_group_json",                 :null => false
+    t.string   "name",                                :null => false
+    t.string   "description",                         :null => false
+    t.string   "cookbook_repo_url",                   :null => false
+    t.text     "nodes_json",                          :null => false
+    t.text     "server_group_json",                   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "job_type",          :default => ""
+    t.boolean  "enabled",           :default => true
   end
 
   create_table "config_templates_smoke_tests", :id => false, :force => true do |t|

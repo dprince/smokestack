@@ -31,6 +31,10 @@
     <%= f.text_field :description %>
   </div>
   <div class="field">
+    <%= f.label :enabled %><br />
+    <%= f.check_box :enabled %>
+  </div>
+  <div class="field">
     <%= f.label :cookbook_repo_url %><br />
     <%= f.text_field :cookbook_repo_url, :size => "60" %>
   </div>

@@ -157,7 +157,7 @@
 <div style="float: left; margin-right: 200px;">
 <b>Configurations:</b><br/>
 
-    <% ConfigTemplate.find(:all).each do |config_template| %>
+    <% ConfigTemplate.find(:all, :conditions => ['enabled = ?', true]).each do |config_template| %>
          <%= check_box_tag "smoke_test[config_template_ids][]", "#{config_template.id}", config_template_checked(config_template) -%>
          <%= config_template.name %><br/>
     <% end %>
