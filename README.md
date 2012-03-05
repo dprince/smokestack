@@ -10,7 +10,7 @@ A web application with a REST based HTTP interface to help smoke test the OpenSt
 * Resque: a redis backed job queue
 * Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well. (add more job runners for: PXE, Crowbar, etc.)
 * Configuration management to install and configure everything (Chef/Puppet)
-* Packages to install software (currently supports Ubuntu)
+* Packages to install software (currently supports Fedora/Ubuntu)
 
 For more information and examples see the wiki: http://wiki.openstack.org/smokestack
 
@@ -42,15 +42,16 @@ Start the API server:
 
 At this point the web application should be running at http://localhost:3000.
 
-## Quickstart on Natty cloudserver
+## Quickstart on Fedora 16
 
     # install ruby, gems & mysql
-    sudo apt-get install -y rubygems ruby-dev mysql-server redis-server \
-                         apt-getlibmysql-ruby libmysqlclient-dev
+    sudo yum install -y rubygems ruby-devel mysql-server redis mysql-devel
 
     # install bundler then install gems via bundle
     sudo gem install -y bundle --no-ri --no-rdoc
-    sudo ln -s /var/lib/gems/1.8/bin/bundle /usr/local/bin
+
+    # cd to SmokeStack app installation directory
+    cd /opt/smokestack
     bundle install
 
     # initialize the db
@@ -60,10 +61,6 @@ At this point the web application should be running at http://localhost:3000.
     # setup vpc
     ssh-keygen # don't use passphrase
     # FIXME - add details on creating .chef_vpc_toolkit.conf for running VPC jobs
-
-    # run under screen
-    sudo apt-get install screen
-
     # in tab 1: launch some workers
     bundle exec rake resque:workers QUEUE="*" COUNT=3
 
@@ -73,20 +70,16 @@ At this point the web application should be running at http://localhost:3000.
 At this point you can view the website at http://localhost:3000 with
 username/password of admin/cloud
 
-### Serving via passenger
+### Serving via Apache/Passenger
 
     sudo gem install passenger
 
     # install apache and libraries needed to run
-    sudo apt-get install -y libcurl4-openssl-dev libssl-dev libapr1-dev \
-                            apache2-mpm-prefork apache2-prefork-dev \
-                            libaprutil1-dev
+    sudo apt-get install -y httpd openssl-devel curl-devel httpd-devel apr-devel
 
-    sudo /var/lib/gems/1.8/bin/passenger-install-apache2-module
+    sudo passenger-install-apache2-module
 
-    # follow instuctions to create a module & site entry in apache:
-    # sudo vi /etc/apache2/mods-enabled/passener.load
-    # sudo vi /etc/apache2/sites-enabled/000-default
+    # follow instuctions to configure modules & site for Apache...
 
     # create a production db 
     RAILS_ENV=production bundle exec rake db:create db:migrate
