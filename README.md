@@ -62,7 +62,7 @@ At this point the web application should be running at http://localhost:3000.
     ssh-keygen # don't use passphrase
     # FIXME - add details on creating .chef_vpc_toolkit.conf for running VPC jobs
     # in tab 1: launch some workers
-    bundle exec rake resque:workers QUEUE="*" COUNT=3
+    bundle exec rake resque:workers QUEUE="vpc" COUNT=3
 
     # in tab 2: run rails
     bundle exec rails server
@@ -75,7 +75,7 @@ username/password of admin/cloud
     sudo gem install passenger
 
     # install apache and libraries needed to run
-    sudo apt-get install -y httpd openssl-devel curl-devel httpd-devel apr-devel
+    sudo yum install -y httpd openssl-devel curl-devel httpd-devel apr-devel
 
     sudo passenger-install-apache2-module
 
@@ -83,3 +83,16 @@ username/password of admin/cloud
 
     # create a production db 
     RAILS_ENV=production bundle exec rake db:create db:migrate
+
+### Unit test workers (used to run unit tests, 1 instance per worker)
+
+    sudo yum install -y rubygems ruby-devel mysql-devel git gcc python-devel libxslt-devel swig python-setuptools python-virtualenv zeromq-devel patch
+
+    # install bundler then install gems via bundle
+    sudo gem install -y bundle --no-ri --no-rdoc
+
+    # cd to SmokeStack app installation directory
+    cd /opt/smokestack
+    bundle install
+
+    bundle exec rake resque:work QUEUE="unit"
