@@ -7,7 +7,6 @@ gem 'rails', '3.1.1'
 
 gem 'popen4'
 gem 'mysql'
-gem 'SystemTimer'
 gem 'resque', '1.19.0'
 gem 'chef-vpc-toolkit'
 
