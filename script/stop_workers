@@ -1,23 +1,3 @@
 #!/bin/bash
-WORKER_PIDS=$(resque list | sed -e "s|.*:\([0-9]*\):.*|\1|g" | xargs)
+WORKER_PIDS=$(ps -e -o pid,command | grep [r]esque | cut -f 2 -d " " | xargs)
 kill -QUIT $WORKER_PIDS
-ret=$?
-if [ $ret -eq 0 ]; then
-        TIMEOUT=30
-        while [ $TIMEOUT -gt 0 ]; do
-            /bin/kill -0 $WORKER_PIDS >/dev/null 2>&1 || break
-            sleep 1
-            let TIMEOUT=${TIMEOUT}-1
-        done
-        if [ $TIMEOUT -eq 0 ]; then
-            echo "Timeout error occurred trying to stop workers."
-            exit 1
-        else
-            rm -f $(dirname $0)/../tmp/pids/*
-                echo "Successfully stopped workers."
-            exit 0
-        fi
-else
-        echo "Failed to stop worker processes."
-        exit 1
-fi

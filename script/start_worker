@@ -2,5 +2,5 @@
 WORKER_ID=${WORKER_ID:?"Please define WORKER_ID."}
 QUEUE=${QUEUE:?"Please define QUEUE."}
 cd $(dirname $0)/../
-nohup rake environment resque:work > log/resque_worker_$WORKER_ID.log 2>&1 </dev/null &
+nohup bundle exec rake environment resque:work > log/resque_worker_$WORKER_ID.log 2>&1 </dev/null &
 echo $! > tmp/pids/resque_worker_$WORKER_ID.pid
