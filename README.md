@@ -45,7 +45,7 @@ At this point the web application should be running at http://localhost:3000.
 ## Quickstart on Fedora 16
 
     # install ruby, gems & mysql
-    sudo yum install -y rubygems ruby-devel mysql-server redis mysql-devel
+    sudo yum install -y rubygems ruby-devel mysql-server redis mysql-devel gcc gcc-c++
 
     # install bundler then install gems via bundle
     sudo gem install -y bundle --no-ri --no-rdoc
@@ -72,7 +72,7 @@ username/password of admin/cloud
 
 ### Serving via Apache/Passenger
 
-    sudo gem install passenger
+    sudo gem install passenger --no-ri --no-rdoc
 
     # install apache and libraries needed to run
     sudo yum install -y httpd openssl-devel curl-devel httpd-devel apr-devel
@@ -86,7 +86,8 @@ username/password of admin/cloud
 
 ### Unit test workers (used to run unit tests, 1 instance per worker)
 
-    sudo yum install -y rubygems ruby-devel mysql-devel git gcc python-devel libxslt-devel swig python-setuptools python-virtualenv zeromq-devel patch
+    #Install dependencies to run Nova, Glance, Keystone tests in a virtualenv
+    sudo yum install -y rubygems ruby-devel mysql-devel git gcc python-devel libxslt-devel swig python-setuptools python-virtualenv zeromq-devel patch gcc-c++ openldap-devel
 
     # install bundler then install gems via bundle
     sudo gem install -y bundle --no-ri --no-rdoc
