@@ -1,0 +1,5 @@
+check process resque_worker_0
+  with pidfile /u/apps/SmokeStack/current/tmp/pids/resque_worker_0.pid
+  start program = "/bin/sh -c 'USER=smokestack HOME=/home/smokestack WORKER_ID=0 RAILS_ENV=production QUEUE=unittests VERBOSE=1 /u/apps/SmokeStack/current/script/start_worker'" as uid smokestack and gid smokestack
+  stop program = "/bin/sh -c 'cd /u/apps/SmokeStack/current && kill -s QUIT `cat tmp/pids/resque_worker_0.pid` && rm -f tmp/pids/resque_worker_0.pid; exit 0;'"
+  if totalmem is greater than 300 MB for 10 cycles then restart
