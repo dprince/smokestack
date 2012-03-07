@@ -93,10 +93,10 @@ if rake group:create && rake group:poll; then
 		#RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
-	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
-		DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
+	#rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		#DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
 		#RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" || \
-		fail "Failed to build keystone packages."
+		#fail "Failed to build keystone packages."
 
 	# install Chef and the Chef Cookbooks
 	copy_hosts
@@ -166,10 +166,10 @@ if rake group:create && rake group:poll; then
 		#RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" || \
 		fail "Failed to build glance packages."
 
-	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
-		DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
+	#rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+		#DEB_PACKAGER_URL="$KEYSTONE_DEB_PACKAGER_URL" || \
 		#RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" || \
-		fail "Failed to build keystone packages."
+		#fail "Failed to build keystone packages."
 
 	# install Chef and the Chef Cookbooks
 	copy_hosts
