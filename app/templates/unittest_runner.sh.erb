@@ -56,7 +56,7 @@ if ! is_master "$NOVA_URL" "$MASTER_NOVA_URL" "$NOVA_BRANCH"; then
   python setup.py sdist &> sdist.out || \
     { echo "Failed to create tarball."; cat sdist.out; exit 1; }
   cd dist
-  cd tar xf nova*.tar.gz
+  tar xf nova*.tar.gz
   rm nova*.tar.gz
   cd nova*
   ./run_tests.sh -V -f &> nova.out.log
@@ -89,7 +89,7 @@ if ! is_master "$GLANCE_URL" "$MASTER_GLANCE_URL" "$GLANCE_BRANCH"; then
   python setup.py sdist &> sdist.out || \
     { echo "Failed to create tarball."; cat sdist.out; exit 1; }
   cd dist
-  cd tar xf glance*.tar.gz
+  tar xf glance*.tar.gz
   rm glance*.tar.gz
   cd glance*
   #NOTE: temp fix for "File exists: '/tmp/glance-tests'" errors
@@ -124,7 +124,7 @@ if ! is_master "$KEYSTONE_URL" "$MASTER_KEYSTONE_URL" "$KEYSTONE_BRANCH"; then
   python setup.py sdist &> sdist.out || \
     { echo "Failed to create tarball."; cat sdist.out; exit 1; }
   cd dist
-  cd tar xf keystone*.tar.gz
+  tar xf keystone*.tar.gz
   rm keystone*.tar.gz
   cd keystone*
   ./run_tests.sh -V -f &> keystone.out.log
