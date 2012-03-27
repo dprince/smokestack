@@ -35,6 +35,12 @@ NOVA_GIT_MASTER_BRANCH=${NOVA_GIT_MASTER_BRANCH:-"master"}
 GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
 KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 
+# Setup default RPM packager branches
+# These may be overridden by some environements
+NOVA_RPM_PACKAGER_BRANCH=${NOVA_RPM_PACKAGER_BRANCH:-"master"}
+GLANCE_RPM_PACKAGER_BRANCH=${GLANCE_RPM_PACKAGER_BRANCH:-"master"}
+KEYSTONE_RPM_PACKAGER_BRANCH=${KEYSTONE_RPM_PACKAGER_BRANCH:-"master"}
+
 # Log to the job log and stdout
 function fail {
 	local MSG=$1

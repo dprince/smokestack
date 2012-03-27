@@ -53,6 +53,7 @@ if rake group:create && rake group:poll; then
 	fi
 	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
 		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
+		RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
 		SOURCE_URL="$NOVA_URL" \
 		SOURCE_BRANCH="$NOVA_BRANCH" \
 		GIT_MASTER="$NOVA_GIT_MASTER" \
@@ -68,6 +69,7 @@ if rake group:create && rake group:poll; then
 	fi
 	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
 		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
+		RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
 		SOURCE_URL="$GLANCE_URL" \
 		SOURCE_BRANCH="$GLANCE_BRANCH" \
 		GIT_MASTER="$GLANCE_GIT_MASTER" \
@@ -83,6 +85,7 @@ if rake group:create && rake group:poll; then
 	fi
 	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
 		RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
+		RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
 		SOURCE_URL="$KEYSTONE_URL" \
 		SOURCE_BRANCH="$KEYSTONE_BRANCH" \
 		GIT_MASTER="$KEYSTONE_GIT_MASTER" \
