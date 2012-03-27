@@ -1,3 +1,14 @@
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+  $("#config_template_accordion").accordion({ fillSpace: false, autoHeight: false, clearStyle: true });
+
+});
+
+</script>
+
+
 <div id="config-template-error-messages" class="ui-widget" style="display: none">
     <div class="ui-state-error ui-corner-all" style="padding: .25em .25em .25em 2.5em;">
 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
@@ -5,6 +16,7 @@
 </p>
     </div>
 </div>
+
 
 <%= form_for(@config_template, :html => { :id => "config-template-form", :onsubmit => "create_config_template(); return false;" } ) do |f| %>
   <% if @config_template.errors.any? %>
@@ -19,6 +31,10 @@
     </div>
   <% end %>
   <div class="field">
+    <%= f.label :enabled %><br />
+    <%= f.check_box :enabled %>
+  </div>
+  <div class="field">
     <%= f.label :job_type %><br />
     <%= f.select("job_type", Job::JOB_TYPES) %>
   </div>
@@ -31,20 +47,30 @@
     <%= f.text_field :description %>
   </div>
   <div class="field">
-    <%= f.label :enabled %><br />
-    <%= f.check_box :enabled %>
-  </div>
-  <div class="field">
     <%= f.label :cookbook_repo_url %><br />
     <%= f.text_field :cookbook_repo_url, :size => "60" %>
   </div>
-  <div class="field">
-    <%= f.label :nodes_json %><br />
-    <%= f.text_area :nodes_json, :cols => "80" %>
-  </div>
-  <div class="field">
+
+<div id="config_template_accordion">
+  <h3><a href="#">Server Group</a></h3>
+  <div>
     <%= f.label :server_group_json %><br />
     <%= f.text_area :server_group_json, :cols => "80" %>
   </div>
 
+  <h3><a href="#">Environment</a></h3>
+  <div>
+    <%= f.label :environment %><br />
+    <%= f.text_area :environment, :cols => "80" %>
+  </div>
+
+  <h3><a href="#">Nodes JSON</a></h3>
+  <div>
+    <%= f.label :nodes_json %><br />
+    <%= f.text_area :nodes_json, :cols => "80" %>
+  </div>
+
+</div>
+
 <% end %>
+

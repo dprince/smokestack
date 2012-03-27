@@ -29,6 +29,12 @@ class Job < ActiveRecord::Base
   def self.run_job(job, template_name="chef_vpc_runner.sh.erb", script_text=nil)
     job.update_attributes(:status => "Running", :start_time => Time.now)
 
+    script_file=nil
+    chef_installer_file=nil
+    nodes_json_file=nil
+    server_group_json_file=nil
+    environment_file=nil
+
     begin
 
       if script_text.nil?
@@ -67,44 +73,30 @@ class Job < ActiveRecord::Base
       end
       server_group_json_file.flush
 
+      #environment
+      environment_file=Tempfile.new('smokestack_environment')
+      unless job.config_template.nil? or job.config_template.environment.nil?
+        job.config_template.environment.each_line do |line|
+          environment_file.write("export " + line)
+        end
+      end
+      environment_file.flush
+
       nova_builder=job.job_group.smoke_test.nova_package_builder
-      #DEB 
       nova_deb_packager_url=nova_builder.deb_packager_url
-      if nova_deb_packager_url.blank? then
-        nova_deb_packager_url=ENV['NOVA_DEB_PACKAGER_URL']
-      end
-      #RPM
       nova_rpm_packager_url=nova_builder.rpm_packager_url
-      if nova_rpm_packager_url.blank? then
-        nova_rpm_packager_url=ENV['NOVA_RPM_PACKAGER_URL']
-      end
 
       glance_builder=job.job_group.smoke_test.glance_package_builder
-      #DEB
       glance_deb_packager_url=glance_builder.deb_packager_url
-      if glance_deb_packager_url.blank? then
-        glance_deb_packager_url=ENV['GLANCE_DEB_PACKAGER_URL']
-      end
-      #RPM
       glance_rpm_packager_url=glance_builder.rpm_packager_url
-      if glance_rpm_packager_url.blank? then
-        glance_rpm_packager_url=ENV['GLANCE_RPM_PACKAGER_URL']
-      end
 
       keystone_builder=job.job_group.smoke_test.keystone_package_builder
-      #DEB
       keystone_deb_packager_url=keystone_builder.deb_packager_url
-      if keystone_deb_packager_url.blank? then
-        keystone_deb_packager_url=ENV['KEYSTONE_DEB_PACKAGER_URL']
-      end
-      #RPM
       keystone_rpm_packager_url=keystone_builder.rpm_packager_url
-      if keystone_rpm_packager_url.blank? then
-        keystone_rpm_packager_url=ENV['KEYSTONE_RPM_PACKAGER_URL']
-      end
 
       args = ["bash",
         script_file.path,
+        environment_file.path,
         nova_builder.url,
         nova_builder.branch || "",
         nova_builder.merge_trunk.to_s,
@@ -153,6 +145,13 @@ class Job < ActiveRecord::Base
       raise e
     ensure
       job.update_attribute(:finish_time, Time.now)
+
+      script_file.delete if script_file
+      chef_installer_file.delete if chef_installer_file
+      nodes_json_file.delete if nodes_json_file
+      server_group_json_file.delete if server_group_json_file
+      environment_file.delete if environment_file
+
     end
 
   end

@@ -37,33 +37,21 @@ function setup {
 
 	cd $TMP_DIR
 	if [ -n "$NOVA_URL" ]; then
-		if [[ ${NOVA_URL:0:2} == "lp" ]]; then
-			get_nova_source_bzr
-		else	
-			get_nova_source_git
-		fi
+		get_nova_source_git
 	fi
 
 	if [ -n "$KEYSTONE_URL" ]; then
-		if [[ ${KEYSTONE_URL:0:2} == "lp" ]]; then
-			get_keystone_source_bzr
-		else	
-			get_keystone_source_git
-		fi
+		get_keystone_source_git
 	fi
 
 	if [ -n "$GLANCE_URL" ]; then
-		if [[ ${GLANCE_URL:0:2} == "lp" ]]; then
-			get_glance_source_bzr
-		else	
-			get_glance_source_git
-		fi
+		get_glance_source_git
 	fi
 
-		GIT_ASKPASS=echo \
-		git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
-		cd openstack_vpc || \
-		fail "Failed to checkout openstack VPC."
+	GIT_ASKPASS=echo \
+	git clone <%= ENV['OPENSTACK_VPC_URL'] %> openstack_vpc && \
+	cd openstack_vpc || \
+	fail "Failed to checkout openstack VPC."
 
 	cp "$CHEF_INSTALLER_CONF" config/chef_installer.yml || \
 		fail "Failed to copy chef_installer.yml"

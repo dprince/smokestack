@@ -1,29 +1,39 @@
 #!/bin/bash
 
-NOVA_URL=$1
-NOVA_BRANCH=$2
-NOVA_MERGE_TRUNK=$3
-NOVA_REVISION=$4
-NOVA_DEB_PACKAGER_URL=$5
-NOVA_RPM_PACKAGER_URL=$6
 
-KEYSTONE_URL=$7
-KEYSTONE_BRANCH=$8
-KEYSTONE_MERGE_TRUNK=$9
-KEYSTONE_REVISION=${10}
-KEYSTONE_DEB_PACKAGER_URL=${11}
-KEYSTONE_RPM_PACKAGER_URL=${12}
+CUSTOM_ENV_FILE=${1}
+source $CUSTOM_ENV_FILE
 
-GLANCE_URL=${13}
-GLANCE_BRANCH=${14}
-GLANCE_MERGE_TRUNK=${15}
-GLANCE_REVISION=${16}
-GLANCE_DEB_PACKAGER_URL=${17}
-GLANCE_RPM_PACKAGER_URL=${18}
+NOVA_URL=${2}
+NOVA_BRANCH=${3}
+NOVA_MERGE_TRUNK=${4}
+NOVA_REVISION=${5}
+NOVA_DEB_PACKAGER_URL=${6:-$NOVA_DEB_PACKAGER_URL}
+NOVA_RPM_PACKAGER_URL=${7:-$NOVA_RPM_PACKAGER_URL}
 
-CHEF_INSTALLER_CONF=${19}
-NODES_JSON_CONF=${20}
-SERVER_GROUP_JSON_CONF=${21}
+KEYSTONE_URL=${8}
+KEYSTONE_BRANCH=${9}
+KEYSTONE_MERGE_TRUNK=${10}
+KEYSTONE_REVISION=${11}
+KEYSTONE_DEB_PACKAGER_URL=${12:-$KEYSTONE_DEB_PACKAGER_URL}
+KEYSTONE_RPM_PACKAGER_URL=${13:-$KEYSTONE_RPM_PACKAGER_URL}
+
+GLANCE_URL=${14}
+GLANCE_BRANCH=${15}
+GLANCE_MERGE_TRUNK=${16}
+GLANCE_REVISION=${17}
+GLANCE_DEB_PACKAGER_URL=${18:-$GLANCE_DEB_PACKAGER_URL}
+GLANCE_RPM_PACKAGER_URL=${19:-$GLANCE_RPM_PACKAGER_URL}
+
+CHEF_INSTALLER_CONF=${20}
+NODES_JSON_CONF=${21}
+SERVER_GROUP_JSON_CONF=${22}
+
+# Setup default branches to merge if MERGE_TRUNK is checked
+# These may be overridden by some environements
+NOVA_GIT_MASTER_BRANCH=${NOVA_GIT_MASTER_BRANCH:-"master"}
+GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
+KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 
 # Log to the job log and stdout
 function fail {
@@ -33,39 +43,14 @@ function fail {
 }
 
 function git_clone {
-        local URL=${1:?"Please specify a URL."}
-        local DIR=${2:?"Please specify a DIR."}
-        local COUNT=1
-        until GIT_ASKPASS=echo git clone "$URL" "$DIR"; do
-                [ "$COUNT" -eq "4" ] && fail "Failed to clone: $URL"
-                sleep $(( $COUNT * 5 ))
-                COUNT=$(( $COUNT + 1 ))
-        done
-}
-
-function get_nova_source_bzr {
-
-	bzr branch "$NOVA_URL" nova_source || \
-		fail "Failed to checkout bzr branch."
-	if [ -n "$NOVA_REVISION" ]; then
-		pushd nova_source
-		bzr revert --revision="$NOVA_REVISION" || \
-			fail "Failed to revert to revision $NOVA_REVISION."
-		bzr commit -m "Revert to revision $NOVA_REVISION." || \
-			fail "Failed to commit revert to revision $NOVA_REVISION."
-		popd
-	else
-	    NOVA_REVISION=$(bzr version-info nova_source | grep revno | sed -e "s|revno: ||")
-		[ -z "$NOVA_REVISION" ] && fail "Failed to obtain nova revision from bzr."
-	fi
-	echo "NOVA_REVISION=$NOVA_REVISION"
-
-	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
-		pushd nova_source || fail "Failed to cd into nova_source directory."
-		bzr merge lp:nova || fail "Failed to merge lp:nova."
-		popd
-	fi
-
+	local URL=${1:?"Please specify a URL."}
+	local DIR=${2:?"Please specify a DIR."}
+	local COUNT=1
+	until GIT_ASKPASS=echo git clone "$URL" "$DIR"; do
+		[ "$COUNT" -eq "4" ] && fail "Failed to clone: $URL"
+		sleep $(( $COUNT * 5 ))
+		COUNT=$(( $COUNT + 1 ))
+	done
 }
 
 function get_nova_source_git {
@@ -87,36 +72,10 @@ function get_nova_source_git {
 	echo "NOVA_REVISION=$NOVA_REVISION"
 
 	if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
-		git rebase master || fail "Failed to rebase master."
+		git merge $NOVA_GIT_MASTER_BRANCH || fail "Failed to merge $NOVA_GIT_MASTER_BRANCH."
 	fi
 
 	popd
-}
-
-function get_keystone_source_bzr {
-   #NOTE: Does anyone uses bzr for Keystone development?
-	bzr branch "$KEYSTONE_URL" keystone_source || \
-		fail "Failed to checkout bzr branch."
-	if [ -n "$KEYSTONE_REVISION" ]; then
-		pushd keystone_source
-		bzr revert --revision="$KEYSTONE_REVISION" || \
-			fail "Failed to revert to revision $KEYSTONE_REVISION."
-		bzr commit -m "Revert to revision $KEYSTONE_REVISION." || \
-			fail "Failed to commit revert to revision $KEYSTONE_REVISION."
-		popd
-	else
-		KEYSTONE_REVISION=$(bzr version-info keystone_source | grep revno | sed -e "s|revno: ||")
-		[ -z "$KEYSTONE_REVISION" ] && fail "Failed to obtain keystone revision from bzr."
-	fi
-	echo "KEYSTONE_REVISION=$KEYSTONE_REVISION"
-
-	if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
-		pushd keystone_source || fail "Failed to cd into keystone_source directory."
-        #NOTE: this may fail (I'm not sure there is an lp:keystone)
-		bzr merge lp:keystone || fail "Failed to merge lp:keystone."
-		popd
-	fi
-
 }
 
 function get_keystone_source_git {
@@ -138,35 +97,10 @@ function get_keystone_source_git {
 	echo "KEYSTONE_REVISION=$KEYSTONE_REVISION"
 
 	if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
-		git rebase master || fail "Failed to rebase master."
+		git merge $KEYSTONE_GIT_MASTER_BRANCH || fail "Failed to merge $KEYSTONE_GIT_MASTER_BRANCH."
 	fi
 
 	popd
-}
-
-function get_glance_source_bzr {
-
-	bzr branch "$GLANCE_URL" glance_source || \
-		fail "Failed to checkout bzr branch."
-	if [ -n "$GLANCE_REVISION" ]; then
-		pushd glance_source
-		bzr revert --revision="$GLANCE_REVISION" || \
-			fail "Failed to revert to revision $GLANCE_REVISION."
-		bzr commit -m "Revert to revision $GLANCE_REVISION." || \
-			fail "Failed to commit revert to revision $GLANCE_REVISION."
-		popd
-	else
-		GLANCE_REVISION=$(bzr version-info glance_source | grep revno | sed -e "s|revno: ||")
-		[ -z "$GLANCE_REVISION" ] && fail "Failed to obtain glance revision from bzr."
-	fi
-	echo "GLANCE_REVISION=$GLANCE_REVISION"
-
-	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
-		pushd glance_source || fail "Failed to cd into glance_source directory."
-		bzr merge lp:glance || fail "Failed to merge lp:glance."
-		popd
-	fi
-
 }
 
 function get_glance_source_git {
@@ -188,9 +122,9 @@ function get_glance_source_git {
 	echo "GLANCE_REVISION=$GLANCE_REVISION"
 
 	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
-		git rebase master || fail "Failed to rebase master."
+		git merge $GLANCE_GIT_MASTER_BRANCH || fail "Failed to merge $GLANCE_GIT_MASTER_BRANCH."
 	fi
 
-    popd
+	popd
 
 }

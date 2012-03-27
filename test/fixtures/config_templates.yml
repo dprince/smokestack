@@ -7,3 +7,4 @@ libvirt_psql:
   cookbook_repo_url: "http://a.b.c/blah"
   nodes_json: {}
   server_group_json: {}
+  environment: foo=bar
