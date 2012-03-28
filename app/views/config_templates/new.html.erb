@@ -25,14 +25,18 @@ function clone_template(id) {
             success: function(data) {
                 name=$("name", data).text() + ' Copy';
                 description=$("description", data).text();
+                job_type=$("job-type", data).text();
                 cookbook_repo_url=$("cookbook-repo-url", data).text();
                 nodes_json=$("nodes-json", data).text();
+                environment=$("environment", data).text();
                 server_group_json=$("server-group-json", data).text();
+                $("select[name='config_template[job_type]']").val(job_type);
                 $("input[type=text][name='config_template[name]']").val(name);
                 $("input[type=text][name='config_template[description]']").val(description);
                 $("input[type=text][name='config_template[cookbook_repo_url]']").val(cookbook_repo_url);
                 $("#config_template_nodes_json").text(nodes_json);
                 $("#config_template_server_group_json").text(server_group_json);
+                $("#config_template_environment").text(environment);
             },
             error: function(data) {
                 alert('Error: Failed to clone config template.');
