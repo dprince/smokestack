@@ -77,7 +77,8 @@ class Job < ActiveRecord::Base
       environment_file=Tempfile.new('smokestack_environment')
       unless job.config_template.nil? or job.config_template.environment.nil?
         job.config_template.environment.each_line do |line|
-          environment_file.write("export " + line)
+          data=line.match(/(\S*)=(\S*)/)
+          environment_file.write("export #{data[1]}=\"#{data[2]}\"\n")
         end
       end
       environment_file.flush
