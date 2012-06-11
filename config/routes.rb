@@ -13,6 +13,8 @@ Smokestack::Application.routes.draw do
 
   resources :jobs
 
+  resources :node_configs
+
   resources :smoke_tests
   resources :smoke_tests do
     member do

@@ -86,6 +86,14 @@ function config_template_table_selectors() {
     }
     );
 
+    $("a.config-template-nodes").button({
+        icons: {
+            primary: 'ui-icon-gear'
+        },
+        text: 'Node Configs'
+    }
+    );
+
     $(".config-template-destroy").click(function(e){
 
         e.preventDefault();
@@ -139,6 +147,34 @@ function config_template_table_selectors() {
        });
 
     $(".config-template-show").click(function(e){
+         e.preventDefault();
+
+         $.get($(this).attr("href"), function(html_snippet) {
+
+           $("#config-templates-dialog").html(
+                html_snippet
+           );
+
+            $("#config-templates-dialog").dialog({
+                modal: true,
+                height: $(window).height()-50,
+                width: $(window).width()-50,
+                buttons: {
+                    Close: function() {
+                        $(this).dialog('close');
+                    }
+                },
+                close: function(data) {
+                    $(this).html("");
+                    $(this).dialog('destroy');
+                }
+            });
+
+         });
+
+       });
+
+    $(".config-template-nodes").click(function(e){
          e.preventDefault();
 
          $.get($(this).attr("href"), function(html_snippet) {

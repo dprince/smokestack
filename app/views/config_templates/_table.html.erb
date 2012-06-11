@@ -12,8 +12,8 @@
     <td><%= raw(chop_for_html(config_template.name, 40)) %></td>
     <td><%= raw(chop_for_html(config_template.description, 60)) %></td>
     <td><%= yes_no(config_template.enabled) %></td>
-    <td><%= link_to 'Show', config_template, :class => "config-template-show" %></td>
     <td><%= link_to 'Edit', edit_config_template_path(config_template), :class => "config-template-edit" %></td>
+    <td><%= link_to 'Node Configuration', "/node_configs?config_template_id=#{config_template.id}", :class => "config-template-nodes" %></td>
     <td><%= link_to 'Destroy', config_template, :confirm => 'Are you sure?', :method => :delete, :class => "config-template-destroy" %></td>
   </tr>
 <% end %>

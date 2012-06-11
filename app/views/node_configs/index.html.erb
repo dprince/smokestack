@@ -1,0 +1,217 @@
+<h1>Node Configurations</h1>
+<b>Config Template:</b>&nbsp;<%= @config_template.name %><br/>
+<b>Description:</b>&nbsp;<%= @config_template.description %>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+    $(".my-node-configs-add").click(function(e){
+         e.preventDefault();
+         reset_my_node_config_form();
+         reset_my_node_configs_divs();
+         $("#my-node-configs-edit-form").attr("action", $(this).attr("href"));
+         $("#my-node-configs-edit-div").show();
+         $("a.my-node-configs-add").hide();
+
+    });
+
+    $(".my-node-configs-cancel").click(function(e){
+         e.preventDefault();
+         reset_my_node_configs_divs();
+
+    });
+
+    $(".my-node-config-delete").click(function(e){
+
+       e.preventDefault();
+
+       my_node_config_delete(this);  
+       reset_my_node_configs_divs();
+
+    });
+
+    $(".my-node-config-edit").click(function(e){
+
+       e.preventDefault();
+       var id = $(this).attr("href").match(/[0-9]*$/);
+       edit_my_node_config_link(id);
+
+    });
+
+});
+
+function reset_my_node_config_form() {
+
+     $("#my-node-configs-edit-form-method").attr("value", "POST");
+      $("#my-node-configs-edit-form input[name='[node_config]id']").attr("value", "");
+      $("#my-node-configs-edit-form input[name='[node_config]hostname']").attr("value", "");
+      $("#my-node-configs-edit-form textarea[name='[node_config]config_data']").attr("value", "");
+
+     $("#my-node-configs-edit-form input[type=submit]").attr("value", 'Create Node Config');
+
+}
+
+function edit_my_node_config_link(id) {
+  reset_my_node_configs_divs();
+  $("#my-node-configs-edit-form").attr("action", "/node_configs/"+id);
+  $("#my-node-configs-edit-div").show();
+  $("a.my-node-configs-add").hide();
+
+  $("#my-node-configs-edit-form-method").attr("value", "PUT");
+  $("#my-node-configs-edit-form input[type=submit]").attr("value", 'Update Node Config');
+  $("#my-node-configs-edit-form input[name='[node_config]id']").attr("value", id);
+
+  $.ajax({
+      url: "/node_configs/"+id+".xml",
+      type: 'GET',
+      success: function(data) {
+          hostname=$("hostname", data).text();
+          config_data=$("config-data", data).text();
+          $("#my-node-configs-edit-form input[name='[node_config]hostname']").attr("value", hostname);
+          $("#my-node-configs-edit-form textarea[name='[node_config]config_data']").attr("value", config_data);
+      },
+      error: function(data) {
+          alert('Error: Unable to find node config record ID: '+id);
+      }
+  });
+
+}
+
+function reset_my_node_configs_divs() {
+     $("a.my-node-configs-add").show();
+     $("#my-node-configs-edit-div").hide();
+     $("#my-node-configs-error-messages").css("display", "none");
+     $("#my-node-config-error-messages-content").html("");
+}
+
+function my_node_config_create() {
+    method_type=$("#my-node-configs-edit-form-method").attr("value");
+
+    var post_data = $("#my-node-configs-edit-form").serialize();
+    $.ajax({
+        url: $("#my-node-configs-edit-form").attr("action")+".xml",
+        type: method_type,
+        data: post_data,
+        success: function(data) {
+            $("#my-node-configs-error-messages").css("display", "none");
+            $("#my-node-configs-error-messages-content").html("");
+            $("#my-node-configs-edit-div").hide();
+            $("a.my-node-configs-add").show();
+
+            if (method_type === 'POST') {
+
+                $("#my-node-configs-list").append(
+                  "<li id=\"node-config-li-" + $("id", data).text() +
+                  "\">" + $("hostname", data).text() +
+
+                  "&nbsp;<a href=\"node_configs/" + $("id", data).text() +
+                  "\" class=\"my-node-config-edit\">Edit</a>"+
+                  "&nbsp;/&nbsp;<a href=\"node_configs/" + $("id", data).text() +
+                  "\" class=\"my-node-config-delete\">Delete</a></li>"
+                );
+
+            } else {
+
+                $("#node-config-li-" + $("id", data).text()).html(
+                  $("hostname", data).text() +
+
+                  "&nbsp;<a href=\"node_configs/" + $("id", data).text() +
+                  "\" class=\"my-node-config-edit\">Edit</a>"+
+                  "&nbsp;/&nbsp;<a href=\"node_configs/" + $("id", data).text() +
+                  "\" class=\"my-node-config-delete\">Delete</a>"
+                );
+            }
+
+             $("#node-config-li-" + $("id", data).text() + " a.my-node-config-delete").click(function(e){
+
+              e.preventDefault();
+
+              my_node_config_delete(this);  
+
+           });
+
+           $("#node-config-li-" + $("id", data).text() + " a.my-node-config-edit").click(function(e){
+
+              e.preventDefault();
+              var id = $(this).attr("href").match(/[0-9]*$/);
+              edit_my_node_config_link(id);
+
+           });
+
+           $("#node-config-li-none").hide();
+
+        },
+        error: function(data) {
+            $("#my-node-configs-error-messages").css("display", "inline");
+            err_html="<ul>";
+            $("error", data.responseXML).each (function() {
+                err_html+="<li>"+$(this).text()+"</li>";
+            });
+            err_html+="</ul>";
+            $("#my-node-configs-error-messages-content").html(err_html);
+        }
+    });
+
+}
+
+function my_node_config_delete(href) {
+
+    if (!confirm("Delete node config?")) {
+        return;
+    }
+
+    $.ajax({
+        url: $(href).attr("href")+".xml",
+        type: 'POST',
+        data: { _method: 'delete', authenticity_token: '<%= form_authenticity_token() %>' },
+        success: function(data) {
+            id=$("id", data).text();
+            $("#node-config-li-"+id).remove();
+        },
+        error: function(data) {
+            alert('Error: Failed to delete record.');
+        }
+    });
+
+}
+
+</script>
+
+<ul id="my-node-configs-list">
+<% @node_configs.each do |config| %>
+    <li id="node-config-li-<%= config.id %>"><%= raw chop_for_html(config.hostname) %>&nbsp;<a href="/node_configs/<%= config.id %>" class="my-node-config-edit">Edit</a>&nbsp;/&nbsp;<a href="/node_configs/<%= config.id %>" class="my-node-config-delete">Delete</a></li>
+<% end %>
+<% if @node_configs.empty? then %>
+    <li id="node-config-li-none">No node configs.</li>
+<% end %>
+</ul>
+
+<div id="my-node-configs-error-messages" class="ui-widget" style="display: none">
+    <div class="ui-state-error ui-corner-all" style="padding: .25em .25em .25em 2.5em;">
+<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+<div id="my-node-configs-error-messages-content"></div>
+</p>
+    </div>
+</div>
+
+<div id="my-node-configs-edit-div" style="display: none;">
+    <form id="my-node-configs-edit-form" action="/node_configs" onsubmit="my_node_config_create(); return false;">
+    <%= tag(:input, :type => "hidden",
+    :name => request_forgery_protection_token.to_s,
+    :value => form_authenticity_token) %>
+    <input id="my-node-configs-edit-form-method" type="hidden" name="_method" value="POST"/>
+    <input type="hidden" name="[node_config]id" value=""/>
+    <input type="hidden" name="[node_config]config_template_id" value="<%= @config_template.id %>"/>
+
+    <label>Hostname:</label><br/>
+    <input type="text" name="[node_config]hostname" value=""/><br/>
+    <label>Config Data(JSON/Manifest):</label><br/>
+    <textarea name="[node_config]config_data" cols="80" rows="15"/><br/>
+    <input type="submit" name="submit" value="Create Node Config"/><%= link_to 'Cancel', "#", { :class => "my-node-configs-cancel" } %>
+
+    </form>
+
+</div>
+
+<%= link_to 'Add Node', "/node_configs", { :class => "my-node-configs-add" } %>

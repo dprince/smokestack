@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 28) do
+ActiveRecord::Schema.define(:version => 29) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -53,6 +53,14 @@ ActiveRecord::Schema.define(:version => 28) do
     t.integer  "approved_by"
     t.datetime "start_time"
     t.datetime "finish_time"
+  end
+
+  create_table "node_configs", :force => true do |t|
+    t.integer  "config_template_id", :null => false
+    t.string   "hostname",           :null => false
+    t.text     "config_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "package_builders", :force => true do |t|

@@ -1,0 +1,6 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+libvirt_psql_nova:
+  hostname: nova1
+  config_template: libvirt_psql
+  config_data: foo
