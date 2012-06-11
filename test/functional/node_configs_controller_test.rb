@@ -15,7 +15,7 @@ class NodeConfigsControllerTest < ActionController::TestCase
   test "should get index as admin" do
 
     login_as(:admin)
-    get :index
+    get :index, :config_template_id => config_templates(:libvirt_psql).id
     assert_response :success
     assert_not_nil assigns(:node_configs)
 

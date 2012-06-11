@@ -53,11 +53,17 @@ function setup {
 	cd openstack_vpc || \
 	fail "Failed to checkout openstack VPC."
 
-	cp "$CHEF_INSTALLER_CONF" config/chef_installer.yml || \
-		fail "Failed to copy chef_installer.yml"
+        cat > config/chef_installer.yml <<-EOF_CAT
+chef_cookbook_repos: $COOKBOOK_URL
 
-	cp "$NODES_JSON_CONF" config/nodes.json || \
-		fail "Failed to copy nodes.json"
+# The Chef JSON configuration contains attributes and recipes for nodes.
+chef_json_file: config/nodes.json
+
+#databags_json_file: config/databags.json
+
+# Chef server name
+chef_server_name: login
+EOF_CAT
 
 	cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
 		fail "Failed to copy server_group.json"

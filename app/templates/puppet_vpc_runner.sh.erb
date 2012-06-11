@@ -33,9 +33,6 @@ function setup {
 	git_clone "<%= ENV['OPENSTACK_VPC_URL'] %>" "openstack_vpc"
 	cd openstack_vpc
 
-	cp "$NODES_JSON_CONF" config/nodes.json || \
-		fail "Failed to copy nodes.json"
-
 	cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
 		fail "Failed to copy server_group.json"
 
@@ -101,10 +98,19 @@ if rake group:create && rake group:poll; then
 
 	# Copy hosts file to all nodes
 	copy_hosts
-    
-	PUPPETMODULES_URL=$(grep "^chef_cookbook_repos" $CHEF_INSTALLER_CONF | sed -e 's/.* //g')
-	rake puppet:install SOURCE_URL="$PUPPETMODULES_URL"
 
+	# Copy node configs into the project and write config file
+        cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
+        echo "nodes:" > config.yml
+        for FILE in $(ls config/puppet-configs/smokestack); do
+            echo "    - name: $FILE" >> config.yml
+            echo "      manifest: $FILE" >> config.yml
+        done
+        cat config.yml
+        mv config.yml config/puppet-configs/smokestack/config.yml
+        cp -a config/puppet-configs/smokestack /tmp/smokestack-config
+    
+	rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
 	rake keystone:configure
 
 	rake glance:load_images

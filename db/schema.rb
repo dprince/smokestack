@@ -10,13 +10,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 29) do
+ActiveRecord::Schema.define(:version => 30) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
     t.string   "description",                         :null => false
     t.string   "cookbook_repo_url",                   :null => false
-    t.text     "nodes_json",                          :null => false
     t.text     "server_group_json",                   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"

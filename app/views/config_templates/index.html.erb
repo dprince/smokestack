@@ -16,6 +16,9 @@ $(document).ready(function() {
 <%= form_tag('/config_templates/XX', :method => :delete, :id => "config-template-delete-form") %>
 </form>
 
+<%= form_tag('/config_templates/XX', :method => :clone, :id => "config-template-clone-form") %>
+</form>
+
 <table id="config-templates-table" class="ui-widget ui-widget-content data">
     <%= render :partial => 'table' %>
 </table>

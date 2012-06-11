@@ -50,7 +50,7 @@
 
 <% if @smoke_test.cookbook_url.blank? %>
   <% cookbook_url_div = "hide" %>
-   <a style="float: right" title="Override Chef Cookbook URL" class="smoke-test-cookbook-url" onclick='$("#cookbook-url-div").toggle(); $(this).hide();'>Override Chef Cookbook URL</a>
+   <a style="float: right" title="Override Cookbook URL" class="smoke-test-cookbook-url" onclick='$("#cookbook-url-div").toggle(); $(this).hide();'>Override Cookbook URL</a>
 <% else %>
   <% cookbook_url_div = "" %>
 <% end %>
@@ -58,7 +58,7 @@
   </div>
 
   <div id="cookbook-url-div" class="field <%= cookbook_url_div %>">
-    <%= f.label 'Cookbook URL (optional/override)' %>&nbsp;<br/>
+    <%= f.label 'Cookbook URL (optional override)' %>&nbsp;<br/>
     <%= f.text_field :cookbook_url, :size => 60 %>
   </div>
 

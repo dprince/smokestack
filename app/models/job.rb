@@ -1,6 +1,6 @@
 require 'erubis'
-require 'tempfile'
 require 'open4'
+require 'fileutils'
 
 class Job < ActiveRecord::Base
 
@@ -29,11 +29,13 @@ class Job < ActiveRecord::Base
   def self.run_job(job, template_name="chef_vpc_runner.sh.erb", script_text=nil)
     job.update_attributes(:status => "Running", :start_time => Time.now)
 
-    script_file=nil
-    chef_installer_file=nil
-    nodes_json_file=nil
-    server_group_json_file=nil
-    environment_file=nil
+
+    base_dir = File.join(Dir.tmpdir, "smokestack_job_#{job.id}")
+    FileUtils.mkdir_p(base_dir)
+    script_file=File.join(base_dir, 'script.bash')
+    server_group_json_file=File.join(base_dir, 'server_group.json')
+    environment_file=File.join(base_dir, 'environment')
+    node_configs_dir=File.join(base_dir, 'node_configs')
 
     begin
 
@@ -44,44 +46,36 @@ class Job < ActiveRecord::Base
         script_text += eruby.result(:job => job)
       end
 
-      script_file=Tempfile.new('smokestack')
-      script_file.write(script_text)
-      script_file.flush
-
-      #chef_installer.yml
-      chef_installer_text = ""
-      unless job.config_template.nil?
-        chef_template = File.read(File.join(Rails.root, "app", "templates", "chef_installer.yml.erb"))
-        eruby = Erubis::Eruby.new(chef_template)
-        chef_installer_text=eruby.result(:job => job)
+      File.open(script_file, 'w') do |f|
+        f.write(script_text)
       end
-      chef_installer_file=Tempfile.new('smokestack_chef')
-      chef_installer_file.write(chef_installer_text)
-      chef_installer_file.flush
-
-      #nodes.json
-      nodes_json_file=Tempfile.new('smokestack_nodes_json')
-      unless job.config_template.nil?
-        nodes_json_file.write(job.config_template.nodes_json)
-      end
-      nodes_json_file.flush
 
       #server_group.json
-      server_group_json_file=Tempfile.new('smokestack_server_group_json')
-      unless job.config_template.nil?
-        server_group_json_file.write(job.config_template.server_group_json)
-      end
-      server_group_json_file.flush
-
-      #environment
-      environment_file=Tempfile.new('smokestack_environment')
-      unless job.config_template.nil? or job.config_template.environment.nil?
-        job.config_template.environment.each_line do |line|
-          data=line.match(/(\S*)=(\S*)/)
-          environment_file.write("export #{data[1]}=\"#{data[2]}\"\n")
+      File.open(server_group_json_file, 'w') do |f|
+        unless job.config_template.nil?
+          f.write(job.config_template.server_group_json)
         end
       end
-      environment_file.flush
+
+      #environment
+      File.open(environment_file, 'w') do |f|
+        unless job.config_template.nil? or job.config_template.environment.nil?
+          job.config_template.environment.each_line do |line|
+            data=line.match(/(\S*)=(\S*)/)
+            f.write("export #{data[1]}=\"#{data[2]}\"\n")
+          end
+        end
+      end
+
+      #node configs
+      unless job.config_template.nil?
+        job.config_template.node_configs.each do |node_config|
+          FileUtils.mkdir_p(node_configs_dir)
+          File.open(File.join(node_configs_dir, node_config.hostname), 'w') do |f|
+            f.write node_config.config_data
+          end
+        end
+      end
 
       nova_builder=job.job_group.smoke_test.nova_package_builder
       nova_deb_packager_url=nova_builder.deb_packager_url
@@ -95,9 +89,16 @@ class Job < ActiveRecord::Base
       keystone_deb_packager_url=keystone_builder.deb_packager_url
       keystone_rpm_packager_url=keystone_builder.rpm_packager_url
 
+      cookbook_url = nil
+      if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
+        cookbook_url = job.job_group.smoke_test.cookbook_url
+      else
+        cookbook_url = job.config_template.cookbook_repo_url
+      end
+
       args = ["bash",
-        script_file.path,
-        environment_file.path,
+        script_file,
+        environment_file,
         nova_builder.url,
         nova_builder.branch || "",
         nova_builder.merge_trunk.to_s,
@@ -116,9 +117,9 @@ class Job < ActiveRecord::Base
         glance_builder.revision_hash,
         glance_deb_packager_url,
         glance_rpm_packager_url,
-        chef_installer_file.path,
-        nodes_json_file.path,
-        server_group_json_file.path]
+        cookbook_url,
+        node_configs_dir,
+        server_group_json_file]
 
       status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
         stdin.close 
@@ -139,20 +140,13 @@ class Job < ActiveRecord::Base
         return false
       end
 
-      script_file.close
     rescue Exception => e
       job.update_attribute(:msg, e.message)
       job.update_attribute(:status, "Failed")
       raise e
     ensure
       job.update_attribute(:finish_time, Time.now)
-
-      script_file.delete if script_file
-      chef_installer_file.delete if chef_installer_file
-      nodes_json_file.delete if nodes_json_file
-      server_group_json_file.delete if server_group_json_file
-      environment_file.delete if environment_file
-
+      FileUtils.rm_rf(base_dir)
     end
 
   end

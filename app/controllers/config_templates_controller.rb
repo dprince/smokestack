@@ -98,6 +98,44 @@ class ConfigTemplatesController < ApplicationController
       format.json  { render :json => json }
       format.xml  { render :xml => xml }
     end
+
+  end
+
+  # POST /config_templates/1/clone
+  def clone
+
+    orig = ConfigTemplate.find(params[:id])
+
+    @config_template = ConfigTemplate.new(
+        :job_type => orig.job_type,
+        :name => orig.name + " Clone",
+        :description => orig.description + " Clone",
+        :cookbook_repo_url => orig.cookbook_repo_url,
+        :environment => orig.environment,
+        :server_group_json => orig.server_group_json
+    )
+
+    respond_to do |format|
+      if @config_template.save
+
+        orig.node_configs.each do |node_config|
+            NodeConfig.create(
+                :config_template_id => @config_template.id,
+                :hostname => node_config.hostname,
+                :config_data => node_config.config_data
+            )
+        end
+        format.html { redirect_to(@config_template, :notice => 'ConfigTemplate was successfully cloned.') }
+        format.json  { render :json => @config_template, :status => :created, :location => @config_template }
+        format.xml  { render :xml => @config_template, :status => :created, :location => @config_template }
+      else
+        format.html { render :action => "new" }
+        format.json  { render :json => @config_template.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @config_template.errors, :status => :unprocessable_entity }
+      end
+
+    end
+
   end
 
 end

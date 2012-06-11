@@ -10,7 +10,6 @@ class ConfigTemplateTest < ActiveSupport::TestCase
             :name => "Libvirt MySQL",
             :description => "Libvirt QEMU w/ MySQL",
             :cookbook_repo_url => "http://a.b.c/blah",
-            :nodes_json => "{}",
             :environment => "",
             :server_group_json => "{}"
         )
@@ -18,7 +17,6 @@ class ConfigTemplateTest < ActiveSupport::TestCase
         assert_equal("Libvirt MySQL", config_template.name)
         assert_equal("Libvirt QEMU w/ MySQL", config_template.description)
         assert_equal("http://a.b.c/blah", config_template.cookbook_repo_url)
-        assert_equal("{}", config_template.nodes_json)
         assert_equal("{}", config_template.server_group_json)
 
     end
@@ -29,7 +27,6 @@ class ConfigTemplateTest < ActiveSupport::TestCase
             :name => "Libvirt MySQL",
             :description => "Libvirt QEMU w/ MySQL",
             :cookbook_repo_url => "http://a.b.c/blah",
-            :nodes_json => "{}",
             :environment => %{foo\nbar},
             :server_group_json => "{}"
         )

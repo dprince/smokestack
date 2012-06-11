@@ -10,6 +10,11 @@ Smokestack::Application.routes.draw do
   end
 
   resources :config_templates
+  resources :config_templates do
+    member do
+      post 'clone'
+    end
+  end
 
   resources :jobs
 

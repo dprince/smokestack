@@ -94,6 +94,14 @@ function config_template_table_selectors() {
     }
     );
 
+    $("a.config-template-clone").button({
+        icons: {
+            primary: 'ui-icon-copy'
+        },
+        text: 'Clone'
+    }
+    );
+
     $(".config-template-destroy").click(function(e){
 
         e.preventDefault();
@@ -199,6 +207,27 @@ function config_template_table_selectors() {
             });
 
          });
+
+       });
+
+    $(".config-template-clone").click(function(e){
+
+        e.preventDefault();
+        var post_data = $("#config-template-clone-form").serialize();
+
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            data: post_data,
+            dataType: 'xml',
+            success: function(data) {
+                reload_config_templates_table($("#config-templates-table"));
+                alert('Config template cloned.');
+            },
+            error: function(data) {
+                alert('Failed to clone config template.');
+            }
+        });
 
        });
 

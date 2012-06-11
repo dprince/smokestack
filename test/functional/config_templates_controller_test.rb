@@ -99,4 +99,12 @@ class ConfigTemplatesControllerTest < ActionController::TestCase
     end
   end
 
+  test "should clone config_template as admin" do
+    login_as(:admin)
+    assert_difference('ConfigTemplate.count') do
+      post :clone, :id => @config_template.id
+    end
+    assert_redirected_to config_template_path(assigns(:config_template))
+  end
+
 end
