@@ -40,7 +40,7 @@ local MSG=""
 cd $TMP_DIR
 
 if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
-  TESTS_RUN=1
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$NOVA_URL" ]; then
     get_nova_source_git
   fi
@@ -69,7 +69,7 @@ fi
 
 if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
 
-  TESTS_RUN=1
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$GLANCE_URL" ]; then
     get_glance_source_git
   fi
@@ -100,7 +100,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
 fi
 
 if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
-  TESTS_RUN=1
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$KEYSTONE_URL" ]; then
     get_keystone_source_git
   fi
@@ -125,6 +125,38 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
     MSG="${MSG}Keystone pep8 failed. "
     cat keystone_pep8.out.log
   fi
+fi
+
+if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
+
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
+  if [ -n "$SWIFT_URL" ]; then
+    get_swift_source_git
+  fi
+  cd $TMP_DIR/swift_source
+  python setup.py sdist &> sdist.out || \
+    { echo "Failed to create tarball."; cat sdist.out; exit 1; }
+  cd dist
+  tar xf swift*.tar.gz
+  rm swift*.tar.gz
+  cd swift*
+  #NOTE: temp fix for "File exists: '/tmp/swift-tests'" errors
+  rm -Rf /tmp/swift-tests*
+  ./run_tests.sh -V -f &> swift.out.log
+  local SWIFT_STATUS=$?
+  ./run_tests.sh -V -p &> swift_pep8.out.log
+  local SWIFT_PEP8_STATUS=$?
+  if [ "$SWIFT_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Swift tests failed. "
+    handle_venv_results Swift swift.out.log
+  fi
+  if [ "$SWIFT_PEP8_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Swift pep8 failed. "
+    cat swift_pep8.out.log
+  fi
+
 fi
 
 if [ $RETVAL -ne 0 ]; then
