@@ -13,6 +13,9 @@ class SmokeTest < ActiveRecord::Base
   has_one :keystone_package_builder
   accepts_nested_attributes_for :keystone_package_builder
 
+  has_one :swift_package_builder
+  accepts_nested_attributes_for :swift_package_builder
+
   has_and_belongs_to_many :config_templates
   has_and_belongs_to_many :test_suites
 

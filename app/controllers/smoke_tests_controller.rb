@@ -6,15 +6,15 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests.json
   # GET /smoke_tests.xml
   def index
-    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder])
+    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder])
 
     if params[:table_only] then
       render :partial => "table"
     else
       respond_to do |format|
         format.html # index.html.erb
-        format.json  { render :json => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
-        format.xml  { render :xml => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
+        format.json  { render :json => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder] }
+        format.xml  { render :xml => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder] }
       end
     end
   end
@@ -23,12 +23,12 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests/1.json
   # GET /smoke_tests/1.xml
   def show
-    @smoke_test = SmokeTest.find(params[:id], :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder])
+    @smoke_test = SmokeTest.find(params[:id], :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder])
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json  { render :json => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
-      format.xml  { render :xml => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder] }
+      format.json  { render :json => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder] }
+      format.xml  { render :xml => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder] }
     end
   end
 
@@ -42,6 +42,8 @@ class SmokeTestsController < ApplicationController
     @smoke_test.glance_package_builder.merge_trunk = false
     @smoke_test.build_keystone_package_builder
     @smoke_test.keystone_package_builder.merge_trunk = false
+    @smoke_test.build_swift_package_builder
+    @smoke_test.swift_package_builder.merge_trunk = false
 
     respond_to do |format|
       format.html # new.html.erb

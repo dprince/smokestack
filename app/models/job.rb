@@ -89,6 +89,10 @@ class Job < ActiveRecord::Base
       keystone_deb_packager_url=keystone_builder.deb_packager_url
       keystone_rpm_packager_url=keystone_builder.rpm_packager_url
 
+      swift_builder=job.job_group.smoke_test.swift_package_builder
+      swift_deb_packager_url=swift_builder.deb_packager_url
+      swift_rpm_packager_url=swift_builder.rpm_packager_url
+
       cookbook_url = nil
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
         cookbook_url = job.job_group.smoke_test.cookbook_url
@@ -117,6 +121,12 @@ class Job < ActiveRecord::Base
         glance_builder.revision_hash,
         glance_deb_packager_url,
         glance_rpm_packager_url,
+        swift_builder.url,
+        swift_builder.branch || "",
+        swift_builder.merge_trunk.to_s,
+        swift_builder.revision_hash,
+        swift_deb_packager_url,
+        swift_rpm_packager_url,
         cookbook_url,
         node_configs_dir,
         server_group_json_file]
@@ -129,6 +139,7 @@ class Job < ActiveRecord::Base
         job.nova_revision=Job.parse_nova_revision(job.stdout)
         job.glance_revision=Job.parse_glance_revision(job.stdout)
         job.keystone_revision=Job.parse_keystone_revision(job.stdout)
+        job.swift_revision=Job.parse_swift_revision(job.stdout)
         job.msg=Job.parse_last_message(job.stdout)
         job.save
       end
@@ -173,6 +184,15 @@ class Job < ActiveRecord::Base
     stdout.each_line do |line|
       if line =~ /^KEYSTONE_REVISION/ then
         return line.sub(/^KEYSTONE_REVISION=/, "").chomp
+      end
+    end
+    return ""
+  end
+
+  def self.parse_swift_revision(stdout)
+    stdout.each_line do |line|
+      if line =~ /^SWIFT_REVISION/ then
+        return line.sub(/^SWIFT_REVISION=/, "").chomp
       end
     end
     return ""

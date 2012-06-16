@@ -151,6 +151,32 @@
     </tr>
   <% end %>
 
+<% if @smoke_test.swift_package_builder.deb_packager_url.blank? and @smoke_test.swift_package_builder.rpm_packager_url.blank? and @smoke_test.swift_package_builder.revision_hash.blank? %>
+  <% adv_swift_options_link = "" %>
+  <% adv_swift_options_tr = "hide" %>
+<% else %>
+  <% adv_swift_options_link = "hide" %>
+  <% adv_swift_options_tr = "" %>
+<% end %>
+
+  <%= f.fields_for :swift_package_builder do |swift_build_frm| %>
+    <tr>
+      <td class="header">Swift Builder</td>
+      <td><%= swift_build_frm.text_field :url, :style => 'width: 300px' %></td>
+      <td><%= swift_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= swift_build_frm.check_box :merge_trunk %></td>
+      <td><a title="Show/Hide Advanced Swift Build Options" class="smoke-test-edit-advanced <%= adv_swift_options_link %>" onclick='$("#swift-builder-adv-tr").toggle();'>&nbsp;</a></td>
+    </tr>
+    <tr class="<%= adv_swift_options_tr %>" id="swift-builder-adv-tr">
+      <td>&nbsp;</td>
+      <td colspan="3">
+        <font class="header">Revision/Hash: &nbsp;</font><%= swift_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+      </td>
+    </tr>
+  <% end %>
+
 </table>
 <hr/>
 <div>

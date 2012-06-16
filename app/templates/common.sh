@@ -25,21 +25,30 @@ GLANCE_REVISION=${17}
 GLANCE_DEB_PACKAGER_URL=${18:-$GLANCE_DEB_PACKAGER_URL}
 GLANCE_RPM_PACKAGER_URL=${19:-$GLANCE_RPM_PACKAGER_URL}
 
-COOKBOOK_URL=${20}
-NODES_CONFIG_DIR=${21}
-SERVER_GROUP_JSON_CONF=${22}
+SWIFT_URL=${20}
+SWIFT_BRANCH=${21}
+SWIFT_MERGE_TRUNK=${22}
+SWIFT_REVISION=${23}
+SWIFT_DEB_PACKAGER_URL=${24:-$SWIFT_DEB_PACKAGER_URL}
+SWIFT_RPM_PACKAGER_URL=${25:-$SWIFT_RPM_PACKAGER_URL}
+
+COOKBOOK_URL=${26}
+NODES_CONFIG_DIR=${27}
+SERVER_GROUP_JSON_CONF=${28}
 
 # Setup default branches to merge if MERGE_TRUNK is checked
 # These may be overridden by some environements
 NOVA_GIT_MASTER_BRANCH=${NOVA_GIT_MASTER_BRANCH:-"master"}
 GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
 KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
+SWIFT_GIT_MASTER_BRANCH=${SWIFT_GIT_MASTER_BRANCH:-"master"}
 
 # Setup default RPM packager branches
 # These may be overridden by some environements
 NOVA_RPM_PACKAGER_BRANCH=${NOVA_RPM_PACKAGER_BRANCH:-"master"}
 GLANCE_RPM_PACKAGER_BRANCH=${GLANCE_RPM_PACKAGER_BRANCH:-"master"}
 KEYSTONE_RPM_PACKAGER_BRANCH=${KEYSTONE_RPM_PACKAGER_BRANCH:-"master"}
+SWIFT_RPM_PACKAGER_BRANCH=${SWIFT_RPM_PACKAGER_BRANCH:-"master"}
 
 # Log to the job log and stdout
 function fail {
@@ -129,6 +138,32 @@ function get_glance_source_git {
 
 	if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
 		git merge $GLANCE_GIT_MASTER_BRANCH || fail "Failed to merge $GLANCE_GIT_MASTER_BRANCH."
+	fi
+
+	popd
+
+}
+
+function get_swift_source_git {
+
+	git_clone "$SWIFT_GIT_MASTER" "swift_source"
+	pushd swift_source
+	git fetch $SWIFT_URL $SWIFT_BRANCH || \
+		fail "Failed to git fetch branch $SWIFT_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$SWIFT_REVISION" ]; then
+		git checkout $SWIFT_REVISION || \
+			fail "Failed to revert to revision $SWIFT_REVISION."
+	else
+		SWIFT_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$SWIFT_REVISION" ] && \
+			fail "Failed to obtain swift revision from git."
+	fi
+	echo "SWIFT_REVISION=$SWIFT_REVISION"
+
+	if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
+		git merge $SWIFT_GIT_MASTER_BRANCH || fail "Failed to merge $SWIFT_GIT_MASTER_BRANCH."
 	fi
 
 	popd

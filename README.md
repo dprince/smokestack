@@ -1,10 +1,10 @@
 # SmokeStack
 
-WebUI to help smoke test the OpenStack
+Smoke test the OpenStack
 
 ## Description
 
-A web application with a REST based HTTP interface to help smoke test the OpenStack. SmokeStack is focused on integration testing of OpenStack services and currently supports Nova, Keystone, and Glance. SmokeStack is built on:
+A web application with a REST based HTTP interface to help smoke test OpenStack. SmokeStack is focused on integration testing of OpenStack services and currently supports Nova, Keystone, and Glance, and Swift. SmokeStack is built on:
 
 * Rails 3.1
 * Resque: a redis backed job queue

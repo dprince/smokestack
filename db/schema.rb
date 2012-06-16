@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 30) do
+ActiveRecord::Schema.define(:version => 31) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 30) do
     t.integer  "approved_by"
     t.datetime "start_time"
     t.datetime "finish_time"
+    t.string   "swift_revision"
   end
 
   create_table "node_configs", :force => true do |t|

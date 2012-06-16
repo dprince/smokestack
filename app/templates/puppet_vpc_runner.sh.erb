@@ -16,25 +16,25 @@ EOF_COPY_HOSTS
 
 function delete_group {
 
-	#for debugging purposes you can touch this file to hang the group
-	rake ssh bash <<-EOF_BASH
-	until [ ! -f /tmp/do_not_delete ]; do
-		sleep 1
-	done
-	EOF_BASH
-	rake group:delete
+#for debugging purposes you can touch this file to hang the group
+rake ssh bash <<-EOF_BASH
+until [ ! -f /tmp/do_not_delete ]; do
+    sleep 1
+done
+EOF_BASH
+rake group:delete
 }
 
 function setup {
 
-	cd $TMP_DIR
+    cd $TMP_DIR
 
-	GIT_ASKPASS=echo \
-	git_clone "<%= ENV['OPENSTACK_VPC_URL'] %>" "openstack_vpc"
-	cd openstack_vpc
+    GIT_ASKPASS=echo \
+    git_clone "<%= ENV['OPENSTACK_VPC_URL'] %>" "openstack_vpc"
+    cd openstack_vpc
 
-	cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
-		fail "Failed to copy server_group.json"
+    cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
+        fail "Failed to copy server_group.json"
 
 
 }
@@ -44,102 +44,136 @@ function run_job {
 trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 if rake group:create && rake group:poll; then
 
-        local NOVA_MERGE_MASTER=""
-        if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
-        	NOVA_MERGE_MASTER="true"
-	fi
-	rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
-		RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
-		RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
-		SOURCE_URL="$NOVA_URL" \
-		SOURCE_BRANCH="$NOVA_BRANCH" \
-		GIT_MASTER="$NOVA_GIT_MASTER" \
-		GIT_MERGE_MASTER_BRANCH="$NOVA_GIT_MASTER_BRANCH" \
-		MERGE_MASTER="$NOVA_MERGE_MASTER" \
-		REVISION="$NOVA_REVISION" \
-		CACHEURL="$RPM_CACHEURL" \
-		|| fail "Failed to build nova packages."
+    local NOVA_MERGE_MASTER=""
+    if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+        NOVA_MERGE_MASTER="true"
+    fi
+    rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+        RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$NOVA_URL" \
+        SOURCE_BRANCH="$NOVA_BRANCH" \
+        GIT_MASTER="$NOVA_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$NOVA_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$NOVA_MERGE_MASTER" \
+        REVISION="$NOVA_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build nova packages."
     
-        local GLANCE_MERGE_MASTER=""
-        if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
-        	GLANCE_MERGE_MASTER="true"
-	fi
-	rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
-		RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
-		RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
-		SOURCE_URL="$GLANCE_URL" \
-		SOURCE_BRANCH="$GLANCE_BRANCH" \
-		GIT_MASTER="$GLANCE_GIT_MASTER" \
-		GIT_MERGE_MASTER_BRANCH="$GLANCE_GIT_MASTER_BRANCH" \
-		MERGE_MASTER="$GLANCE_MERGE_MASTER" \
-		REVISION="$GLANCE_REVISION" \
-		CACHEURL="$RPM_CACHEURL" \
-		|| fail "Failed to build glance packages."
+    local GLANCE_MERGE_MASTER=""
+    if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
+        GLANCE_MERGE_MASTER="true"
+    fi
+
+    rake nova:build_python_novaclient \
+        SOURCE_URL="$NOVACLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$NOVACLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build novaclient packages."
+
+    rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+        RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$GLANCE_URL" \
+        SOURCE_BRANCH="$GLANCE_BRANCH" \
+        GIT_MASTER="$GLANCE_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$GLANCE_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$GLANCE_MERGE_MASTER" \
+        REVISION="$GLANCE_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build glance packages."
 
         local KEYSTONE_MERGE_MASTER=""
         if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
-        	KEYSTONE_MERGE_MASTER="true"
-	fi
-	rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
-		RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
-		RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
-		SOURCE_URL="$KEYSTONE_URL" \
-		SOURCE_BRANCH="$KEYSTONE_BRANCH" \
-		GIT_MASTER="$KEYSTONE_GIT_MASTER" \
-		GIT_MERGE_MASTER_BRANCH="$KEYSTONE_GIT_MASTER_BRANCH" \
-		MERGE_MASTER="$KEYSTONE_MERGE_MASTER" \
-		REVISION="$KEYSTONE_REVISION" \
-		CACHEURL="$RPM_CACHEURL" \
-		|| fail "Failed to build keystone packages."
+            KEYSTONE_MERGE_MASTER="true"
+    fi
+    rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+        RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$KEYSTONE_URL" \
+        SOURCE_BRANCH="$KEYSTONE_BRANCH" \
+        GIT_MASTER="$KEYSTONE_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$KEYSTONE_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$KEYSTONE_MERGE_MASTER" \
+        REVISION="$KEYSTONE_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build keystone packages."
 
-        rake keystone:build_python_keystoneclient SOURCE_URL="git://github.com/openstack/python-keystoneclient.git" CACHEURL="$RPM_CACHEURL"
+    rake keystone:build_python_keystoneclient \
+        SOURCE_URL="$KEYSTONECLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$KEYSTONECLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build keystoneclient packages."
 
-        rake nova:build_python_novaclient SOURCE_URL="git://github.com/openstack/python-novaclient.git" CACHEURL="$RPM_CACHEURL"
+    if [ -n "$BUILD_SWIFT" ]; then
+        local SWIFT_MERGE_MASTER=""
+        if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
+            SWIFT_MERGE_MASTER="true"
+        fi
+        rake swift:build_packages SOURCE_DIR="$TMP_DIR/swift_source" \
+            RPM_PACKAGER_URL="$SWIFT_RPM_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$SWIFT_RPM_PACKAGER_BRANCH" \
+            SOURCE_URL="$SWIFT_URL" \
+            SOURCE_BRANCH="$SWIFT_BRANCH" \
+            GIT_MASTER="$SWIFT_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$SWIFT_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$SWIFT_MERGE_MASTER" \
+            REVISION="$SWIFT_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build swift packages."
 
-	# Copy hosts file to all nodes
-	copy_hosts
+        rake swift:build_python_swiftclient \
+            SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build swiftclient packages."
 
-	# Copy node configs into the project and write config file
-        cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
-        echo "nodes:" > config.yml
-        for FILE in $(ls config/puppet-configs/smokestack); do
-            echo "    - name: $FILE" >> config.yml
-            echo "      manifest: $FILE" >> config.yml
-        done
-        cat config.yml
-        mv config.yml config/puppet-configs/smokestack/config.yml
-        cp -a config/puppet-configs/smokestack /tmp/smokestack-config
+    fi
+
+    # Copy hosts file to all nodes
+    copy_hosts
+
+    # Copy node configs into the project and write out config.yml
+    cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
+    echo "nodes:" > config.yml
+    for FILE in $(ls config/puppet-configs/smokestack); do
+        echo "    - name: $FILE" >> config.yml
+        echo "      manifest: $FILE" >> config.yml
+    done
+    cat config.yml
+    mv config.yml config/puppet-configs/smokestack/config.yml
+    cp -a config/puppet-configs/smokestack /tmp/smokestack-config
     
-	rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
-	rake keystone:configure
+    rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
+    rake keystone:configure
 
-	rake glance:load_images
+    rake glance:load_images
     
-	#run Torpedo API tests (Uses the Ruby openstack-compute gem)
-	if [ -n "$RUN_TORPEDO" ]; then
-		rake torpedo SERVER_NAME=nova1 || \
-		{ rake tail_logs; fail "Hit by Torpedo."; }
-	fi
+    #run Torpedo API tests (Uses the Ruby openstack-compute gem)
+    if [ -n "$RUN_TORPEDO" ]; then
+        rake torpedo SERVER_NAME=nova1 || \
+        { rake tail_logs; fail "Hit by Torpedo."; }
+    fi
                
-	# run smoke tests
-	if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
-		rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
-		{ rake tail_logs; fail "Smoke tests failed."; }
+    # run smoke tests
+    if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
+        rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
+        { rake tail_logs; fail "Smoke tests failed."; }
 
-	fi
+    fi
 
-	# run Tempest
-	if [ -n "$RUN_TEMPEST" ]; then
-		rake tempest SERVER_NAME=nova1 || \
-		{ rake tail_logs; fail "Caught in a Tempest."; }
-	fi
+    # run Tempest
+    if [ -n "$RUN_TEMPEST" ]; then
+        rake tempest SERVER_NAME=nova1 || \
+        { rake tail_logs; fail "Caught in a Tempest."; }
+    fi
 
-	# Cache rpms if tests pass
-	rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
+    # Cache rpms if tests pass
+    rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
 
 else
-	rake tail_logs
-	fail "Failed to create server group."
+    rake tail_logs
+    fail "Failed to create server group."
 fi
 
 }

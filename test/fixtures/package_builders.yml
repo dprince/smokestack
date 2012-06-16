@@ -18,6 +18,12 @@ glance_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+swift_builder_trunk:
+  type: SwiftPackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
 nova_builder_dev:
   type: NovaPackageBuilder
   url: dev
@@ -32,6 +38,12 @@ keystone_builder_dev:
 
 glance_builder_dev:
   type: GlancePackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1
+
+swift_builder_dev:
+  type: SwiftPackageBuilder
   url: dev
   merge_trunk: true
   smoke_test: dev1
