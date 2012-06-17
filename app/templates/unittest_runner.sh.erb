@@ -24,7 +24,8 @@ function handle_venv_results {
   if [ $? -eq 0 ]; then # print from SEARCH_STR to end of the file
     perl -ne "print if /$SEARCH_STR/ .. 0" $FILENAME
   else
-    cat $FILENAME
+    # cat test output excluding the environment
+    cat $FILENAME | grep -v env=
   fi
 }
 
@@ -63,7 +64,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   if [ "$NOVA_PEP8_STATUS" -ne "0" ]; then
     RETVAL=1
     MSG="${MSG}Nova pep8 failed. "
-    cat nova_pep8.out.log
+    cat nova_pep8.out.log | grep -v env=
   fi
 fi
 
@@ -94,7 +95,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   if [ "$GLANCE_PEP8_STATUS" -ne "0" ]; then
     RETVAL=1
     MSG="${MSG}Glance pep8 failed. "
-    cat glance_pep8.out.log
+    cat glance_pep8.out.log | grep -v env=
   fi
 
 fi
@@ -123,7 +124,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   if [ "$KEYSTONE_PEP8_STATUS" -ne "0" ]; then
     RETVAL=1
     MSG="${MSG}Keystone pep8 failed. "
-    cat keystone_pep8.out.log
+    cat keystone_pep8.out.log | grep -v env=
   fi
 fi
 
@@ -154,7 +155,7 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
   if [ "$SWIFT_PEP8_STATUS" -ne "0" ]; then
     RETVAL=1
     MSG="${MSG}Swift pep8 failed. "
-    cat swift_pep8.out.log
+    cat swift_pep8.out.log | grep -v env=
   fi
 
 fi
