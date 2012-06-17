@@ -168,8 +168,10 @@ if rake group:create && rake group:poll; then
         { rake tail_logs; fail "Caught in a Tempest."; }
     fi
 
-    # Cache rpms if tests pass
-    rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
+    # Cache rpms all tests pass
+    if [ -n "$RPM_CACHEURL" ]; then
+        rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
+    fi
 
 else
     rake tail_logs
