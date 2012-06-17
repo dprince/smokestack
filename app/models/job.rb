@@ -96,8 +96,10 @@ class Job < ActiveRecord::Base
       cookbook_url = nil
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
         cookbook_url = job.job_group.smoke_test.cookbook_url
-      else
+      elsif not job.config_template.nil? then
         cookbook_url = job.config_template.cookbook_repo_url
+      else
+        cookbook_url = ""
       end
 
       args = ["bash",
