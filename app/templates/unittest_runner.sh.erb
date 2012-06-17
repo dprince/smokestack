@@ -51,9 +51,9 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   tar xf nova*.tar.gz
   rm nova*.tar.gz
   cd nova*
-  ./run_tests.sh -V -f &> nova.out.log
+  tox -epy27 &> nova.out.log
   local NOVA_STATUS=$?
-  ./run_tests.sh -V -p &> nova_pep8.out.log
+  tox -epep8 &> nova_pep8.out.log
   local NOVA_PEP8_STATUS=$?
   if [ "$NOVA_STATUS" -ne "0" ]; then
     RETVAL=1
@@ -82,9 +82,9 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   cd glance*
   #NOTE: temp fix for "File exists: '/tmp/glance-tests'" errors
   rm -Rf /tmp/glance-tests*
-  ./run_tests.sh -V -f &> glance.out.log
+  tox -epy27 &> glance.out.log
   local GLANCE_STATUS=$?
-  ./run_tests.sh -V -p &> glance_pep8.out.log
+  tox -epep8 &> glance_pep8.out.log
   local GLANCE_PEP8_STATUS=$?
   if [ "$GLANCE_STATUS" -ne "0" ]; then
     RETVAL=1
@@ -111,9 +111,9 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   tar xf keystone*.tar.gz
   rm keystone*.tar.gz
   cd keystone*
-  ./run_tests.sh -V -f &> keystone.out.log
+  tox -epy27 &> keystone.out.log
   local KEYSTONE_STATUS=$?
-  ./run_tests.sh -V -p &> keystone_pep8.out.log
+  tox -epep8 &> keystone_pep8.out.log
   local KEYSTONE_PEP8_STATUS=$?
   if [ "$KEYSTONE_STATUS" -ne "0" ]; then
     RETVAL=1
@@ -142,9 +142,9 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
   cd swift*
   #NOTE: temp fix for "File exists: '/tmp/swift-tests'" errors
   rm -Rf /tmp/swift-tests*
-  ./run_tests.sh -V -f &> swift.out.log
+  tox -epy27 &> swift.out.log
   local SWIFT_STATUS=$?
-  ./run_tests.sh -V -p &> swift_pep8.out.log
+  tox -epep8 &> swift_pep8.out.log
   local SWIFT_PEP8_STATUS=$?
   if [ "$SWIFT_STATUS" -ne "0" ]; then
     RETVAL=1
