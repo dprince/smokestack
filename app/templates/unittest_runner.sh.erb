@@ -33,7 +33,8 @@ function run_job {
 
 trap "{ cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 override_sudo
-export PIP_DOWNLOAD_CACHE="~/.pip/unittest_runner_cache"
+export PIP_DOWNLOAD_CACHE="$HOME/.pip/unittest_runner_cache"
+mkdir -p "$PIP_DOWNLOAD_CACHE"
 export PIP_USE_MIRRORS=true
 local RETVAL=0
 local TESTS_RUN=0
