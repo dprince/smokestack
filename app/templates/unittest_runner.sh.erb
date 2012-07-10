@@ -1,4 +1,6 @@
-TMP_DIR=$(mktemp -d)
+TMP_DIR=/tmp/smokestack_unittest
+rm -Rf "$TMP_DIR"
+mkdir -p "$TMP_DIR"
 
 function override_sudo {
   # test suites should stub out sudo. If it is called return an exit status.
@@ -7,6 +9,34 @@ function override_sudo {
   echo "/bin/false" >> sudo
   chmod 755 sudo
   export PATH="$TMP_DIR/bin:$PATH"
+}
+
+function tox_cache_dir {
+  local PROJECT_NAME=$1
+  local CACHE_MD5_TMP=$(mktemp)
+  echo "$PROJECT_NAME" > $CACHE_MD5_TMP
+  cat tools/*requires >> $CACHE_MD5_TMP
+  local MD5_SUM=$(md5sum $CACHE_MD5_TMP | cut -f 1 -d ' ')
+  local YMD=$(date +%Y-%m-%d)
+  echo "/tmp/$PROJECT_NAME-$YMD-$MD5_SUM"
+}
+
+function cache_tox {
+  local PROJECT_NAME=$1
+  local CACHE_DIR=$(tox_cache_dir "$PROJECT_NAME")
+  if [ ! -d "$CACHE_DIR"  ]; then
+    rm -Rf .tox/dist
+    cp -r .tox $CACHE_DIR
+  fi
+}
+
+function get_tox_from_cache {
+  local PROJECT_NAME=$1
+  local CACHE_DIR=$(tox_cache_dir "$PROJECT_NAME")
+  if [ -d "$CACHE_DIR"  ]; then
+    echo "Using cached .tox directory.."
+    cp -r $CACHE_DIR .tox
+  fi
 }
 
 function is_master {
@@ -53,6 +83,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   tar xf nova*.tar.gz
   rm nova*.tar.gz
   cd nova*
+  get_tox_from_cache "nova"
   start_metric "Nova Unit Tests"
   tox -epy27 &> nova.out.log
   local NOVA_STATUS=$?
@@ -71,6 +102,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
     MSG="${MSG}Nova pep8 failed. "
     cat nova_pep8.out.log | grep -v env=
   fi
+  cache_tox "nova"
 fi
 
 if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
@@ -88,6 +120,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   cd glance*
   #NOTE: temp fix for "File exists: '/tmp/glance-tests'" errors
   rm -Rf /tmp/glance-tests*
+  get_tox_from_cache "glance"
   start_metric "Glance Unit Tests"
   tox -epy27 &> glance.out.log
   local GLANCE_STATUS=$?
@@ -106,7 +139,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
     MSG="${MSG}Glance pep8 failed. "
     cat glance_pep8.out.log | grep -v env=
   fi
-
+  cache_tox "glance"
 fi
 
 if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
@@ -121,6 +154,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   tar xf keystone*.tar.gz
   rm keystone*.tar.gz
   cd keystone*
+  get_tox_from_cache "keystone"
   start_metric "Keystone Unit Tests"
   tox -epy27 &> keystone.out.log
   local KEYSTONE_STATUS=$?
@@ -139,6 +173,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
     MSG="${MSG}Keystone pep8 failed. "
     cat keystone_pep8.out.log | grep -v env=
   fi
+  cache_tox "keystone"
 fi
 
 if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
@@ -154,6 +189,7 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
   tar xf swift*.tar.gz
   rm swift*.tar.gz
   cd swift*
+  get_tox_from_cache "swift"
   #NOTE: temp fix for "File exists: '/tmp/swift-tests'" errors
   rm -Rf /tmp/swift-tests*
   start_metric "Swift Unit Tests"
@@ -174,7 +210,7 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
     MSG="${MSG}Swift pep8 failed. "
     cat swift_pep8.out.log | grep -v env=
   fi
-
+  cache_tox "swift"
 fi
 
 if [ $RETVAL -ne 0 ]; then
