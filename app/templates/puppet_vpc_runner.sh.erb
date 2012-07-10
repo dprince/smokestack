@@ -122,7 +122,7 @@ stop_metric
         if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
             SWIFT_MERGE_MASTER="true"
         fi
-        start_metric "Build Python-Keystoneclient"
+        start_metric "Build Swift"
         rake swift:build_packages SOURCE_DIR="$TMP_DIR/swift_source" \
             RPM_PACKAGER_URL="$SWIFT_RPM_PACKAGER_URL" \
             RPM_PACKAGER_BRANCH="$SWIFT_RPM_PACKAGER_BRANCH" \
