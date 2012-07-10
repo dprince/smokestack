@@ -55,3 +55,4 @@ ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubun
 ENV['SWIFT_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/swift/ubuntu"
 
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
+ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"

@@ -32,9 +32,10 @@ SWIFT_REVISION=${23}
 SWIFT_DEB_PACKAGER_URL=${24:-$SWIFT_DEB_PACKAGER_URL}
 SWIFT_RPM_PACKAGER_URL=${25:-$SWIFT_RPM_PACKAGER_URL}
 
-COOKBOOK_URL=${26}
-NODES_CONFIG_DIR=${27}
-SERVER_GROUP_JSON_CONF=${28}
+CONFIG_TEMPLATE_DESCRIPTION=${26}
+COOKBOOK_URL=${27}
+NODES_CONFIG_DIR=${28}
+SERVER_GROUP_JSON_CONF=${29}
 
 # Setup default branches to merge if MERGE_TRUNK is checked
 # These may be overridden by some environements
@@ -54,6 +55,7 @@ SWIFT_RPM_PACKAGER_BRANCH=${SWIFT_RPM_PACKAGER_BRANCH:-"master"}
 function fail {
 	local MSG=$1
 	echo "FAILURE_MSG=$MSG"
+        stop_metric
 	exit 1
 }
 
@@ -70,7 +72,9 @@ function git_clone {
 
 function get_nova_source_git {
 
+        start_metric "Git Clone Nova"
 	git_clone "$NOVA_GIT_MASTER" "nova_source"
+        stop_metric
 	pushd nova_source
 	git fetch $NOVA_URL $NOVA_BRANCH || \
 		fail "Failed to git fetch branch $NOVA_BRANCH."
@@ -95,7 +99,9 @@ function get_nova_source_git {
 
 function get_keystone_source_git {
 
+        start_metric "Git Clone Keystone"
 	git_clone "$KEYSTONE_GIT_MASTER" "keystone_source"
+        stop_metric
 	pushd keystone_source
 	git fetch $KEYSTONE_URL $KEYSTONE_BRANCH || \
 		fail "Failed to git fetch branch $KEYSTONE_BRANCH."
@@ -120,7 +126,9 @@ function get_keystone_source_git {
 
 function get_glance_source_git {
 
+        start_metric "Git Clone Glance"
 	git_clone "$GLANCE_GIT_MASTER" "glance_source"
+        stop_metric
 	pushd glance_source
 	git fetch $GLANCE_URL $GLANCE_BRANCH || \
 		fail "Failed to git fetch branch $GLANCE_BRANCH."
@@ -146,7 +154,9 @@ function get_glance_source_git {
 
 function get_swift_source_git {
 
+        start_metric "Git Clone Swift"
 	git_clone "$SWIFT_GIT_MASTER" "swift_source"
+        stop_metric
 	pushd swift_source
 	git fetch $SWIFT_URL $SWIFT_BRANCH || \
 		fail "Failed to git fetch branch $SWIFT_BRANCH."
@@ -168,4 +178,31 @@ function get_swift_source_git {
 
 	popd
 
+}
+
+export METRIC_START_TIME=""
+export METRIC_NAME=""
+export METRIC_SOURCE="" #defaults to hostname
+
+function start_metric {
+	METRIC_NAME=$(echo "$1" | sed -e 's|[\ \///:]|_|g')
+        if [ -n "$2" ]; then
+	    METRIC_SOURCE=$(echo "$2" | sed -e 's|[\ \///:]|_|g')
+        elif [ -n "$CONFIG_TEMPLATE_DESCRIPTION" ]; then
+	    METRIC_SOURCE=$(echo "$CONFIG_TEMPLATE_DESCRIPTION" | sed -e 's|[\ \///:]|_|g')
+        else
+	    METRIC_SOURCE="$HOSTNAME"
+        fi
+	METRIC_START_TIME=$(date +%s)
+}
+
+function stop_metric {
+	local END_TIME=$(date +%s)
+	local TOTAL_TIME="$(($END_TIME - $METRIC_START_TIME))"
+        if [ -n "$METRIC_NAME" ]; then
+	    echo "$END_TIME:$TOTAL_TIME:$METRIC_NAME:$METRIC_SOURCE" >> <%= ENV['METRICS_DATA_FILE'] %>
+        fi
+	METRIC_START_TIME=""
+	METRIC_NAME=""
+	METRIC_SOURCE=""
 }

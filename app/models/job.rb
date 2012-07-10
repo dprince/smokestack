@@ -40,10 +40,13 @@ class Job < ActiveRecord::Base
     begin
 
       if script_text.nil?
-        script_text = File.read(File.join(Rails.root, "app", "templates", "common.sh"))
+        common_template = File.read(File.join(Rails.root, "app", "templates", "common.sh.erb"))
+        common_eruby = Erubis::Eruby.new(common_template)
+        script_text = common_eruby.result(:job => job)
+        
         template = File.read(File.join(Rails.root, "app", "templates", template_name))
-        eruby = Erubis::Eruby.new(template)
-        script_text += eruby.result(:job => job)
+        template_eruby = Erubis::Eruby.new(template)
+        script_text += template_eruby.result(:job => job)
       end
 
       File.open(script_file, 'w') do |f|
@@ -93,13 +96,16 @@ class Job < ActiveRecord::Base
       swift_deb_packager_url=swift_builder.deb_packager_url
       swift_rpm_packager_url=swift_builder.rpm_packager_url
 
-      cookbook_url = nil
+      cookbook_url = ""
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
         cookbook_url = job.job_group.smoke_test.cookbook_url
       elsif not job.config_template.nil? then
         cookbook_url = job.config_template.cookbook_repo_url
-      else
-        cookbook_url = ""
+      end
+
+      config_template_description = ""
+      if not job.config_template.nil? then
+        config_template_description = job.config_template.description
       end
 
       args = ["bash",
@@ -129,6 +135,7 @@ class Job < ActiveRecord::Base
         swift_builder.revision_hash,
         swift_deb_packager_url,
         swift_rpm_packager_url,
+        config_template_description,
         cookbook_url,
         node_configs_dir,
         server_group_json_file]

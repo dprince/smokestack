@@ -42,12 +42,15 @@ function setup {
 function run_job {
 
 trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+start_metric "Create Server Group"
 if rake group:create && rake group:poll; then
+stop_metric
 
     local NOVA_MERGE_MASTER=""
     if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
         NOVA_MERGE_MASTER="true"
     fi
+    start_metric "Build Nova"
     rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
         RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
@@ -59,18 +62,22 @@ if rake group:create && rake group:poll; then
         REVISION="$NOVA_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build nova packages."
-    
-    local GLANCE_MERGE_MASTER=""
-    if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
-        GLANCE_MERGE_MASTER="true"
-    fi
+    stop_metric
 
+    start_metric "Build Python-Novaclient"
     rake nova:build_python_novaclient \
         SOURCE_URL="$NOVACLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$NOVACLIENT_RPM_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build novaclient packages."
+    stop_metric
+   
+    local GLANCE_MERGE_MASTER=""
+    if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
+        GLANCE_MERGE_MASTER="true"
+    fi
 
+    start_metric "Build Glance"
     rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
         RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
@@ -82,11 +89,13 @@ if rake group:create && rake group:poll; then
         REVISION="$GLANCE_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build glance packages."
+    stop_metric
 
-        local KEYSTONE_MERGE_MASTER=""
-        if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
-            KEYSTONE_MERGE_MASTER="true"
+    local KEYSTONE_MERGE_MASTER=""
+    if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
+        KEYSTONE_MERGE_MASTER="true"
     fi
+    start_metric "Build Keystone"
     rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
         RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
@@ -98,18 +107,22 @@ if rake group:create && rake group:poll; then
         REVISION="$KEYSTONE_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build keystone packages."
+    stop_metric
 
+    start_metric "Build Python-Keystoneclient"
     rake keystone:build_python_keystoneclient \
         SOURCE_URL="$KEYSTONECLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$KEYSTONECLIENT_RPM_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build keystoneclient packages."
+    stop_metric
 
     if [ -n "$BUILD_SWIFT" ]; then
         local SWIFT_MERGE_MASTER=""
         if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
             SWIFT_MERGE_MASTER="true"
         fi
+        start_metric "Build Python-Keystoneclient"
         rake swift:build_packages SOURCE_DIR="$TMP_DIR/swift_source" \
             RPM_PACKAGER_URL="$SWIFT_RPM_PACKAGER_URL" \
             RPM_PACKAGER_BRANCH="$SWIFT_RPM_PACKAGER_BRANCH" \
@@ -121,12 +134,15 @@ if rake group:create && rake group:poll; then
             REVISION="$SWIFT_REVISION" \
             CACHEURL="$RPM_CACHEURL" \
             || fail "Failed to build swift packages."
+        stop_metric
 
+        start_metric "Build Python-Swiftclient"
         rake swift:build_python_swiftclient \
             SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
             RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
             CACHEURL="$RPM_CACHEURL" \
             || fail "Failed to build swiftclient packages."
+        stop_metric
 
     fi
 
@@ -144,28 +160,36 @@ if rake group:create && rake group:poll; then
     mv config.yml config/puppet-configs/smokestack/config.yml
     cp -a config/puppet-configs/smokestack /tmp/smokestack-config
     
+    start_metric "Puppet Install"
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
+    stop_metric
+
     rake keystone:configure
 
     rake glance:load_images
     
     #run Torpedo API tests (Uses the Ruby openstack-compute gem)
     if [ -n "$RUN_TORPEDO" ]; then
+        start_metric "Torpedo"
         rake torpedo SERVER_NAME=nova1 || \
         { rake tail_logs; fail "Hit by Torpedo."; }
+        stop_metric
     fi
                
     # run smoke tests
     if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
+        start_metric "Nova Smoke Tests"
         rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
         { rake tail_logs; fail "Smoke tests failed."; }
-
+        stop_metric
     fi
 
     # run Tempest
     if [ -n "$RUN_TEMPEST" ]; then
+        start_metric "Tempest Smoke"
         rake tempest SERVER_NAME=nova1 || \
         { rake tail_logs; fail "Caught in a Tempest."; }
+        stop_metric
     fi
 
     # Cache rpms all tests pass

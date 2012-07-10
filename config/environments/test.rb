@@ -49,3 +49,5 @@ ENV['KEYSTONE_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-keyst
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
 ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
 ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubuntu"
+
+ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"
