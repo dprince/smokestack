@@ -17,8 +17,7 @@ function tox_cache_dir {
   echo "$PROJECT_NAME" > $CACHE_MD5_TMP
   cat tools/*requires >> $CACHE_MD5_TMP
   local MD5_SUM=$(md5sum $CACHE_MD5_TMP | cut -f 1 -d ' ')
-  local YMD=$(date +%Y-%m-%d)
-  echo "/tmp/$PROJECT_NAME-$YMD-$MD5_SUM"
+  echo "/tmp/$PROJECT_NAME-$MD5_SUM"
 }
 
 function cache_tox {
