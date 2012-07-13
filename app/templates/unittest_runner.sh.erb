@@ -65,6 +65,12 @@ override_sudo
 export PIP_DOWNLOAD_CACHE="$HOME/.pip/unittest_runner_cache"
 mkdir -p "$PIP_DOWNLOAD_CACHE"
 export PIP_USE_MIRRORS=true
+
+# These are used to control openstack-common's setup.py and will effect
+# both the sdist and the tox commands (which also run sdist)
+export SKIP_GENERATE_AUTHORS=1
+export SKIP_WRITE_GIT_CHANGELOG=1
+
 local RETVAL=0
 local TESTS_RUN=0
 local MSG=""
