@@ -70,4 +70,18 @@ class JobTest < ActiveSupport::TestCase
     assert_equal "This is only a test.", Job.parse_last_message(job.stdout)
   end
 
+  test "verify timeout" do
+    ENV['JOB_TIMEOUT'] = '1'
+    tmp_file="/tmp/smokestack_timeout_works"
+    job_script = "trap '{ touch #{tmp_file}; }' INT TERM EXIT\nsleep 20\n"
+    assert (not Job.run_job(jobs(:one), nil, job_script))
+    job = Job.find(jobs(:one).id)
+    assert_nil job.stdout
+    assert_nil job.stderr
+    assert_equal "Failed", job.status
+    assert File.exists?(tmp_file)
+    File.delete(tmp_file)
+    ENV['JOB_TIMEOUT'] = '3600'
+  end
+
 end

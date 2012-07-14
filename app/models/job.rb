@@ -1,6 +1,7 @@
 require 'erubis'
 require 'open4'
 require 'fileutils'
+require 'timeout'
 
 class Job < ActiveRecord::Base
 
@@ -140,18 +141,32 @@ class Job < ActiveRecord::Base
         node_configs_dir,
         server_group_json_file]
 
-      status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
-        stdin.close 
-        job.stdout=stdout.readlines.join.chomp
-        job.stderr=stderr.readlines.join.chomp
+      job_timeout = ENV['JOB_TIMEOUT'] || '3600' #default to 1 hour
+      status = nil
+      job_pid = nil
+      begin
+        Timeout::timeout(job_timeout.to_i) do
+          status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
+            job_pid = pid
+            stdin.close
+            job.stdout=stdout.readlines.join.chomp
+            job.stderr=stderr.readlines.join.chomp
 
-        job.nova_revision=Job.parse_nova_revision(job.stdout)
-        job.glance_revision=Job.parse_glance_revision(job.stdout)
-        job.keystone_revision=Job.parse_keystone_revision(job.stdout)
-        job.swift_revision=Job.parse_swift_revision(job.stdout)
-        job.msg=Job.parse_last_message(job.stdout)
-        job.save
+            job.nova_revision=Job.parse_nova_revision(job.stdout)
+            job.glance_revision=Job.parse_glance_revision(job.stdout)
+            job.keystone_revision=Job.parse_keystone_revision(job.stdout)
+            job.swift_revision=Job.parse_swift_revision(job.stdout)
+            job.msg=Job.parse_last_message(job.stdout)
+            job.save
+          end
+        end
+      rescue Timeout::Error => te
+        Process.kill("HUP", job_pid)
+        job.update_attribute(:msg, "Timeout: " + te.message)
+        job.update_attribute(:status, "Failed")
+        return false
       end
+
       if status.exitstatus == 0
         job.update_attribute(:status, "Success")
         return true
