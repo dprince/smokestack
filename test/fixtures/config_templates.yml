@@ -2,7 +2,7 @@
 
 libvirt_psql:
   name: Libvirt Postgres
-  job_type: Chef Vpc
+  job_type: Puppet Vpc
   description: Libvirt QEME w/ Postgres
   cookbook_repo_url: "http://a.b.c/blah"
   server_group_json: {}

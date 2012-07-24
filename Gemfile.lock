@@ -2,7 +2,6 @@ GEM
   remote: http://rubygems.org/
   specs:
     Platform (0.4.0)
-    SystemTimer (1.2.3)
     actionmailer (3.1.1)
       actionpack (= 3.1.1)
       mail (~> 2.3.0)
@@ -33,11 +32,6 @@ GEM
       multi_json (~> 1.0)
     arel (2.2.1)
     builder (3.0.0)
-    chef-vpc-toolkit (2.8.1)
-      builder
-      json
-      rake
-      uuidtools
     coffee-rails (3.1.1)
       coffee-script (>= 2.2.0)
       railties (~> 3.1.0)
@@ -51,6 +45,11 @@ GEM
     hike (1.2.1)
     i18n (0.6.0)
     json (1.6.1)
+    kytoon (1.0.1)
+      builder
+      json
+      rake
+      uuidtools
     libv8 (3.3.10.4)
     mail (2.3.0)
       i18n (>= 0.4.0)
@@ -134,9 +133,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  SystemTimer (~> 1.2.3)
-  chef-vpc-toolkit
   coffee-rails (~> 3.1.1)
+  kytoon
   mysql
   popen4
   rails (= 3.1.1)

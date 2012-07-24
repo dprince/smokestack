@@ -9,7 +9,7 @@ A web application with a REST based HTTP interface to help smoke test OpenStack.
 * Rails 3.1
 * Resque: a redis backed job queue
 * Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well. (add more job runners for: PXE, Crowbar, etc.)
-* Configuration management to install and configure everything (Chef/Puppet)
+* Configuration management to install and configure everything (Puppet)
 * Packages to install software (currently supports Fedora/Ubuntu)
 
 For more information and examples see the wiki: http://wiki.openstack.org/smokestack
@@ -60,7 +60,7 @@ At this point the web application should be running at http://localhost:3000.
 
     # setup vpc
     ssh-keygen # don't use passphrase
-    # FIXME - add details on creating .chef_vpc_toolkit.conf for running VPC jobs
+    # FIXME - add details on creating .kytoon.conf for running VPC jobs
     # in tab 1: launch some workers
     bundle exec rake resque:workers QUEUE="vpc" COUNT=3
 

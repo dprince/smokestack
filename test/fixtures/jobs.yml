@@ -11,7 +11,6 @@ one:
 two:
   status: Success
   stdout: |
-    Chef VPC Toolkit Version: 2.5.1
     Cloning into openstack_vpc..
     NOVA_REVISION=102
     FAILURE_MSG=This is only a test.

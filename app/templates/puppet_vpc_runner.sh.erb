@@ -1,5 +1,7 @@
-#Global Chef settings
 TMP_DIR=$(mktemp -d)
+
+# Set default Kytoon group type to 'cloud_server_vpc'
+export GROUP_TYPE=cloud_server_vpc
 
 <% job.job_group.smoke_test.test_suites.each do |suite| %>
 RUN_<%= suite.name %>=true
@@ -43,7 +45,7 @@ function run_job {
 
 trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 start_metric "Create Server Group"
-if rake group:create && rake group:poll; then
+if rake group:create; then
 stop_metric
 
     local NOVA_MERGE_MASTER=""
@@ -159,7 +161,9 @@ stop_metric
     cat config.yml
     mv config.yml config/puppet-configs/smokestack/config.yml
     cp -a config/puppet-configs/smokestack /tmp/smokestack-config
-    
+   
+    rake fedora:create_rpm_repo
+ 
     start_metric "Puppet Install"
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
     stop_metric
