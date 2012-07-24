@@ -1,0 +1,234 @@
+TMP_DIR=$(mktemp -d)
+
+# Set default Kytoon group type to 'xenserver'
+export GROUP_TYPE=xenserver
+
+<% job.job_group.smoke_test.test_suites.each do |suite| %>
+RUN_<%= suite.name %>=true
+<% end %>
+
+function copy_hosts {
+# Copy hosts file to each node
+rake ssh bash <<-"EOF_COPY_HOSTS"
+for IP in $(cat /etc/hosts | cut -f 1); do
+[[ "$IP" != "127.0.0.1" ]] && scp /etc/hosts $IP:/etc/hosts
+done
+EOF_COPY_HOSTS
+}
+
+function delete_group {
+
+#for debugging purposes you can touch this file to hang the group
+rake ssh bash <<-EOF_BASH
+until [ ! -f /tmp/do_not_delete ]; do
+    sleep 1
+done
+EOF_BASH
+rake group:delete
+}
+
+function setup {
+
+    cd $TMP_DIR
+
+    GIT_ASKPASS=echo \
+    git_clone "<%= ENV['OPENSTACK_VPC_URL'] %>" "openstack_vpc"
+    cd openstack_vpc
+
+    cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
+        fail "Failed to copy server_group.json"
+
+
+}
+
+function run_job {
+
+[ -n "$XENSERVER_IP" ] || fail "Xen jobs require a XENSERVER_IP env variable."
+
+trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+start_metric "Create Server Group"
+if rake group:create GATEWAY_IP="$XENSERVER_IP"; then
+stop_metric
+
+    local NOVA_MERGE_MASTER=""
+    if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+        NOVA_MERGE_MASTER="true"
+    fi
+    start_metric "Build Nova"
+    rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+        RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$NOVA_URL" \
+        SOURCE_BRANCH="$NOVA_BRANCH" \
+        GIT_MASTER="$NOVA_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$NOVA_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$NOVA_MERGE_MASTER" \
+        REVISION="$NOVA_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build nova packages."
+    stop_metric
+
+    start_metric "Build Python-Novaclient"
+    rake nova:build_python_novaclient \
+        SOURCE_URL="$NOVACLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$NOVACLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build novaclient packages."
+    stop_metric
+   
+    local GLANCE_MERGE_MASTER=""
+    if [[ "$GLANCE_MERGE_TRUNK" == "true" ]]; then
+        GLANCE_MERGE_MASTER="true"
+    fi
+
+    start_metric "Build Glance"
+    rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+        RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$GLANCE_URL" \
+        SOURCE_BRANCH="$GLANCE_BRANCH" \
+        GIT_MASTER="$GLANCE_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$GLANCE_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$GLANCE_MERGE_MASTER" \
+        REVISION="$GLANCE_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build glance packages."
+    stop_metric
+
+    local KEYSTONE_MERGE_MASTER=""
+    if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
+        KEYSTONE_MERGE_MASTER="true"
+    fi
+    start_metric "Build Keystone"
+    rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+        RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
+        RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
+        SOURCE_URL="$KEYSTONE_URL" \
+        SOURCE_BRANCH="$KEYSTONE_BRANCH" \
+        GIT_MASTER="$KEYSTONE_GIT_MASTER" \
+        GIT_MERGE_MASTER_BRANCH="$KEYSTONE_GIT_MASTER_BRANCH" \
+        MERGE_MASTER="$KEYSTONE_MERGE_MASTER" \
+        REVISION="$KEYSTONE_REVISION" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build keystone packages."
+    stop_metric
+
+    start_metric "Build Python-Keystoneclient"
+    rake keystone:build_python_keystoneclient \
+        SOURCE_URL="$KEYSTONECLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$KEYSTONECLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build keystoneclient packages."
+    stop_metric
+
+    if [ -n "$BUILD_SWIFT" ]; then
+        local SWIFT_MERGE_MASTER=""
+        if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
+            SWIFT_MERGE_MASTER="true"
+        fi
+        start_metric "Build Swift"
+        rake swift:build_packages SOURCE_DIR="$TMP_DIR/swift_source" \
+            RPM_PACKAGER_URL="$SWIFT_RPM_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$SWIFT_RPM_PACKAGER_BRANCH" \
+            SOURCE_URL="$SWIFT_URL" \
+            SOURCE_BRANCH="$SWIFT_BRANCH" \
+            GIT_MASTER="$SWIFT_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$SWIFT_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$SWIFT_MERGE_MASTER" \
+            REVISION="$SWIFT_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build swift packages."
+        stop_metric
+
+        start_metric "Build Python-Swiftclient"
+        rake swift:build_python_swiftclient \
+            SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build swiftclient packages."
+        stop_metric
+
+    fi
+
+    # Copy hosts file to all nodes
+    copy_hosts
+
+    # obtain IP address of xenbr0
+    XENBR0_IP=$(rake ssh 'ip a | grep xenbr0 | grep inet | sed -e "s|.*inet \([^/]*\).*|\1|"')
+
+    # Copy node configs into the project and write out config.yml
+    cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
+    echo "nodes:" > config.yml
+    for FILE in $(ls config/puppet-configs/smokestack); do
+        echo "    - name: $FILE" >> config.yml
+        echo "      manifest: $FILE" >> config.yml
+
+        # FIXME: need to figure out how to make xenbr1 a XenServer management
+        # interface.
+        # For now we replace XENAPI_CONNECTION_URL with the IP of xenbr0
+        sed -e "s|XENAPI_CONNECTION_URL|http://$XENBR0_IP|g" -i "config/puppet-configs/smokestack/$FILE"
+        
+    done
+    cat config.yml
+    mv config.yml config/puppet-configs/smokestack/config.yml
+    cp -a config/puppet-configs/smokestack /tmp/smokestack-config
+   
+    rake fedora:create_rpm_repo
+
+    rake xen:install_plugins SOURCE_URL="$NOVA_URL" SOURCE_BRANCH="$NOVA_BRANCH"
+ 
+    start_metric "Puppet Install"
+    rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
+    stop_metric
+
+    rake keystone:configure
+
+    rake glance:load_images_xen
+
+    #reserve the first 5 IPs for the server group
+    rake ssh bash <<-"EOF_RESERVE_IPS"
+ssh nova1 bash <<-"EOF_NOVA1"
+for NUM in {0..5}; do
+nova-manage fixed reserve 192.168.0.$NUM
+done
+EOF_NOVA1
+EOF_RESERVE_IPS
+    
+    #run Torpedo API tests (Uses the Ruby openstack-compute gem)
+    if [ -n "$RUN_TORPEDO" ]; then
+        start_metric "Torpedo"
+        rake torpedo SERVER_NAME=nova1 MODE=xen || \
+        { rake tail_logs; fail "Hit by Torpedo."; }
+        stop_metric
+    fi
+               
+    # run smoke tests
+    if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
+        start_metric "Nova Smoke Tests"
+        rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
+        { rake tail_logs; fail "Smoke tests failed."; }
+        stop_metric
+    fi
+
+    # run Tempest
+    if [ -n "$RUN_TEMPEST" ]; then
+        start_metric "Tempest Smoke"
+        rake tempest SERVER_NAME=nova1 || \
+        { rake tail_logs; fail "Caught in a Tempest."; }
+        stop_metric
+    fi
+
+    # Cache rpms all tests pass
+    if [ -n "$RPM_CACHEURL" ]; then
+        rake fedora:fill_cache CACHEURL=$RPM_CACHEURL
+    fi
+
+else
+    rake tail_logs
+    fail "Failed to create server group."
+fi
+
+}
+
+setup
+run_job
