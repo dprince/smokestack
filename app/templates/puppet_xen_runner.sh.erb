@@ -175,7 +175,12 @@ stop_metric
    
     rake fedora:create_rpm_repo
 
-    rake xen:install_plugins SOURCE_URL="$NOVA_URL" SOURCE_BRANCH="$NOVA_BRANCH"
+    rake xen:install_plugins SOURCE_URL="$NOVA_URL" \
+                             SOURCE_BRANCH="$NOVA_BRANCH" \
+                             GIT_MASTER="$NOVA_GIT_MASTER" \
+                             GIT_MERGE_MASTER_BRANCH="$NOVA_GIT_MASTER_BRANCH" \
+                             MERGE_MASTER="$NOVA_MERGE_MASTER" \
+                             REVISION="$NOVA_REVISION"
  
     start_metric "Puppet Install"
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
