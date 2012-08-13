@@ -93,6 +93,17 @@ stop_metric
         || fail "Failed to build glance packages."
     stop_metric
 
+    #FIXME (remove once we add this to Fedora)
+    rake glance:build_python_warlock
+
+    start_metric "Build Python-Glanceclient"
+    rake glance:build_python_glanceclient \
+        SOURCE_URL="$GLANCECLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$GLANCECLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build glanceclient packages."
+    stop_metric
+
     local KEYSTONE_MERGE_MASTER=""
     if [[ "$KEYSTONE_MERGE_TRUNK" == "true" ]]; then
         KEYSTONE_MERGE_MASTER="true"
