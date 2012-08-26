@@ -5,9 +5,10 @@ require 'timeout'
 
 class Job < ActiveRecord::Base
 
+  PUPPET_LIBVIRT = "Puppet Libvirt"
   PUPPET_VPC = "Puppet Vpc"
   PUPPET_XEN = "Puppet Xen"
-  JOB_TYPES = [PUPPET_VPC, PUPPET_XEN]
+  JOB_TYPES = [PUPPET_LIBVIRT, PUPPET_VPC, PUPPET_XEN]
 
   validates_presence_of :job_group_id
   belongs_to :job_group

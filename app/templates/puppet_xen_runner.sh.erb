@@ -1,7 +1,19 @@
 TMP_DIR=$(mktemp -d)
 
+# Server name within the group which will be used to build packages
+export BUILD_SERVER_NAME=${BUILD_SERVER_NAME:-"login"}
+
+# Keystone HOST (defaults to nova1)
+export KEYSTONE_SERVER_NAME=${KEYSTONE_SERVER_NAME:-"nova1"}
+
+# Glance HOST (defaults to nova1)
+export GLANCE_SERVER_NAME=${GLANCE_SERVER_NAME:-"nova1"}
+
+# Server name within the group which will be used to build packages
+export TEST_SUITE_SERVER_NAME=${TEST_SUITE_SERVER_NAME:-"nova1"}
+
 # Set default Kytoon group type to 'xenserver'
-export GROUP_TYPE=xenserver
+export GROUP_TYPE=${GROUP_TYPE:-"xenserver"}
 
 <% job.job_group.smoke_test.test_suites.each do |suite| %>
 RUN_<%= suite.name %>=true
@@ -56,6 +68,7 @@ stop_metric
     fi
     start_metric "Build Nova"
     rake nova:build_packages SOURCE_DIR="$TMP_DIR/nova_source" \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         RPM_PACKAGER_URL="$NOVA_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$NOVA_RPM_PACKAGER_BRANCH" \
         SOURCE_URL="$NOVA_URL" \
@@ -70,6 +83,7 @@ stop_metric
 
     start_metric "Build Python-Novaclient"
     rake nova:build_python_novaclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         SOURCE_URL="$NOVACLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$NOVACLIENT_RPM_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
@@ -83,6 +97,7 @@ stop_metric
 
     start_metric "Build Glance"
     rake glance:build_packages SOURCE_DIR="$TMP_DIR/glance_source" \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         RPM_PACKAGER_URL="$GLANCE_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$GLANCE_RPM_PACKAGER_BRANCH" \
         SOURCE_URL="$GLANCE_URL" \
@@ -96,10 +111,12 @@ stop_metric
     stop_metric
 
     #FIXME (remove once we add this to Fedora)
-    rake glance:build_python_warlock
+    rake glance:build_python_warlock \
+        SERVER_NAME="$BUILD_SERVER_NAME"
 
     start_metric "Build Python-Glanceclient"
     rake glance:build_python_glanceclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         SOURCE_URL="$GLANCECLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$GLANCECLIENT_RPM_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
@@ -112,6 +129,7 @@ stop_metric
     fi
     start_metric "Build Keystone"
     rake keystone:build_packages SOURCE_DIR="$TMP_DIR/keystone_source" \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         RPM_PACKAGER_URL="$KEYSTONE_RPM_PACKAGER_URL" \
         RPM_PACKAGER_BRANCH="$KEYSTONE_RPM_PACKAGER_BRANCH" \
         SOURCE_URL="$KEYSTONE_URL" \
@@ -126,6 +144,7 @@ stop_metric
 
     start_metric "Build Python-Keystoneclient"
     rake keystone:build_python_keystoneclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
         SOURCE_URL="$KEYSTONECLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$KEYSTONECLIENT_RPM_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
@@ -139,6 +158,7 @@ stop_metric
         fi
         start_metric "Build Swift"
         rake swift:build_packages SOURCE_DIR="$TMP_DIR/swift_source" \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
             RPM_PACKAGER_URL="$SWIFT_RPM_PACKAGER_URL" \
             RPM_PACKAGER_BRANCH="$SWIFT_RPM_PACKAGER_BRANCH" \
             SOURCE_URL="$SWIFT_URL" \
@@ -153,6 +173,7 @@ stop_metric
 
         start_metric "Build Python-Swiftclient"
         rake swift:build_python_swiftclient \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
             SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
             RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
             CACHEURL="$RPM_CACHEURL" \
@@ -184,7 +205,7 @@ stop_metric
     mv config.yml config/puppet-configs/smokestack/config.yml
     cp -a config/puppet-configs/smokestack /tmp/smokestack-config
    
-    rake fedora:create_rpm_repo
+    rake fedora:create_rpm_repo SERVER_NAME="$BUILD_SERVER_NAME"
 
     rake xen:install_plugins SOURCE_URL="$NOVA_URL" \
                              SOURCE_BRANCH="$NOVA_BRANCH" \
@@ -197,9 +218,9 @@ stop_metric
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" --trace
     stop_metric
 
-    rake keystone:configure
+    rake keystone:configure SERVER_NAME="$KEYSTONE_SERVER_NAME"
 
-    rake glance:load_images_xen
+    rake glance:load_images_xen SERVER_NAME="$GLANCE_SERVER_NAME"
 
     #reserve the first 5 IPs for the server group
     rake ssh bash <<-"EOF_RESERVE_IPS"
@@ -213,7 +234,7 @@ EOF_RESERVE_IPS
     #run Torpedo API tests (Uses the Ruby openstack-compute gem)
     if [ -n "$RUN_TORPEDO" ]; then
         start_metric "Torpedo"
-        rake torpedo SERVER_NAME=nova1 MODE=xen || \
+        rake torpedo SERVER_NAME="$TEST_SUITE_SERVER_NAME" MODE=xen || \
         { rake tail_logs; fail "Hit by Torpedo."; }
         stop_metric
     fi
@@ -221,7 +242,7 @@ EOF_RESERVE_IPS
     # run smoke tests (Not currently supported)
     #if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
         #start_metric "Nova Smoke Tests"
-        #rake nova:smoke_tests_fedora SERVER_NAME=nova1 NO_VOLUME=true || \
+        #rake nova:smoke_tests_fedora SERVER_NAME="$TEST_SUITE_SERVER_NAME" NO_VOLUME=true || \
         #{ rake tail_logs; fail "Smoke tests failed."; }
         #stop_metric
     #fi
@@ -229,7 +250,7 @@ EOF_RESERVE_IPS
     # run Tempest
     if [ -n "$RUN_TEMPEST" ]; then
         start_metric "Tempest Smoke"
-        rake tempest SERVER_NAME=nova1 || \
+        rake tempest SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
         { rake tail_logs; fail "Caught in a Tempest."; }
         stop_metric
     fi

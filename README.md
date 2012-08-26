@@ -8,9 +8,9 @@ A web application with a REST based HTTP interface to help smoke test OpenStack.
 
 * Rails 3.1
 * Resque: a redis backed job queue
-* Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well. (add more job runners for: PXE, Crowbar, etc.)
+* Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well.
 * Configuration management to install and configure everything (Puppet)
-* Packages to install software (currently supports Fedora/Ubuntu)
+* Packages to install software (currently supports Fedora)
 
 For more information and examples see the wiki: http://wiki.openstack.org/smokestack
 
@@ -34,7 +34,7 @@ Unpack the rails app and run the following commands to create the database.
 Start some linux workers to configure Linux machines:
 
     mkdir tmp/pids
-    rake resque:workers QUEUE=vpc COUNT=3
+    rake resque:workers QUEUE=libvirt COUNT=3
 
 Start the API server:
 
@@ -58,11 +58,11 @@ At this point the web application should be running at http://localhost:3000.
     cp config/database.yml.sample config/database.yml
     bundle exec rake db:create db:migrate
 
-    # setup vpc
+    # setup kytoon
     ssh-keygen # don't use passphrase
-    # FIXME - add details on creating .kytoon.conf for running VPC jobs
+    # FIXME - add details on creating .kytoon.conf for running jobs
     # in tab 1: launch some workers
-    bundle exec rake resque:workers QUEUE="vpc" COUNT=3
+    bundle exec rake resque:workers QUEUE="libvirt" COUNT=3
 
     # in tab 2: run rails
     bundle exec rails server
