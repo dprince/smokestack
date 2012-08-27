@@ -220,3 +220,11 @@ function stop_metric {
 	METRIC_NAME=""
 	METRIC_SOURCE=""
 }
+
+if [ -f ~/.gitconfig ]; then
+cat > ~/.gitconfig <<-EOF_GIT_CONFIG_CAT
+[user]
+        name = SmokeStack
+        email = smokestack@openstack.org
+EOF_GIT_CONFIG_CAT
+fi
