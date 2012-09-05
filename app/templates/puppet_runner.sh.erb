@@ -215,7 +215,9 @@ stop_metric
     # run smoke tests
     if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
         start_metric "Nova Smoke Tests"
-        rake nova:smoke_tests_fedora SERVER_NAME="$TEST_SUITE_SERVER_NAME" NO_VOLUME=true || \
+        rake nova:smoke_tests_fedora \
+            SERVER_NAME="$TEST_SUITE_SERVER_NAME"
+            NO_VOLUME="$SMOKE_TESTS_DISABLE_VOLUME" || \
         { rake tail_logs; fail "Smoke tests failed."; }
         stop_metric
     fi
