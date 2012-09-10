@@ -32,10 +32,17 @@ SWIFT_REVISION=${23}
 SWIFT_DEB_PACKAGER_URL=${24:-$SWIFT_DEB_PACKAGER_URL}
 SWIFT_RPM_PACKAGER_URL=${25:-$SWIFT_RPM_PACKAGER_URL}
 
-CONFIG_TEMPLATE_DESCRIPTION=${26}
-COOKBOOK_URL=${27}
-NODES_CONFIG_DIR=${28}
-SERVER_GROUP_JSON_CONF=${29}
+CINDER_URL=${26}
+CINDER_BRANCH=${27}
+CINDER_MERGE_TRUNK=${28}
+CINDER_REVISION=${29}
+CINDER_DEB_PACKAGER_URL=${30:-$CINDER_DEB_PACKAGER_URL}
+CINDER_RPM_PACKAGER_URL=${31:-$CINDER_RPM_PACKAGER_URL}
+
+CONFIG_TEMPLATE_DESCRIPTION=${32}
+COOKBOOK_URL=${33}
+NODES_CONFIG_DIR=${34}
+SERVER_GROUP_JSON_CONF=${35}
 
 # Setup default branches to merge if MERGE_TRUNK is checked
 # These may be overridden by some environements
@@ -43,6 +50,7 @@ NOVA_GIT_MASTER_BRANCH=${NOVA_GIT_MASTER_BRANCH:-"master"}
 GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
 KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 SWIFT_GIT_MASTER_BRANCH=${SWIFT_GIT_MASTER_BRANCH:-"master"}
+CINDER_GIT_MASTER_BRANCH=${CINDER_GIT_MASTER_BRANCH:-"master"}
 
 # Setup default RPM packager branches
 # These may be overridden by some environements
@@ -50,6 +58,7 @@ NOVA_RPM_PACKAGER_BRANCH=${NOVA_RPM_PACKAGER_BRANCH:-"master"}
 GLANCE_RPM_PACKAGER_BRANCH=${GLANCE_RPM_PACKAGER_BRANCH:-"master"}
 KEYSTONE_RPM_PACKAGER_BRANCH=${KEYSTONE_RPM_PACKAGER_BRANCH:-"master"}
 SWIFT_RPM_PACKAGER_BRANCH=${SWIFT_RPM_PACKAGER_BRANCH:-"master"}
+CINDER_RPM_PACKAGER_BRANCH=${CINDER_RPM_PACKAGER_BRANCH:-"master"}
 
 GIT_CACHE_DIR=${GIT_CACHE_DIR:-"$HOME/.smokestack_git_cache"}
 
@@ -188,6 +197,34 @@ function get_swift_source_git {
 
 	if [[ "$SWIFT_MERGE_TRUNK" == "true" ]]; then
 		git merge $SWIFT_GIT_MASTER_BRANCH || fail "Failed to merge $SWIFT_GIT_MASTER_BRANCH."
+	fi
+
+	popd
+
+}
+
+function get_cinder_source_git {
+
+        start_metric "Git Clone Cinder"
+	git_clone "$CINDER_GIT_MASTER" "cinder_source"
+        stop_metric
+	pushd cinder_source
+	git fetch $CINDER_URL $CINDER_BRANCH || \
+		fail "Failed to git fetch branch $CINDER_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$CINDER_REVISION" ]; then
+		git checkout $CINDER_REVISION || \
+			fail "Failed to revert to revision $CINDER_REVISION."
+	else
+		CINDER_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$CINDER_REVISION" ] && \
+			fail "Failed to obtain cinder revision from git."
+	fi
+	echo "CINDER_REVISION=$CINDER_REVISION"
+
+	if [[ "$CINDER_MERGE_TRUNK" == "true" ]]; then
+		git merge $CINDER_GIT_MASTER_BRANCH || fail "Failed to merge $CINDER_GIT_MASTER_BRANCH."
 	fi
 
 	popd

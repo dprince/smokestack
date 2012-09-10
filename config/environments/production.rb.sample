@@ -67,6 +67,8 @@ ENV['KEYSTONE_GIT_MASTER'] = "git://github.com/openstack/keystone.git"
 ENV['KEYSTONECLIENT_GIT_MASTER'] = "git://github.com/openstack/python-keystoneclient.git"
 ENV['SWIFT_GIT_MASTER'] = "git://github.com/openstack/swift.git"
 ENV['SWIFTCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-swiftclient.git"
+ENV['CINDER_GIT_MASTER'] = "git://github.com/openstack/cinder.git"
+ENV['CINDERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-cinderclient.git"
 
 ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 
@@ -74,11 +76,13 @@ ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
 ENV['NOVA_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-nova.git"
 ENV['NOVACLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-novaclient.git"
 ENV['GLANCE_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-glance.git"
+ENV['GLANCECLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-glanceclient.git"
 ENV['KEYSTONE_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-keystone.git"
 ENV['KEYSTONECLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-keystoneclient.git"
 ENV['SWIFT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-swift.git"
 ENV['SWIFTCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-swiftclient.git"
-ENV['GLANCECLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-glanceclient.git"
+ENV['CINDER_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-cinder.git"
+ENV['CINDERCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-cinderclient.git"
 
 # Default DEB packager URLS
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"

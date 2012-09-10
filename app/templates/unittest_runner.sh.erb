@@ -17,6 +17,7 @@ function tox_cache_dir {
   echo "$PROJECT_NAME" > $CACHE_MD5_TMP
   cat tools/*requires >> $CACHE_MD5_TMP
   local MD5_SUM=$(md5sum $CACHE_MD5_TMP | cut -f 1 -d ' ')
+  rm "$CACHE_MD5_TMP"
   echo "/tmp/$PROJECT_NAME-$MD5_SUM"
 }
 
@@ -86,6 +87,7 @@ local TESTS_RUN=0
 local MSG=""
 cd $TMP_DIR
 
+#BEGIN NOVA
 if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$NOVA_URL" ]; then
@@ -119,7 +121,9 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   fi
   cache_tox "nova"
 fi
+#END NOVA
 
+#BEGIN GLANCE
 if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
 
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
@@ -156,7 +160,9 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   fi
   cache_tox "glance"
 fi
+#END GLANCE
 
+#BEGIN KEYSTONE
 if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$KEYSTONE_URL" ]; then
@@ -190,7 +196,9 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   fi
   cache_tox "keystone"
 fi
+#END KEYSTONE
 
+#BEGIN SWIFT
 if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
 
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
@@ -227,6 +235,46 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
   fi
   cache_tox "swift"
 fi
+#END SWIFT
+
+#BEGIN CINDER
+if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
+
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
+  if [ -n "$CINDER_URL" ]; then
+    get_cinder_source_git
+  fi
+  cd $TMP_DIR/cinder_source
+  python setup.py sdist &> sdist.out || \
+    { echo "Failed to create tarball."; cat sdist.out; exit 1; }
+  cd dist
+  tar xf cinder*.tar.gz
+  rm cinder*.tar.gz
+  cd cinder*
+  get_tox_from_cache "cinder"
+  #NOTE: temp fix for "File exists: '/tmp/cinder-tests'" errors
+  rm -Rf /tmp/cinder-tests*
+  start_metric "Cinder Unit Tests"
+  tox -epy27 &> cinder.out.log
+  local CINDER_STATUS=$?
+  stop_metric
+  start_metric "Cinder Pep8"
+  tox -epep8 &> cinder_pep8.out.log
+  local CINDER_PEP8_STATUS=$?
+  stop_metric
+  if [ "$CINDER_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Cinder tests failed. "
+    handle_venv_results Cinder cinder.out.log
+  fi
+  if [ "$CINDER_PEP8_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Cinder pep8 failed. "
+    cat cinder_pep8.out.log | grep -v env=
+  fi
+  cache_tox "cinder"
+fi
+#END CINDER
 
 if [ $RETVAL -ne 0 ]; then
   fail "$MSG"

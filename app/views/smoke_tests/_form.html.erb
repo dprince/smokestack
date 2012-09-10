@@ -177,6 +177,32 @@
     </tr>
   <% end %>
 
+<% if @smoke_test.cinder_package_builder.deb_packager_url.blank? and @smoke_test.cinder_package_builder.rpm_packager_url.blank? and @smoke_test.cinder_package_builder.revision_hash.blank? %>
+  <% adv_cinder_options_link = "" %>
+  <% adv_cinder_options_tr = "hide" %>
+<% else %>
+  <% adv_cinder_options_link = "hide" %>
+  <% adv_cinder_options_tr = "" %>
+<% end %>
+
+  <%= f.fields_for :cinder_package_builder do |cinder_build_frm| %>
+    <tr>
+      <td class="header">Cinder Builder</td>
+      <td><%= cinder_build_frm.text_field :url, :style => 'width: 300px' %></td>
+      <td><%= cinder_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= cinder_build_frm.check_box :merge_trunk %></td>
+      <td><a title="Show/Hide Advanced Cinder Build Options" class="smoke-test-edit-advanced <%= adv_cinder_options_link %>" onclick='$("#cinder-builder-adv-tr").toggle();'>&nbsp;</a></td>
+    </tr>
+    <tr class="<%= adv_cinder_options_tr %>" id="cinder-builder-adv-tr">
+      <td>&nbsp;</td>
+      <td colspan="3">
+        <font class="header">Revision/Hash: &nbsp;</font><%= cinder_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+      </td>
+    </tr>
+  <% end %>
+
 </table>
 <hr/>
 <div>

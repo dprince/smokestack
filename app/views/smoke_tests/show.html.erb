@@ -115,6 +115,32 @@
 </p>
 
 <hr/>
+
+<p>
+  <b>Cinder URL:</b>
+  <%= @smoke_test.cinder_package_builder.url %>
+</p>
+
+<% if not @smoke_test.cinder_package_builder.branch.blank? then %>
+<p>
+  <b>Cinder Branch:</b>
+  <%= @smoke_test.cinder_package_builder.branch %>
+</p>
+<% end %>
+
+<p>
+  <b>Cinder Merge trunk:</b>
+  <%= yes_no(@smoke_test.cinder_package_builder.merge_trunk) %>
+</p>
+
+<p>
+  <b>Cinder Revision (most recent):</b>
+  <% if @smoke_test.most_recent_job_group and @smoke_test.most_recent_job_group.most_recent_job %>
+    <%= @smoke_test.most_recent_job_group.most_recent_job.cinder_revision %>
+  <% end %>
+</p>
+
+<hr/>
 <% @jobs = Job.find(:all, :conditions => ["job_group_id IN (SELECT id from job_groups WHERE smoke_test_id = ?)", @smoke_test.id], :include => [:config_template, {:job_group => :smoke_test}], :order => "id DESC") %>
 <script type="text/javascript">
 

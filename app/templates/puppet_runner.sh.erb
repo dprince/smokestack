@@ -180,6 +180,37 @@ stop_metric
 
     fi
 
+    if [ -n "$BUILD_CINDER" ]; then
+        local CINDER_MERGE_MASTER=""
+        if [[ "$CINDER_MERGE_TRUNK" == "true" ]]; then
+            CINDER_MERGE_MASTER="true"
+        fi
+        start_metric "Build Cinder"
+        rake cinder:build_packages SOURCE_DIR="$TMP_DIR/cinder_source" \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            RPM_PACKAGER_URL="$CINDER_RPM_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$CINDER_RPM_PACKAGER_BRANCH" \
+            SOURCE_URL="$CINDER_URL" \
+            SOURCE_BRANCH="$CINDER_BRANCH" \
+            GIT_MASTER="$CINDER_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$CINDER_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$CINDER_MERGE_MASTER" \
+            REVISION="$CINDER_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build cinder packages."
+        stop_metric
+
+        start_metric "Build Python-Cinderclient"
+        rake cinder:build_python_cinderclient \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            SOURCE_URL="$CINDERCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$CINDERCLIENT_RPM_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build cinderclient packages."
+        stop_metric
+
+    fi
+
     # Copy hosts file to all nodes
     copy_hosts
 

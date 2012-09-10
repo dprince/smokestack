@@ -97,6 +97,10 @@ class Job < ActiveRecord::Base
       swift_deb_packager_url=swift_builder.deb_packager_url
       swift_rpm_packager_url=swift_builder.rpm_packager_url
 
+      cinder_builder=job.job_group.smoke_test.cinder_package_builder
+      cinder_deb_packager_url=cinder_builder.deb_packager_url
+      cinder_rpm_packager_url=cinder_builder.rpm_packager_url
+
       cookbook_url = ""
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
         cookbook_url = job.job_group.smoke_test.cookbook_url
@@ -136,6 +140,12 @@ class Job < ActiveRecord::Base
         swift_builder.revision_hash,
         swift_deb_packager_url,
         swift_rpm_packager_url,
+        cinder_builder.url,
+        cinder_builder.branch || "",
+        cinder_builder.merge_trunk.to_s,
+        cinder_builder.revision_hash,
+        cinder_deb_packager_url,
+        cinder_rpm_packager_url,
         config_template_description,
         cookbook_url,
         node_configs_dir,
@@ -156,6 +166,7 @@ class Job < ActiveRecord::Base
             job.glance_revision=Job.parse_glance_revision(job.stdout)
             job.keystone_revision=Job.parse_keystone_revision(job.stdout)
             job.swift_revision=Job.parse_swift_revision(job.stdout)
+            job.cinder_revision=Job.parse_cinder_revision(job.stdout)
             job.msg=Job.parse_last_message(job.stdout)
             job.save
           end
@@ -217,6 +228,15 @@ class Job < ActiveRecord::Base
     stdout.each_line do |line|
       if line =~ /^SWIFT_REVISION/ then
         return line.sub(/^SWIFT_REVISION=/, "").chomp
+      end
+    end
+    return ""
+  end
+
+  def self.parse_cinder_revision(stdout)
+    stdout.each_line do |line|
+      if line =~ /^CINDER_REVISION/ then
+        return line.sub(/^CINDER_REVISION=/, "").chomp
       end
     end
     return ""

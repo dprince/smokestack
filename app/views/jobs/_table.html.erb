@@ -9,6 +9,7 @@
     <th>Keystone<br/>Revision</th>
     <th>Glance<br/>Revision</th>
     <th>Swift<br/>Revision</th>
+    <th>Cinder<br/>Revision</th>
     <th>Runtime</th>
 <% if local_assigns[:show_updated_at] %>
     <th>Updated at</th>
@@ -45,6 +46,7 @@
     <td><%= raw(chop_for_html(job.keystone_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.glance_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.swift_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.cinder_revision, 7)) %></td>
     <td><%= job_runtime(job) %></td>
     <% if local_assigns[:show_updated_at] %>
       <td><%= timestamp(job.updated_at.in_time_zone) %></td>

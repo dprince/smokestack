@@ -24,6 +24,12 @@ swift_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+cinder_builder_trunk:
+  type: CinderPackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
 nova_builder_dev:
   type: NovaPackageBuilder
   url: dev
@@ -44,6 +50,12 @@ glance_builder_dev:
 
 swift_builder_dev:
   type: SwiftPackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1
+
+cinder_builder_dev:
+  type: CinderPackageBuilder
   url: dev
   merge_trunk: true
   smoke_test: dev1
