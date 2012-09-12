@@ -37,9 +37,9 @@ function get_tox_from_cache {
     echo "Using cached .tox directory.."
     cp -r $CACHE_DIR .tox
     # Check for bad symlinks and if we find them re-create cache
-    # These can be caused by new version numbers, etc.
-    for FILE in $(ls .tox/pep8) $(ls .tox/py27); do
-      if [ ! -d "$FILE" ]; then
+    # These can be caused by new tarball version numbers, etc.
+    for FILE in $(ls .tox/pep8); do
+      if [ ! -d ".tox/pep8/$FILE" ]; then
         echo "Bad symlink found in tox cache. Creating a new one...";
         rm -Rf $CACHE_DIR
         rm -Rf .tox
