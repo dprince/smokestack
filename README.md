@@ -8,7 +8,7 @@ A web application with a REST based HTTP interface to help smoke test OpenStack.
 
 * Rails 3.1
 * Resque: a redis backed job queue
-* Job runner templates: The default VPC job runner uses openstack_vpc to spin up groups of servers in the cloud for smoke testing. A job runner for unit tests is included as well.
+* Job runner templates: The default job runner uses firestack to spin up groups of servers. A job runner for unit tests is included as well.
 * Configuration management to install and configure everything (Puppet)
 * Packages to install software (currently supports Fedora)
 

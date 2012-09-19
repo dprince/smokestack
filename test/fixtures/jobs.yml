@@ -11,7 +11,7 @@ one:
 two:
   status: Success
   stdout: |
-    Cloning into openstack_vpc..
+    Cloning into firestack..
     NOVA_REVISION=102
     FAILURE_MSG=This is only a test.
     All tests passed successfully.

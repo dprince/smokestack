@@ -70,7 +70,7 @@ ENV['SWIFTCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-swiftclient.g
 ENV['CINDER_GIT_MASTER'] = "git://github.com/openstack/cinder.git"
 ENV['CINDERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-cinderclient.git"
 
-ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
+ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
 # Default RPM packager URLS
 ENV['NOVA_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-nova.git"

@@ -38,7 +38,7 @@ Smokestack::Application.configure do
   config.active_support.deprecation = :stderr
 end
 
-ENV['OPENSTACK_VPC_URL'] = "git://github.com/dprince/openstack_vpc.git"
+ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
 # Default RPM packager URLS
 ENV['NOVA_RPM_PACKAGER_URL'] = "git://pkgs.fedoraproject.org/openstack-nova.git"

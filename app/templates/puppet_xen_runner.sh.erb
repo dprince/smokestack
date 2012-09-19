@@ -36,7 +36,7 @@ until [ ! -f /tmp/do_not_delete ]; do
     sleep 1
 done
 EOF_BASH
-rake group:delete
+rake kytoon:delete
 }
 
 function setup {
@@ -44,12 +44,11 @@ function setup {
     cd $TMP_DIR
 
     GIT_ASKPASS=echo \
-    git_clone "<%= ENV['OPENSTACK_VPC_URL'] %>" "openstack_vpc"
-    cd openstack_vpc
+    git_clone "<%= ENV['FIRESTACK_URL'] %>" "firestack"
+    cd firestack
 
     cp "$SERVER_GROUP_JSON_CONF" config/server_group.json || \
         fail "Failed to copy server_group.json"
-
 
 }
 
@@ -59,7 +58,7 @@ function run_job {
 
 trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
 start_metric "Create Server Group"
-if rake group:create GATEWAY_IP="$XENSERVER_IP"; then
+if rake kytoon:create GATEWAY_IP="$XENSERVER_IP"; then
 stop_metric
 
     local NOVA_MERGE_MASTER=""
