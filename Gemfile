@@ -8,7 +8,7 @@ gem 'rails', '3.1.1'
 gem 'popen4'
 gem 'mysql'
 gem 'resque', '1.19.0'
-gem 'kytoon', '>= 1.2.3'
+gem 'kytoon', '>= 1.2.4'
 
 # Gems used only for assets and not required
 # in production environments by default.
