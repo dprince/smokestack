@@ -276,6 +276,45 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
 fi
 #END CINDER
 
+##BEGIN QUANTUM
+if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
+
+  TESTS_RUN=$(( $TESTS_RUN + 1 ))
+  if [ -n "$QUANTUM_URL" ]; then
+    get_quantum_source_git
+  fi
+  cd $TMP_DIR/quantum_source
+  python setup.py sdist &> sdist.out || \
+    { echo "Failed to create tarball."; cat sdist.out; exit 1; }
+  cd dist
+  tar xf quantum*.tar.gz
+  rm quantum*.tar.gz
+  cd quantum*
+  get_tox_from_cache "quantum"
+  #NOTE: temp fix for "File exists: '/tmp/-tests'" errors
+  rm -Rf /tmp/quantum-tests*
+  start_metric "Quantum Unit Tests"
+  tox -epy27 &> quantum.out.log
+  local QUANTUM_STATUS=$?
+  stop_metric
+  start_metric "Quantum Pep8"
+  tox -epep8 &> quantum_pep8.out.log
+  local QUANTUM_PEP8_STATUS=$?
+  stop_metric
+  if [ "$QUANTUM_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Quantum tests failed. "
+    handle_venv_results Quantum quantum.out.log
+  fi
+  if [ "$QUANTUM_PEP8_STATUS" -ne "0" ]; then
+    RETVAL=1
+    MSG="${MSG}Quantum pep8 failed. "
+    cat quantum_pep8.out.log | grep -v env=
+  fi
+  cache_tox "quantum"
+fi
+#END QUANTUM
+
 if [ $RETVAL -ne 0 ]; then
   fail "$MSG"
 fi

@@ -69,6 +69,8 @@ ENV['SWIFT_GIT_MASTER'] = "git://github.com/openstack/swift.git"
 ENV['SWIFTCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-swiftclient.git"
 ENV['CINDER_GIT_MASTER'] = "git://github.com/openstack/cinder.git"
 ENV['CINDERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-cinderclient.git"
+ENV['QUANTUM_GIT_MASTER'] = "git://github.com/openstack/quantum.git"
+ENV['QUANTUMCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-quantumclient.git"
 
 ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
@@ -83,6 +85,8 @@ ENV['SWIFT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-swi
 ENV['SWIFTCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-swiftclient.git"
 ENV['CINDER_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-cinder.git"
 ENV['CINDERCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-cinderclient.git"
+ENV['QUANTUM_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-quantum.git"
+ENV['QUANTUMCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-quantumclient.git"
 
 # Default DEB packager URLS
 ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"

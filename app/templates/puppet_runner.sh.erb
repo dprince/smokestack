@@ -210,6 +210,37 @@ stop_metric
 
     fi
 
+    if [ -n "$BUILD_QUANTUM" ]; then
+        local QUANTUM_MERGE_MASTER=""
+        if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
+            QUANTUM_MERGE_MASTER="true"
+        fi
+        start_metric "Build Quantum"
+        rake quantum:build_packages SOURCE_DIR="$TMP_DIR/quantum_source" \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            RPM_PACKAGER_URL="$QUANTUM_RPM_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$QUANTUM_RPM_PACKAGER_BRANCH" \
+            SOURCE_URL="$QUANTUM_URL" \
+            SOURCE_BRANCH="$QUANTUM_BRANCH" \
+            GIT_MASTER="$QUANTUM_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$QUANTUM_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$QUANTUM_MERGE_MASTER" \
+            REVISION="$QUANTUM_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build quantum packages."
+        stop_metric
+
+        start_metric "Build Python-Quantumclient"
+        rake quantum:build_python_quantumclient \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            SOURCE_URL="$QUANTUMCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$QUANTUMCLIENT_RPM_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || fail "Failed to build quantumclient packages."
+        stop_metric
+
+    fi
+
     # Copy hosts file to all nodes
     copy_hosts
 

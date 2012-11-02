@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 32) do
+ActiveRecord::Schema.define(:version => 33) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(:version => 32) do
     t.datetime "finish_time"
     t.string   "swift_revision"
     t.string   "cinder_revision"
+    t.string   "quantum_revision"
   end
 
   create_table "node_configs", :force => true do |t|

@@ -39,10 +39,17 @@ CINDER_REVISION=${29}
 CINDER_DEB_PACKAGER_URL=${30:-$CINDER_DEB_PACKAGER_URL}
 CINDER_RPM_PACKAGER_URL=${31:-$CINDER_RPM_PACKAGER_URL}
 
-CONFIG_TEMPLATE_DESCRIPTION=${32}
-COOKBOOK_URL=${33}
-NODES_CONFIG_DIR=${34}
-SERVER_GROUP_JSON_CONF=${35}
+QUANTUM_URL=${32}
+QUANTUM_BRANCH=${33}
+QUANTUM_MERGE_TRUNK=${34}
+QUANTUM_REVISION=${35}
+QUANTUM_DEB_PACKAGER_URL=${36:-$QUANTUM_DEB_PACKAGER_URL}
+QUANTUM_RPM_PACKAGER_URL=${37:-$QUANTUM_RPM_PACKAGER_URL}
+
+CONFIG_TEMPLATE_DESCRIPTION=${38}
+COOKBOOK_URL=${39}
+NODES_CONFIG_DIR=${40}
+SERVER_GROUP_JSON_CONF=${41}
 
 # Setup default branches to merge if MERGE_TRUNK is checked
 # These may be overridden by some environements
@@ -51,6 +58,7 @@ GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
 KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 SWIFT_GIT_MASTER_BRANCH=${SWIFT_GIT_MASTER_BRANCH:-"master"}
 CINDER_GIT_MASTER_BRANCH=${CINDER_GIT_MASTER_BRANCH:-"master"}
+QUANTUM_GIT_MASTER_BRANCH=${QUANTUM_GIT_MASTER_BRANCH:-"master"}
 
 # Setup default RPM packager branches
 # These may be overridden by some environements
@@ -59,6 +67,7 @@ GLANCE_RPM_PACKAGER_BRANCH=${GLANCE_RPM_PACKAGER_BRANCH:-"master"}
 KEYSTONE_RPM_PACKAGER_BRANCH=${KEYSTONE_RPM_PACKAGER_BRANCH:-"master"}
 SWIFT_RPM_PACKAGER_BRANCH=${SWIFT_RPM_PACKAGER_BRANCH:-"master"}
 CINDER_RPM_PACKAGER_BRANCH=${CINDER_RPM_PACKAGER_BRANCH:-"master"}
+QUANTUM_RPM_PACKAGER_BRANCH=${QUANTUM_RPM_PACKAGER_BRANCH:-"master"}
 
 GIT_CACHE_DIR=${GIT_CACHE_DIR:-"$HOME/.smokestack_git_cache"}
 
@@ -225,6 +234,34 @@ function get_cinder_source_git {
 
 	if [[ "$CINDER_MERGE_TRUNK" == "true" ]]; then
 		git merge $CINDER_GIT_MASTER_BRANCH || fail "Failed to merge $CINDER_GIT_MASTER_BRANCH."
+	fi
+
+	popd
+
+}
+
+function get_quantum_source_git {
+
+        start_metric "Git Clone Quantum"
+	git_clone "$QUANTUM_GIT_MASTER" "quantum_source"
+        stop_metric
+	pushd quantum_source
+	git fetch $QUANTUM_URL $QUANTUM_BRANCH || \
+		fail "Failed to git fetch branch $QUANTUM_BRANCH."
+	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
+
+	if [ -n "$QUANTUM_REVISION" ]; then
+		git checkout $QUANTUM_REVISION || \
+			fail "Failed to revert to revision $QUANTUM_REVISION."
+	else
+		QUANTUM_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$QUANTUM_REVISION" ] && \
+			fail "Failed to obtain quantum revision from git."
+	fi
+	echo "QUANTUM_REVISION=$QUANTUM_REVISION"
+
+	if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
+		git merge $QUANTUM_GIT_MASTER_BRANCH || fail "Failed to merge $QUANTUM_GIT_MASTER_BRANCH."
 	fi
 
 	popd

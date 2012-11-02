@@ -30,6 +30,12 @@ cinder_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+quantum_builder_trunk:
+  type: QuantumPackageBuilder
+  url: trunk
+  merge_trunk: true
+  smoke_test: trunk
+
 nova_builder_dev:
   type: NovaPackageBuilder
   url: dev
@@ -56,6 +62,12 @@ swift_builder_dev:
 
 cinder_builder_dev:
   type: CinderPackageBuilder
+  url: dev
+  merge_trunk: true
+  smoke_test: dev1
+
+quantum_builder_dev:
+  type: QuantumPackageBuilder
   url: dev
   merge_trunk: true
   smoke_test: dev1
