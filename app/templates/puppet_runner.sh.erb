@@ -107,10 +107,6 @@ stop_metric
         || fail "Failed to build glance packages."
     stop_metric
 
-    #FIXME (remove once we add this to Fedora)
-    rake glance:build_python_warlock \
-        SERVER_NAME="$BUILD_SERVER_NAME"
-
     start_metric "Build Python-Glanceclient"
     rake glance:build_python_glanceclient \
         SERVER_NAME="$BUILD_SERVER_NAME" \
@@ -210,6 +206,10 @@ stop_metric
 
     fi
 
+    # Prettytable 0.6 is not in stock Fedora 17
+    rake fedora:build_python_prettytable \
+        SERVER_NAME="$BUILD_SERVER_NAME"
+
     if [ -n "$BUILD_QUANTUM" ]; then
         local QUANTUM_MERGE_MASTER=""
         if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
@@ -264,6 +264,10 @@ stop_metric
     rake keystone:configure SERVER_NAME="$KEYSTONE_SERVER_NAME"
 
     rake glance:load_images SERVER_NAME="$GLANCE_SERVER_NAME"
+
+    if [ -n "$QUANTUM_SERVER_NAME" ]; then
+        rake quantum:configure SERVER_NAME="$QUANTUM_SERVER_NAME"
+    fi
     
     #run Torpedo API tests (Uses the Ruby openstack-compute gem)
     if [ -n "$RUN_TORPEDO" ]; then

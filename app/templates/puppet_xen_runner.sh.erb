@@ -212,6 +212,10 @@ stop_metric
 
     fi
 
+    # Prettytable 0.6 is not in stock Fedora 17
+    rake fedora:build_python_prettytable \
+        SERVER_NAME="$BUILD_SERVER_NAME"
+
     if [ -n "$BUILD_QUANTUM" ]; then
         local QUANTUM_MERGE_MASTER=""
         if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
@@ -282,6 +286,10 @@ stop_metric
     rake keystone:configure SERVER_NAME="$KEYSTONE_SERVER_NAME"
 
     rake glance:load_images_xen SERVER_NAME="$GLANCE_SERVER_NAME"
+
+    if [ -n "$QUANTUM_SERVER_NAME" ]; then
+        rake quantum:configure SERVER_NAME="$QUANTUM_SERVER_NAME"
+    fi
 
     #reserve the first 5 IPs for the server group
     rake ssh bash <<-"EOF_RESERVE_IPS"
