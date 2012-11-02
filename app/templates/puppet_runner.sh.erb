@@ -272,6 +272,15 @@ stop_metric
     #run Torpedo API tests (Uses the Ruby openstack-compute gem)
     if [ -n "$RUN_TORPEDO" ]; then
         start_metric "Torpedo"
+
+        #setup reasonable defaults for Libvirt Torpedo runs here
+        export TORPEDO_SERVER_BUILD_TIMEOUT=${TORPEDO_SERVER_BUILD_TIMEOUT:-"180"}
+        export TORPEDO_SSH_TIMEOUT=${TORPEDO_SSH_TIMEOUT:-"60"}
+        export TORPEDO_PING_TIMEOUT=${TORPEDO_PING_TIMEOUT:-"60"}
+        export TORPEDO_TEST_REBUILD_SERVER=${TORPEDO_TEST_REBUILD_SERVER:-"true"}
+        export TORPEDO_FLAVOR_REF=${TORPEDO_FLAVOR_REF:-"1"}
+        export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"ami-tty"}
+
         rake torpedo SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
         { rake tail_logs; fail "Hit by Torpedo."; }
         stop_metric

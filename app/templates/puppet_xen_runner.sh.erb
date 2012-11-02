@@ -303,6 +303,17 @@ EOF_RESERVE_IPS
     #run Torpedo API tests (Uses the Ruby openstack-compute gem)
     if [ -n "$RUN_TORPEDO" ]; then
         start_metric "Torpedo"
+
+        #setup reasonable defaults for Xen Torpedo runs here
+        export TORPEDO_SERVER_BUILD_TIMEOUT=${TORPEDO_SERVER_BUILD_TIMEOUT:-"420"}
+        export TORPEDO_SSH_TIMEOUT=${TORPEDO_SSH_TIMEOUT:-"60"}
+        export TORPEDO_PING_TIMEOUT=${TORPEDO_PING_TIMEOUT:-"60"}
+        export TORPEDO_TEST_REBUILD_SERVER=${TORPEDO_TEST_REBUILD_SERVER:-"true"}
+        export TORPEDO_TEST_RESIZE_SERVER=${TORPEDO_TEST_RESIZE_SERVER:-"true"}
+        export TORPEDO_TEST_ADMIN_PASSWORD=${TORPEDO_TEST_ADMIN_PASSWORD:-"true"}
+        export TORPEDO_TEST_SOFT_REBOOT=${TORPEDO_TEST_SOFT_REBOOT:-"true"}
+        export TORPEDO_TEST_HARD_REBOOT=${TORPEDO_TEST_HARD_REBOOT:-"true"}
+
         rake torpedo SERVER_NAME="$TEST_SUITE_SERVER_NAME" MODE=xen || \
         { rake tail_logs; fail "Hit by Torpedo."; }
         stop_metric
