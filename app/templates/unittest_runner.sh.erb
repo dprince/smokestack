@@ -126,6 +126,8 @@ fi
 #BEGIN GLANCE
 if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
 
+  # Set the base temp directory for Glance unit tests
+  export GLANCE_TEST_TMP_DIR=$(mktemp -d)
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
   if [ -n "$GLANCE_URL" ]; then
     get_glance_source_git
@@ -158,6 +160,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
     MSG="${MSG}Glance pep8 failed. "
     cat glance_pep8.out.log | grep -v env=
   fi
+  rm -Rf "$GLANCE_TEST_TMP_DIR"
   cache_tox "glance"
 fi
 #END GLANCE
