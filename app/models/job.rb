@@ -28,8 +28,8 @@ class Job < ActiveRecord::Base
   end
 
   def self.run_job(job, template_name="puppet_vpc_runner.sh.erb", script_text=nil)
+    ActiveRecord::Base.connection_handler.verify_active_connections!
     job.update_attributes(:status => "Running", :start_time => Time.now)
-
 
     base_dir = File.join(Dir.tmpdir, "smokestack_job_#{job.id}")
     FileUtils.mkdir_p(base_dir)
@@ -172,6 +172,7 @@ class Job < ActiveRecord::Base
             job.stdout=stdout.readlines.join.chomp
             job.stderr=stderr.readlines.join.chomp
 
+            ActiveRecord::Base.connection_handler.verify_active_connections!
             job.nova_revision=Job.parse_nova_revision(job.stdout)
             job.glance_revision=Job.parse_glance_revision(job.stdout)
             job.keystone_revision=Job.parse_keystone_revision(job.stdout)
@@ -184,6 +185,7 @@ class Job < ActiveRecord::Base
         end
       rescue Timeout::Error => te
         Process.kill("HUP", job_pid)
+        ActiveRecord::Base.connection_handler.verify_active_connections!
         job.update_attribute(:msg, "Timeout: " + te.message)
         job.update_attribute(:status, "Failed")
         return false
