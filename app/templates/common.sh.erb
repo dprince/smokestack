@@ -75,7 +75,6 @@ GIT_CACHE_DIR=${GIT_CACHE_DIR:-"$HOME/.smokestack_git_cache"}
 function fail {
 	local MSG=$1
 	echo "FAILURE_MSG=$MSG"
-        stop_metric
 	exit 1
 }
 
@@ -285,10 +284,12 @@ function start_metric {
 }
 
 function stop_metric {
-	local END_TIME=$(date +%s)
-	local TOTAL_TIME="$(($END_TIME - $METRIC_START_TIME))"
-        if [ -n "$METRIC_NAME" ]; then
-	    echo "$END_TIME:$TOTAL_TIME:$METRIC_NAME:$METRIC_SOURCE" >> <%= ENV['METRICS_DATA_FILE'] %>
+        if [ -n "$METRIC_START_TIME" ]; then
+	  local END_TIME=$(date +%s)
+	  local TOTAL_TIME="$(($END_TIME - $METRIC_START_TIME))"
+          if [ -n "$METRIC_NAME" ]; then
+	      echo "$END_TIME:$TOTAL_TIME:$METRIC_NAME:$METRIC_SOURCE" >> <%= ENV['METRICS_DATA_FILE'] %>
+          fi
         fi
 	METRIC_START_TIME=""
 	METRIC_NAME=""
