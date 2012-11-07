@@ -2,6 +2,11 @@ TMP_DIR=/tmp/smokestack_unittest
 rm -Rf "$TMP_DIR"
 mkdir -p "$TMP_DIR"
 
+# Clean out the default tox distshare directory
+if [ -d "$HOME/.tox/distshare/" ]; then
+  rm -Rf "$HOME/.tox/distshare/"
+fi
+
 function override_sudo {
   # test suites should stub out sudo. If it is called return an exit status.
   mkdir "$TMP_DIR/bin" && cd "$TMP_DIR/bin"
