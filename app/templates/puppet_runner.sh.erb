@@ -164,16 +164,16 @@ stop_metric
             || fail "Failed to build swift packages."
         stop_metric
 
-        start_metric "Build Python-Swiftclient"
-        rake swift:build_python_swiftclient \
-            SERVER_NAME="$BUILD_SERVER_NAME" \
-            SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
-            RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
-            CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build swiftclient packages."
-        stop_metric
-
     fi
+
+    start_metric "Build Python-Swiftclient"
+    rake swift:build_python_swiftclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
+        SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$SWIFTCLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build swiftclient packages."
+    stop_metric
 
     if [ -n "$BUILD_CINDER" ]; then
         local CINDER_MERGE_MASTER=""
@@ -195,16 +195,16 @@ stop_metric
             || fail "Failed to build cinder packages."
         stop_metric
 
-        start_metric "Build Python-Cinderclient"
-        rake cinder:build_python_cinderclient \
-            SERVER_NAME="$BUILD_SERVER_NAME" \
-            SOURCE_URL="$CINDERCLIENT_GIT_MASTER" \
-            RPM_PACKAGER_URL="$CINDERCLIENT_RPM_PACKAGER_URL" \
-            CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build cinderclient packages."
-        stop_metric
-
     fi
+
+    start_metric "Build Python-Cinderclient"
+    rake cinder:build_python_cinderclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
+        SOURCE_URL="$CINDERCLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$CINDERCLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build cinderclient packages."
+    stop_metric
 
     # Prettytable 0.6 is not in stock Fedora 17
     rake fedora:build_python_prettytable \
@@ -229,17 +229,16 @@ stop_metric
             CACHEURL="$RPM_CACHEURL" \
             || fail "Failed to build quantum packages."
         stop_metric
-
-        start_metric "Build Python-Quantumclient"
-        rake quantum:build_python_quantumclient \
-            SERVER_NAME="$BUILD_SERVER_NAME" \
-            SOURCE_URL="$QUANTUMCLIENT_GIT_MASTER" \
-            RPM_PACKAGER_URL="$QUANTUMCLIENT_RPM_PACKAGER_URL" \
-            CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build quantumclient packages."
-        stop_metric
-
     fi
+
+    start_metric "Build Python-Quantumclient"
+    rake quantum:build_python_quantumclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
+        SOURCE_URL="$QUANTUMCLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$QUANTUMCLIENT_RPM_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || fail "Failed to build quantumclient packages."
+    stop_metric
 
     # Copy hosts file to all nodes
     copy_hosts
