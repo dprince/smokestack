@@ -31,6 +31,8 @@ function cache_tox {
   local CACHE_DIR=$(tox_cache_dir "$PROJECT_NAME")
   if [ ! -d "$CACHE_DIR"  ]; then
     rm -Rf .tox/dist
+    rm -Rf .tox/pep8
+    rm -Rf .tox/py27
     cp -r .tox $CACHE_DIR
   fi
 }
@@ -41,16 +43,14 @@ function get_tox_from_cache {
   if [ -d "$CACHE_DIR"  ]; then
     echo "Using cached .tox directory.."
     cp -r $CACHE_DIR .tox
-    # Check for bad symlinks and if we find them re-create cache
-    # These can be caused by new tarball version numbers, etc.
-    for FILE in $(ls .tox/pep8); do
-      if [ ! -d ".tox/pep8/$FILE" ]; then
-        echo "Bad symlink found in tox cache. Creating a new one...";
-        rm -Rf $CACHE_DIR
-        rm -Rf .tox
-        break
-      fi
-    done
+    # Check for pre-existing pep8 dirs and if we find them
+    # create a new .tox dir (this should not have been cached...)
+    if [ -d ".tox/py27" ]; then
+      echo "Invalid tox cache. Creating a new one...";
+      rm -Rf $CACHE_DIR
+      rm -Rf .tox
+      break
+    fi
   fi
 }
 
