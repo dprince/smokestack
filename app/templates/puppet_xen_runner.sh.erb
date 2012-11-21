@@ -109,10 +109,6 @@ stop_metric
         || fail "Failed to build glance packages."
     stop_metric
 
-    #FIXME (remove once we add this to Fedora)
-    rake glance:build_python_warlock \
-        SERVER_NAME="$BUILD_SERVER_NAME"
-
     start_metric "Build Python-Glanceclient"
     rake glance:build_python_glanceclient \
         SERVER_NAME="$BUILD_SERVER_NAME" \
