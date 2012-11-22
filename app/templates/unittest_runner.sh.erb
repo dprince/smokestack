@@ -16,41 +16,30 @@ function override_sudo {
   export PATH="$TMP_DIR/bin:$PATH"
 }
 
-function tox_cache_dir {
+function venv_cache_dir {
   local PROJECT_NAME=$1
   local CACHE_MD5_TMP=$(mktemp)
   echo "$PROJECT_NAME" > $CACHE_MD5_TMP
   cat tools/*requires >> $CACHE_MD5_TMP
   local MD5_SUM=$(md5sum $CACHE_MD5_TMP | cut -f 1 -d ' ')
   rm "$CACHE_MD5_TMP"
-  echo "/tmp/$PROJECT_NAME-$MD5_SUM"
+  echo "/tmp/cache-$PROJECT_NAME-$MD5_SUM"
 }
 
-function cache_tox {
+function cache_venv {
   local PROJECT_NAME=$1
-  local CACHE_DIR=$(tox_cache_dir "$PROJECT_NAME")
+  local CACHE_DIR=$(venv_cache_dir "$PROJECT_NAME")
   if [ ! -d "$CACHE_DIR"  ]; then
-    rm -Rf .tox/dist
-    rm -Rf .tox/pep8
-    rm -Rf .tox/py27
-    cp -r .tox $CACHE_DIR
+    cp -r .venv $CACHE_DIR
   fi
 }
 
-function get_tox_from_cache {
+function get_venv_from_cache {
   local PROJECT_NAME=$1
-  local CACHE_DIR=$(tox_cache_dir "$PROJECT_NAME")
+  local CACHE_DIR=$(venv_cache_dir "$PROJECT_NAME")
   if [ -d "$CACHE_DIR"  ]; then
-    echo "Using cached .tox directory.."
-    cp -r $CACHE_DIR .tox
-    # Check for pre-existing pep8 dirs and if we find them
-    # create a new .tox dir (this should not have been cached...)
-    if [ -d ".tox/py27" ]; then
-      echo "Invalid tox cache. Creating a new one...";
-      rm -Rf $CACHE_DIR
-      rm -Rf .tox
-      break
-    fi
+    echo "Using cached .venv directory.."
+    cp -r $CACHE_DIR .venv
   fi
 }
 
@@ -105,13 +94,13 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   tar xf nova*.tar.gz
   rm nova*.tar.gz
   cd nova*
-  get_tox_from_cache "nova"
+  get_venv_from_cache "nova"
   start_metric "Nova Unit Tests"
-  tox -epy27 &> nova.out.log
+  ./run_tests.sh -V -f &> nova.out.log
   local NOVA_STATUS=$?
   stop_metric
   start_metric "Nova Pep8"
-  tox -epep8 &> nova_pep8.out.log
+  ./run_tests.sh -V -p &> nova_pep8.out.log
   local NOVA_PEP8_STATUS=$?
   stop_metric
   if [ "$NOVA_STATUS" -ne "0" ]; then
@@ -124,7 +113,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
     MSG="${MSG}Nova pep8 failed. "
     cat nova_pep8.out.log | grep -v env=
   fi
-  cache_tox "nova"
+  cache_venv "nova"
 fi
 #END NOVA
 
@@ -146,13 +135,13 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   cd glance*
   #NOTE: temp fix for "File exists: '/tmp/glance-tests'" errors
   rm -Rf /tmp/glance-tests*
-  get_tox_from_cache "glance"
+  get_venv_from_cache "glance"
   start_metric "Glance Unit Tests"
-  tox -epy27 &> glance.out.log
+  ./run_tests.sh -V -f &> glance.out.log
   local GLANCE_STATUS=$?
   stop_metric
   start_metric "Glance Pep8"
-  tox -epep8 &> glance_pep8.out.log
+  ./run_tests.sh -V -p &> glance_pep8.out.log
   local GLANCE_PEP8_STATUS=$?
   stop_metric
   if [ "$GLANCE_STATUS" -ne "0" ]; then
@@ -166,7 +155,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
     cat glance_pep8.out.log | grep -v env=
   fi
   rm -Rf "$GLANCE_TEST_TMP_DIR"
-  cache_tox "glance"
+  cache_venv "glance"
 fi
 #END GLANCE
 
@@ -183,13 +172,13 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   tar xf keystone*.tar.gz
   rm keystone*.tar.gz
   cd keystone*
-  get_tox_from_cache "keystone"
+  get_venv_from_cache "keystone"
   start_metric "Keystone Unit Tests"
-  tox -epy27 &> keystone.out.log
+  ./run_tests.sh -V -f &> keystone.out.log
   local KEYSTONE_STATUS=$?
   stop_metric
   start_metric "Keystone Pep8"
-  tox -epep8 &> keystone_pep8.out.log
+  ./run_tests.sh -V -p &> keystone_pep8.out.log
   local KEYSTONE_PEP8_STATUS=$?
   stop_metric
   if [ "$KEYSTONE_STATUS" -ne "0" ]; then
@@ -202,7 +191,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
     MSG="${MSG}Keystone pep8 failed. "
     cat keystone_pep8.out.log | grep -v env=
   fi
-  cache_tox "keystone"
+  cache_venv "keystone"
 fi
 #END KEYSTONE
 
@@ -220,7 +209,6 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
   tar xf swift*.tar.gz
   rm swift*.tar.gz
   cd swift*
-  get_tox_from_cache "swift"
   #NOTE: temp fix for "File exists: '/tmp/swift-tests'" errors
   rm -Rf /tmp/swift-tests*
   start_metric "Swift Unit Tests"
@@ -241,7 +229,6 @@ if ! is_master "$SWIFT_URL" "$SWIFT_GIT_MASTER" "$SWIFT_BRANCH"; then
     MSG="${MSG}Swift pep8 failed. "
     cat swift_pep8.out.log | grep -v env=
   fi
-  cache_tox "swift"
 fi
 #END SWIFT
 
@@ -259,15 +246,15 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
   tar xf cinder*.tar.gz
   rm cinder*.tar.gz
   cd cinder*
-  get_tox_from_cache "cinder"
+  get_venv_from_cache "cinder"
   #NOTE: temp fix for "File exists: '/tmp/cinder-tests'" errors
   rm -Rf /tmp/cinder-tests*
   start_metric "Cinder Unit Tests"
-  tox -epy27 &> cinder.out.log
+  ./run_tests.sh -V -f &> cinder.out.log
   local CINDER_STATUS=$?
   stop_metric
   start_metric "Cinder Pep8"
-  tox -epep8 &> cinder_pep8.out.log
+  ./run_tests.sh -V -p &> cinder_pep8.out.log
   local CINDER_PEP8_STATUS=$?
   stop_metric
   if [ "$CINDER_STATUS" -ne "0" ]; then
@@ -280,7 +267,7 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
     MSG="${MSG}Cinder pep8 failed. "
     cat cinder_pep8.out.log | grep -v env=
   fi
-  cache_tox "cinder"
+  cache_venv "cinder"
 fi
 #END CINDER
 
@@ -298,15 +285,15 @@ if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
   tar xf quantum*.tar.gz
   rm quantum*.tar.gz
   cd quantum*
-  get_tox_from_cache "quantum"
+  get_venv_from_cache "quantum"
   #NOTE: temp fix for "File exists: '/tmp/-tests'" errors
   rm -Rf /tmp/quantum-tests*
   start_metric "Quantum Unit Tests"
-  tox -epy27 &> quantum.out.log
+  ./run_tests.sh -V -f &> quantum.out.log
   local QUANTUM_STATUS=$?
   stop_metric
   start_metric "Quantum Pep8"
-  tox -epep8 &> quantum_pep8.out.log
+  ./run_tests.sh -V -p &> quantum_pep8.out.log
   local QUANTUM_PEP8_STATUS=$?
   stop_metric
   if [ "$QUANTUM_STATUS" -ne "0" ]; then
@@ -319,7 +306,7 @@ if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
     MSG="${MSG}Quantum pep8 failed. "
     cat quantum_pep8.out.log | grep -v env=
   fi
-  cache_tox "quantum"
+  cache_venv "quantum"
 fi
 #END QUANTUM
 
