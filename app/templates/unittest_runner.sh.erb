@@ -40,6 +40,18 @@ function get_venv_from_cache {
   if [ -d "$CACHE_DIR"  ]; then
     echo "Using cached .venv directory.."
     cp -r $CACHE_DIR .venv
+
+    # Check for bad symlinks and if we find them re-create cache
+    # These can be caused by new tarball version numbers, etc.
+    for FILE in $(ls .venv); do
+      if [ ! -d ".venv/$FILE" ]; then
+        echo "Bad symlink found in venv cache. Creating a new one...";
+        rm -Rf $CACHE_DIR
+        rm -Rf .venv
+        break
+      fi
+    done
+
   fi
 }
 
@@ -96,7 +108,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   cd nova*
   get_venv_from_cache "nova"
   start_metric "Nova Unit Tests"
-  ./run_tests.sh -V -f &> nova.out.log
+  ./run_tests.sh -V -P &> nova.out.log
   local NOVA_STATUS=$?
   stop_metric
   start_metric "Nova Pep8"
@@ -137,7 +149,8 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
   rm -Rf /tmp/glance-tests*
   get_venv_from_cache "glance"
   start_metric "Glance Unit Tests"
-  ./run_tests.sh -V -f &> glance.out.log
+  #FIXME: glance is missing -P option?
+  ./run_tests.sh -V &> glance.out.log
   local GLANCE_STATUS=$?
   stop_metric
   start_metric "Glance Pep8"
@@ -174,7 +187,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
   cd keystone*
   get_venv_from_cache "keystone"
   start_metric "Keystone Unit Tests"
-  ./run_tests.sh -V -f &> keystone.out.log
+  ./run_tests.sh -V -P &> keystone.out.log
   local KEYSTONE_STATUS=$?
   stop_metric
   start_metric "Keystone Pep8"
@@ -250,7 +263,7 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
   #NOTE: temp fix for "File exists: '/tmp/cinder-tests'" errors
   rm -Rf /tmp/cinder-tests*
   start_metric "Cinder Unit Tests"
-  ./run_tests.sh -V -f &> cinder.out.log
+  ./run_tests.sh -V -P &> cinder.out.log
   local CINDER_STATUS=$?
   stop_metric
   start_metric "Cinder Pep8"
@@ -289,7 +302,7 @@ if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
   #NOTE: temp fix for "File exists: '/tmp/-tests'" errors
   rm -Rf /tmp/quantum-tests*
   start_metric "Quantum Unit Tests"
-  ./run_tests.sh -V -f &> quantum.out.log
+  ./run_tests.sh -V -P &> quantum.out.log
   local QUANTUM_STATUS=$?
   stop_metric
   start_metric "Quantum Pep8"
