@@ -45,7 +45,7 @@ GEM
     hike (1.2.1)
     i18n (0.6.0)
     json (1.6.1)
-    kytoon (1.2.4)
+    kytoon (1.2.5)
       builder
       json
       openstack-compute
@@ -138,7 +138,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-rails (~> 3.1.1)
-  kytoon (>= 1.2.4)
+  kytoon (>= 1.2.5)
   mysql
   popen4
   rails (= 3.1.1)
