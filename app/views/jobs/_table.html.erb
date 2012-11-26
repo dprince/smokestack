@@ -46,8 +46,8 @@
     <td><%= raw(chop_for_html(job.nova_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.keystone_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.glance_revision, 7)) %></td>
-    <td><%= raw(chop_for_html(job.swift_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.cinder_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.swift_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.quantum_revision, 7)) %></td>
     <td><%= job_runtime(job) %></td>
     <% if local_assigns[:show_updated_at] %>
