@@ -18,12 +18,12 @@ function override_sudo {
 
 function venv_cache_dir {
   local PROJECT_NAME=$1
-  local CACHE_MD5_TMP=$(mktemp)
-  echo "$PROJECT_NAME" > $CACHE_MD5_TMP
-  cat tools/*requires >> $CACHE_MD5_TMP
-  local MD5_SUM=$(md5sum $CACHE_MD5_TMP | cut -f 1 -d ' ')
-  rm "$CACHE_MD5_TMP"
-  echo "/tmp/cache-$PROJECT_NAME-$MD5_SUM"
+  local CACHE_SHA1_TMP=$(mktemp)
+  echo "$PROJECT_NAME" > $CACHE_SHA1_TMP
+  cat tools/*requires >> $CACHE_SHA1_TMP
+  local SHA1SUM=$(sha1sum $CACHE_SHA1_TMP | cut -f 1 -d ' ')
+  rm "$CACHE_SHA1_TMP"
+  echo "/tmp/venv-$PROJECT_NAME-$SHA1SUM"
 }
 
 function cache_venv {
