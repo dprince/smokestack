@@ -208,10 +208,6 @@ stop_metric
         || fail "Failed to build cinderclient packages."
     stop_metric
 
-    # Prettytable 0.6 is not in stock Fedora 17
-    rake fedora:build_python_prettytable \
-        SERVER_NAME="$BUILD_SERVER_NAME"
-
     if [ -n "$BUILD_QUANTUM" ]; then
         local QUANTUM_MERGE_MASTER=""
         if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
@@ -242,6 +238,9 @@ stop_metric
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build quantumclient packages."
     stop_metric
+
+    # distro agnostic hook to build custom required packages for upstream
+    rake build_misc SERVER_NAME="$BUILD_SERVER_NAME"
 
     # Copy hosts file to all nodes
     copy_hosts
