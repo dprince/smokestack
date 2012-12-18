@@ -107,6 +107,8 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
   rm nova*.tar.gz
   cd nova*
   get_venv_from_cache "nova"
+  # Disable parallel testing https://review.openstack.org/#/c/18327/
+  sed -e "s|run --parallel|run|" -i run_tests.sh 
   start_metric "Nova Unit Tests"
   ./run_tests.sh -V -P &> nova.out.log
   local NOVA_STATUS=$?
