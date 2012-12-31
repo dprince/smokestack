@@ -1,4 +1,4 @@
-  <tr class="ui-widget-header">
+  <tr class="header">
     <th>ID</th>
 <% if local_assigns[:show_description] %>
     <th>Smoke Test</th>
@@ -30,7 +30,7 @@
     <td><%= job.id %></td>
     <% if local_assigns[:show_description] %>
       <% if job.job_group.smoke_test then %>
-        <td><%= raw(chop_for_html(job.job_group.smoke_test.description, 60)) %></td>
+        <td><%= raw(chop_for_html(job.job_group.smoke_test.description, 50)) %></td>
       <% else %>
         <td>&nbsp;</td>
       <% end %>
@@ -69,9 +69,9 @@
 </font>
 <% end %>
     </td>
-    <td><%= link_to 'Show', "/jobs/#{job.id}", :class => "job-show" %></td>
+    <td><a href="<%= "/jobs/#{job.id}" %>" class="job-show btn btn-small" title="Show"><i class="icon-zoom-in"></i></a></td>
     <% if show_edit_links %>
-      <td><%= link_to 'Destroy',  {:controller => 'jobs', :action => 'destroy', :id => job.id, :authenticity_token => form_authenticity_token()}, :confirm => 'Are you sure?', :method => :delete, :class => "job-destroy" %></td>
+      <td><a href="<%= "/jobs/#{job.id}" %>" class="job-destroy btn btn-small" title="Delete"><i class="icon-trash"></i></a></td>
     <% end %>
   </tr>
 <% end %>

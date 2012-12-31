@@ -1,6 +1,7 @@
-<div id="jobs" class="ui-widget">
-
 <script type="text/javascript">
+
+$('.navbar li').removeClass('active');
+$('#nav_jobs').addClass('active');
 
 $(document).ready(function() {
 
@@ -10,8 +11,13 @@ $(document).ready(function() {
 
 </script>
 
-<table id="jobs-table" class="ui-widget ui-widget-content data">
+<form action="/jobs/XX" method="POST" id="job-delete-form">
+<input type="hidden" name="_method" value="delete"/>
+<%= tag(:input, :type => "hidden",
+    :name => request_forgery_protection_token.to_s,
+    :value => form_authenticity_token) %>
+</form>
+
+<table id="jobs-table" class="data table-bordered">
   <%= render :partial => 'table', :locals => {:show_updated_at => false, :show_description => true} %>
 </table>
-
-</div>

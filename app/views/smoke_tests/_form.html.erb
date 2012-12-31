@@ -1,32 +1,6 @@
-<script type="text/javascript">
+<div id="smoke-test-error-messages" />
 
-    $("a.smoke-test-edit-advanced").button({
-        icons: {
-            primary: 'ui-icon-gear'
-        },
-        text: false
-    }
-    );
-
-    $("a.smoke-test-cookbook-url").button({
-        icons: {
-            primary: 'ui-icon-gear'
-        },
-        text: true
-    }
-    );
-
-</script>
-
-<div id="smoke-test-error-messages" class="ui-widget" style="display: none">
-    <div class="ui-state-error ui-corner-all" style="padding: .25em .25em .25em 2.5em;">
-<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-<div id="smoke-test-error-messages-content"></div>
-</p>
-    </div>
-</div>
-
-<%= form_for(@smoke_test, :html => { :id => "smoke-test-form", :onsubmit => "create_smoke_test(); return false;" } ) do |f| %>
+<%= form_for(@smoke_test, :html => { :id => "smoke-test-form", :onsubmit => "create_smoke_test(); return false;", :class => "form-inline" } ) do |f| %>
 
   <% if @smoke_test.id then %>
     <%= f.hidden_field :id %>
@@ -45,12 +19,12 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :description %>&nbsp;(Ex. Nova fix_api_extensions)<br/>
-    <%= f.text_field :description %>
+    <%= f.label :description %>
+    <%= f.text_field :description, :class => 'input-large' %>
 
 <% if @smoke_test.cookbook_url.blank? %>
   <% cookbook_url_div = "hide" %>
-   <a style="float: right" title="Override Cookbook URL" class="smoke-test-cookbook-url" onclick='$("#cookbook-url-div").toggle(); $(this).hide();'>Override Cookbook URL</a>
+   <button style="float: right" title="Override Cookbook URL" class="btn" onclick='$("#cookbook-url-div").toggle(); $(this).hide(); return false;'>Override Cookbook URL</button>
 <% else %>
   <% cookbook_url_div = "" %>
 <% end %>
@@ -58,17 +32,17 @@
   </div>
 
   <div id="cookbook-url-div" class="field <%= cookbook_url_div %>">
-    <%= f.label 'Cookbook URL (optional override)' %>&nbsp;<br/>
-    <%= f.text_field :cookbook_url, :size => 60 %>
+    <%= f.label 'Cookbook URL (optional override)' %>
+    <%= f.text_field :cookbook_url, :style => 'width: 70%' %>
   </div>
 
 
 <br/>
-<table class="data" width="100%">
+<table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
 <th>&nbsp;</th>
 <th>URL</th>
-<th>Branch<br/>(Git Only)</th>
+<th>Git Branch</th>
 <th>Merge<br/>Trunk</th>
 <th>Adv<br/>Opts</th>
 </tr>
@@ -84,17 +58,17 @@
   <%= f.fields_for :nova_package_builder do |nova_build_frm| %>
     <tr>
       <td class="header">Nova Builder</td>
-      <td><%= nova_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= nova_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= nova_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= nova_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= nova_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Nova Build Options" class="smoke-test-edit-advanced <%= adv_nova_options_link %>" onclick='$("#nova-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Nova Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_nova_options_link %>" onclick='$("#nova-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_nova_options_tr %>" id="nova-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= nova_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= nova_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>
@@ -110,17 +84,17 @@
   <%= f.fields_for :keystone_package_builder do |keystone_build_frm| %>
     <tr>
       <td class="header">Keystone Builder</td>
-      <td><%= keystone_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= keystone_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= keystone_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= keystone_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= keystone_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Keystone Build Options" class="smoke-test-edit-advanced <%= adv_keystone_options_link %>" onclick='$("#keystone-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Keystone Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_keystone_options_link %>" onclick='$("#keystone-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_keystone_options_tr %>" id="keystone-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= keystone_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= keystone_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>
@@ -136,17 +110,17 @@
   <%= f.fields_for :glance_package_builder do |glance_build_frm| %>
     <tr>
       <td class="header">Glance Builder</td>
-      <td><%= glance_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= glance_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= glance_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= glance_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= glance_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Glance Build Options" class="smoke-test-edit-advanced <%= adv_glance_options_link %>" onclick='$("#glance-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Glance Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_glance_options_link %>" onclick='$("#glance-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_glance_options_tr %>" id="glance-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= glance_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= glance_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>
@@ -162,17 +136,17 @@
   <%= f.fields_for :swift_package_builder do |swift_build_frm| %>
     <tr>
       <td class="header">Swift Builder</td>
-      <td><%= swift_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= swift_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= swift_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= swift_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= swift_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Swift Build Options" class="smoke-test-edit-advanced <%= adv_swift_options_link %>" onclick='$("#swift-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Swift Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_swift_options_link %>" onclick='$("#swift-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_swift_options_tr %>" id="swift-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= swift_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= swift_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>
@@ -188,17 +162,17 @@
   <%= f.fields_for :cinder_package_builder do |cinder_build_frm| %>
     <tr>
       <td class="header">Cinder Builder</td>
-      <td><%= cinder_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= cinder_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= cinder_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= cinder_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= cinder_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Cinder Build Options" class="smoke-test-edit-advanced <%= adv_cinder_options_link %>" onclick='$("#cinder-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Cinder Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_cinder_options_link %>" onclick='$("#cinder-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_cinder_options_tr %>" id="cinder-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= cinder_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= cinder_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>
@@ -214,17 +188,17 @@
   <%= f.fields_for :quantum_package_builder do |quantum_build_frm| %>
     <tr>
       <td class="header">Quantum Builder</td>
-      <td><%= quantum_build_frm.text_field :url, :style => 'width: 300px' %></td>
-      <td><%= quantum_build_frm.text_field :branch, :style => 'width: 150px' %></td>
+      <td><%= quantum_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= quantum_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= quantum_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Quantum Build Options" class="smoke-test-edit-advanced <%= adv_quantum_options_link %>" onclick='$("#quantum-builder-adv-tr").toggle();'>&nbsp;</a></td>
+      <td><a title="Show/Hide Advanced Quantum Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_quantum_options_link %>" onclick='$("#quantum-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_quantum_options_tr %>" id="quantum-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= quantum_build_frm.text_field :revision_hash, :style => 'width: 100px' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :deb_packager_url, :style => 'width: 300px' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :rpm_packager_url, :style => 'width: 300px' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= quantum_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">DEB Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
+        <font class="header">RPM Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
       </td>
     </tr>
   <% end %>

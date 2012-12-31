@@ -3,8 +3,8 @@ var usersIntervalId = setInterval(refreshUsers, 6000);
 
 function refreshUsers() { 
 
-    var selected = $("#tabs").tabs( "option", "selected" );
-    if (selected == usersTabId) {
+    var nav_class = $('#nav_users').attr('class');
+    if (nav_class == 'active') {
         reload_users_table($("#users-table"));
     } 
 
@@ -25,10 +25,10 @@ function reload_users_table(container) {
 
 function user_selectors() {
 
-    $("#user-new-link").click(function(e){
+    $("#user-new-button").click(function(e){
          e.preventDefault();
 
-         $.get($(this).attr("href"), function(html_snippet) {
+         $.get('/users/new', function(html_snippet) {
 
            $("#users-dialog").html(
                html_snippet
@@ -54,37 +54,6 @@ function user_selectors() {
 }
 
 function user_table_selectors() {
-
-    $("#user-new-link").button({
-                icons: {
-                    primary: 'ui-icon-circle-plus'
-                }
-    }
-    );
-
-    $("a.user-destroy").button({
-        icons: {
-            primary: 'ui-icon-trash'
-        },
-        text: false
-    }
-    );
-
-    $("a.user-edit").button({
-        icons: {
-            primary: 'ui-icon-wrench'
-        },
-        text: false
-    }
-    );
-
-    $("a.user-show").button({
-        icons: {
-            primary: 'ui-icon-circle-zoomin'
-        },
-        text: false
-    }
-    );
 
     $(".user-destroy").click(function(e){
 
@@ -177,18 +146,16 @@ function user_create_or_edit(method) {
         data: post_data,
         dataType: 'xml',
         success: function(data) {
-            id=$("id", data).text();
             $("#users-dialog").dialog('close');
             reload_users_table($("#users-table"));
         },
-        error: function(data) {
-            err_html="<ul>";
+        error: function(data, textStatus, errorThrow) {
+            err_html="<div class='alert alert-error' id='user-error-messages'><ul>";
             $("error", data.responseXML).each (function() {
                 err_html+="<li>"+$(this).text()+"</li>";
             });
-            err_html+="</ul>";
-            $("#user-error-messages-content").html(err_html);
-            $("#user-error-messages").css("display", "inline");
+            err_html+="</ul></div>";
+            $("#user-error-messages").replaceWith(err_html);
         }
     });
 
@@ -237,13 +204,12 @@ function change_password() {
             $("#change-password-dialog").dialog('close');
         },
         error: function(data) {
-            err_html="<ul>";
+            err_html="<div class='alert alert-error' id='user-password-error-messages'><ul>";
             $("error", data.responseXML).each (function() {
                 err_html+="<li>"+$(this).text()+"</li>";
             });
-            err_html+="</ul>";
-            $("#user-password-error-messages-content").html(err_html);
-            $("#user-password-error-messages").css("display", "inline");
+            err_html+="</ul></div>";
+            $("#user-password-error-messages").replaceWith(err_html);
         }
     });
 

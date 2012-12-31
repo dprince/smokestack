@@ -1,4 +1,4 @@
-  <tr class="ui-widget-header">
+  <tr class="header">
     <th>Description</th>
     <th>Nova Branch Name</th>
     <th>Status</th>
@@ -15,15 +15,15 @@
 
 <% @smoke_tests.each do |smoke_test| %>
   <tr id="smoke-test-tr-<%= smoke_test.id %>" class="<%= cycle "tr0", "tr1" %>">
-    <td><%=raw chop_for_html(smoke_test.description, 60) %></td>
+    <td><%= raw(chop_for_html(smoke_test.description, 60)) %></td>
     <td><%=raw chop_for_html(smoke_test.nova_package_builder.branch) %></td>
     <td><%=raw status_image(smoke_test.status) %></td>
     <td><%= timestamp(smoke_test.updated_at.in_time_zone) %></td>
-    <td><%= link_to 'Show', smoke_test, :class => "smoke-test-show" %></td>
+    <td><a href="<%= "/smoke_tests/#{smoke_test.id}" %>" class="smoke-test-show btn btn-small" title="Show"><i class="icon-zoom-in"></i></a></td>
     <% if show_edit_links %>
-      <td><%= link_to 'Edit', edit_smoke_test_path(smoke_test), :class => "smoke-test-edit" %></td>
-      <td><%= link_to 'Destroy', smoke_test, :confirm => 'Are you sure?', :method => :delete, :class => "smoke-test-destroy"  %></td>
-      <td><%= link_to 'Run Jobs', "/smoke_tests/#{smoke_test.id}/run_jobs", :method => :post, :class => "smoke-test-run-jobs" %></td>
+      <td><a href="<%= edit_smoke_test_path(smoke_test) %>" class="smoke-test-edit btn btn-small" title="Edit"><i class="icon-edit"></i>Edit</a></td>
+      <td><a href="<%= "/smoke_tests/#{smoke_test.id}" %>" class="smoke-test-destroy btn btn-small" title="Delete"><i class="icon-trash"></i></a></td>
+      <td><a href="<%= "/smoke_tests/#{smoke_test.id}/run_jobs" %>" class="smoke-test-run-jobs btn btn-small" title="Fire (Run Jobs)"><i class="icon-fire"></i>Fire</a></td>
     <% end %>
   </tr>
 <% end %>

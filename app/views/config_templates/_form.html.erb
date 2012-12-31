@@ -8,16 +8,9 @@ $(document).ready(function() {
 
 </script>
 
-<div id="config-template-error-messages" class="ui-widget" style="display: none">
-    <div class="ui-state-error ui-corner-all" style="padding: .25em .25em .25em 2.5em;">
-<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-<div id="config-template-error-messages-content"></div>
-</p>
-    </div>
-</div>
+<div id="config-template-error-messages" />
 
-
-<%= form_for(@config_template, :html => { :id => "config-template-form", :onsubmit => "create_config_template(); return false;" } ) do |f| %>
+<%= form_for(@config_template, :html => { :id => "config-template-form", :onsubmit => "create_config_template(); return false;", :class => "form-inline" } ) do |f| %>
   <% if @config_template.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@config_template.errors.count, "error") %> prohibited this config_template from being saved:</h2>
@@ -30,37 +23,37 @@ $(document).ready(function() {
     </div>
   <% end %>
   <div class="field">
-    <%= f.label :enabled %><br />
+    <%= f.label :enabled %>
     <%= f.check_box :enabled %>
   </div>
   <div class="field">
-    <%= f.label :job_type %><br />
+    <%= f.label :job_type %>
     <%= f.select("job_type", Job::JOB_TYPES) %>
   </div>
   <div class="field">
-    <%= f.label :name %><br />
+    <%= f.label :name %>
     <%= f.text_field :name %>
   </div>
   <div class="field">
-    <%= f.label :description %><br />
+    <%= f.label :description %>
     <%= f.text_field :description %>
   </div>
   <div class="field">
-    <%= f.label :cookbook_repo_url %><br />
+    <%= f.label :cookbook_repo_url %>
     <%= f.text_field :cookbook_repo_url, :size => "60" %>
   </div>
 
 <div id="config_template_accordion">
   <h3><a href="#">Server Group</a></h3>
   <div>
-    <%= f.label :server_group_json %><br />
-    <%= f.text_area :server_group_json, :cols => "80" %>
+    <%= f.label :server_group_json %>
+    <%= f.text_area :server_group_json, :cols => "80", :class => "wide" %>
   </div>
 
   <h3><a href="#">Environment</a></h3>
   <div>
-    <%= f.label :environment %><br />
-    <%= f.text_area :environment, :cols => "80" %>
+    <%= f.label :environment %>
+    <%= f.text_area :environment, :cols => "80", :class => "wide" %>
   </div>
 
 </div>

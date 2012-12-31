@@ -65,8 +65,8 @@ class NodeConfigsController < ApplicationController
     respond_to do |format|
       if @node_config.update_attributes(params[:node_config])
         format.html { redirect_to(@node_config, :notice => 'NodeConfig was successfully updated.') }
-        format.json  { render :json => @node_config }
-        format.xml  { render :xml => @node_config }
+        format.json  { render :json => @node_config, :status => :ok }
+        format.xml  { render :xml => @node_config, :status => :ok }
       else
         format.xml  { render :xml => @node_config.errors, :status => :unprocessable_entity }
         format.any  { render :json => @node_config.errors, :status => :unprocessable_entity }

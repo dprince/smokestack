@@ -4,12 +4,6 @@ $(document).ready(function() {
 
   $("#job_accordion").accordion({ fillSpace: false, autoHeight: false, clearStyle: true });
 
-  $("input.paste-site").button({
-      icons: {
-          primary: 'ui-icon-extlink'
-      }
-  });
-
 });
 
 </script>
@@ -44,9 +38,9 @@ $(document).ready(function() {
 <form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
 <input type="hidden" name="language" value="text"/>
 <% if ENV['PASTE_SITE_URL'] %>
-<input type="submit" name="paste" value="Create Paste" class="paste-site" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'"/><br/>
+<button type="submit" name="paste" class="btn btn-small btn-info" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'">Create Paste</button><br/>
 <% end %>
-<textarea name="code" rows="15" cols="100">
+<textarea name="code" rows="15" cols="100" class="wide logs">
 <%= @job.stdout %>
 </textarea>
 </form>
@@ -59,9 +53,9 @@ $(document).ready(function() {
 <form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
 <input type="hidden" name="language" value="text"/>
 <% if ENV['PASTE_SITE_URL'] %>
-<input type="submit" name="paste" value="Create Paste" class="paste-site" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'" /><br/>
+<button type="submit" name="paste" class="btn btn-small btn-info" title="Paste to: '<%= ENV['PASTE_SITE_URL'] %>'">Create Paste</button><br/>
 <% end %>
-<textarea name="code" rows="15" cols="100">
+<textarea name="code" rows="15" cols="100" class="wide logs">
 <%= @job.stderr %>
 </textarea>
 </form>

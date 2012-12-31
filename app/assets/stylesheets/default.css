@@ -21,6 +21,26 @@ table.data tr td font.header {
   font-weight: bold;
 }
 
+table.data tr td.success {
+  color: #5ba75b;
+}
+
+table.data tr td.error {
+  color: #da4f49;
+}
+
+table.data tr td.warning {
+  color: #f89406;
+}
+
+table.data tr td.info {
+  color: #49afcd;
+}
+
+table.data tr td.primary {
+  color: #003399;
+}
+
 table.data tr.tr0 {
   background-color: #FFF;
 }
@@ -38,41 +58,13 @@ br.clear {
   clear: both;
 }
 
-img.check_image {
+textarea.wide {
+  width: 100%;
 }
 
-img.status_image {
-}
-
-textarea {
+textarea.logs {
   font-family: terminal, "VT-100", monospace;
-}
-
-#header_div {
-    float: left;
-    margin-bottom: 0.2em;
-}
-
-#login_div {
-  font-size: 14px;
-  text-align: center;
-  margin-top: 3.0em;
-  margin-bottom: 3.0em;
-}
-
-#login_div table {
-  width: 400px;
-  margin: auto;
-  text-align: left;
-}
-
-#login_header {
-  float: right;
-}
-
-#footer_div {
-  float: right;
-  color: #333;
+  color: #222;
 }
 
 .show {

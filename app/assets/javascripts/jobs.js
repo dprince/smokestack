@@ -3,8 +3,8 @@ var jobsIntervalId = setInterval(refreshJobs, 6000);
 
 function refreshJobs() {
 
-    var selected = $("#tabs").tabs( "option", "selected" );
-    if (selected == jobsTabId) {
+    var nav_class = $('#nav_jobs').attr('class');
+    if (nav_class == 'active') {
         reload_jobs_table($("#jobs-table"));
     }
 
@@ -42,22 +42,6 @@ function job_update(job_id, post_data) {
 
 function job_table_selectors() {
 
-    $("a.job-destroy").button({
-        icons: {
-            primary: 'ui-icon-trash'
-        },
-        text: false
-    }
-    );
-
-    $("a.job-show").button({
-        icons: {
-            primary: 'ui-icon-circle-zoomin'
-        },
-        text: false
-    }
-    );
-
     $(".job-destroy").click(function(e){
 
         e.preventDefault();
@@ -66,10 +50,13 @@ function job_table_selectors() {
             return;
         }
 
+        var post_data = $("#job-delete-form").serialize();
+
         $.ajax({
             url: $(this).attr("href"),
-            type: 'DELETE',
+            type: 'POST',
             dataType: 'xml',
+            data: post_data,
             success: function(data) {
                 id=$("id", data).text();
                 $(".job-tr-"+id).remove();
@@ -108,5 +95,14 @@ function job_table_selectors() {
          });
 
        });
+
+/*
+    #row clicking (disabled for now)
+    $('table.data tr td').not($('table.data tr td.noclick')).click(function() {
+        var href = $(this).parent().find("a").attr("href");
+        if(href) {
+        }
+    });
+*/
 
 }

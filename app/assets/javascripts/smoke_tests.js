@@ -3,8 +3,8 @@ var smokeTestsIntervalId = setInterval(refreshSmokeTest, 6000);
 
 function refreshSmokeTest() { 
 
-    var selected = $("#tabs").tabs( "option", "selected" );
-    if (selected == smokeTestsTabId) {
+    var nav_class = $('#nav_smoke_tests').attr('class');
+    if (nav_class == 'active') {
         reload_smoke_tests_table($("#smoke-tests-table"));
     } 
 
@@ -25,10 +25,10 @@ function reload_smoke_tests_table(container) {
 
 function smoke_test_selectors() {
 
-    $("#smoke-test-new-link").click(function(e){
+    $("#smoke-test-new-button").click(function(e){
          e.preventDefault();
 
-         $.get($(this).attr("href"), function(html_snippet) {
+         $.get('/smoke_tests/new', function(html_snippet) {
 
            $("#smoke-tests-dialog").html(
                html_snippet
@@ -54,44 +54,6 @@ function smoke_test_selectors() {
 }
 
 function smoke_test_table_selectors() {
-
-    $("#smoke-test-new-link").button({
-                icons: {
-                    primary: 'ui-icon-circle-plus'
-                }
-    }
-    );
-
-    $("a.smoke-test-run-jobs").button({
-        icons: {
-            primary: 'ui-icon-play'
-        }
-    }
-    );
-
-    $("a.smoke-test-destroy").button({
-        icons: {
-            primary: 'ui-icon-trash'
-        },
-        text: false
-    }
-    );
-
-    $("a.smoke-test-edit").button({
-        icons: {
-            primary: 'ui-icon-wrench'
-        },
-        text: false
-    }
-    );
-
-    $("a.smoke-test-show").button({
-        icons: {
-            primary: 'ui-icon-circle-zoomin'
-        },
-        text: false
-    }
-    );
 
     $(".smoke-test-destroy").click(function(e){
 
@@ -204,18 +166,16 @@ function smoke_test_create_or_edit(method) {
         data: post_data,
         dataType: 'xml',
         success: function(data) {
-            id=$("id", data).text();
             $("#smoke-tests-dialog").dialog('close');
             reload_smoke_tests_table($("#smoke-tests-table"));
         },
-        error: function(data) {
-            err_html="<ul>";
+        error: function(data, textStatus, errorThrow) {
+            err_html="<div class='alert alert-error' id='smoke-test-error-messages'><ul>";
             $("error", data.responseXML).each (function() {
                 err_html+="<li>"+$(this).text()+"</li>";
             });
-            err_html+="</ul>";
-            $("#smoke-test-error-messages-content").html(err_html);
-            $("#smoke-test-error-messages").css("display", "inline");
+            err_html+="</ul></div>";
+            $("#smoke-test-error-messages").replaceWith(err_html);
         }
     });
 

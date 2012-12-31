@@ -1,62 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-  <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
-  <%= javascript_include_tag "application" %>
-  <%= stylesheet_link_tag    "application" %>
-  <%= csrf_meta_tag %>
 <script type="text/javascript">
-    $(function() {
 
-        $("a.button").button();
+$('.navbar li').removeClass('active');
+$('#nav_about').addClass('active');
 
-    });
 </script>
 
-  </head>
-<body>
-
-<h1>SmokeStack: About</h1>
-<table class="ui-widget ui-widget-content data" width="100%">
-  <tr class="ui-widget-header">
-    <th>&nbsp;</th>
-  </tr>
-  <tr>
-    <td>
-
-<a href="/" class="button">Back to the SmokeStack</a>
-<hr/>
-
 <div>
-<b>Summary:</b>
+<h4>Summary:</h4>
 <p>
-A web application with a REST based HTTP interface to help smoke test the OpenStack. SmokeStack is focused on integration testing of OpenStack services and currently supports Nova, Keystone, and Glance. SmokeStack is built on:
+SmokeStack is a web application with a REST based HTTP interface to help origanize and drive testing of OpenStack. SmokeStack is focused on integration using real packages (RPM, Deb, etc.) and config management (Puppet/Chef).
+
+The following core OpenStack services are currently supported: Nova, Keystone, Glance, Swift, Cinder, and Quantum.
+</p>
+
+<p>
+SmokeStack is built using:
 
 <ul>
 
 <li>Rails 3.1</li>
 <li>Resque: a redis backed job queue</li>
-<li>A templated job runner. The default VPC job runner uses <a href="https://github.com/dprince/firestack">firestack</a> to spin up groups of servers in the cloud for smoke testing.</li>
-<li>Packages to install software (currently supports Fedora/Ubuntu)</li>
+<li>A templated job runner. The default libvirt job runner uses <a href="https://github.com/dprince/kytoon">Kytoon</a> to spin up groups of servers in the cloud for smoke testing.</li>
+<li>Packages to install software (currently supports Fedora)</li>
 <li>Configuration management to install and configure everything (Puppet)</li>
 
 </ul>
-For more information and examples see the <a href="http://wiki.openstack.org/smokestack"/>wiki</a>.
-
 </p>
+
 </div>
 <hr/>
 
 <div>
-<b>Features:</b>
+<h4>Features:</h4>
 <p>
 
 <ul>
 <li>Currently supports Git and Bzr.</li>
 <li>Ability to test custom branches on GitHub, Launchpad, Gerrit, etc.</li>
-<li>Custom package builder branches.(RPMs/Debs)</li>
+<li>Custom package builder branches.(For RPMs/Debs/etc.)</li>
 <li>Specify a custom revision hash for each source code URL.</li>
 <li>Captures stdout and stderr for each job.</li>
 <li>Multiple configuration support. Libvirt/XenServer, MySQL/PostgreSQL, Qpid/Rabbit, etc. build your own and test with them right in the UI.</li>
@@ -68,7 +49,7 @@ For more information and examples see the <a href="http://wiki.openstack.org/smo
 <hr/>
 
 <div>
-<b>Rest API</b>
+<h4>Rest API</h4>
 <ul>
 <li><b>GET /smoke_tests.json</b>: get a list of existing smoke tests</li>
 <li><b>POST /smoke_tests.json</b>: create a new smoke test</li>
@@ -89,17 +70,11 @@ For more information and examples see the <a href="http://wiki.openstack.org/smo
 <p>
 
 <ul>
-<li><a href="https://github.com/dprince/torpedo">Torpedo<a/>: Fast Ruby integration tests for OpenStack.</li>
-<li><a href="https://github.com/dprince/bellows">Bellows<a/>: SmokeStack automation w/ Gerrit.</li>
 <li><a href="https://github.com/dprince/firestack">Firestack<a/>: 'Fire up' your own OpenStack cloud.</li>
+<li><a href="https://github.com/dprince/kytoon">Kytoon<a/>: Create small virtual server groups.</li>
+<li><a href="https://github.com/dprince/bellows">Bellows<a/>: SmokeStack automation w/ Gerrit.</li>
+<li><a href="https://github.com/dprince/torpedo">Torpedo<a/>: Fast Ruby integration tests for OpenStack.</li>
 <ul>
 
 </p>
 </div>
-
-    </td>
-  </tr>
-</table>
-
-</body>
-</html>

@@ -1,6 +1,7 @@
 class JobsController < ApplicationController
 
   before_filter :authorize, :except => [:index, :show]
+  layout "default", :only => :index
 
   # GET /jobs
   # GET /jobs.xml
@@ -47,8 +48,8 @@ class JobsController < ApplicationController
       # We only allow the approval to be updated on jobs
       if @job.update_attribute(:approved_by, approved_by)
         format.html { redirect_to("/jobs/#{@job.id}", :notice => 'Job was successfully created.') }
-        format.json  { render :json => @job }
-        format.xml  { render :xml => @job }
+        format.json  { render :json => @job, :status => :ok }
+        format.xml  { render :xml => @job, :status => :ok }
       else
         format.html { render :action => "new" }
         format.json  { render :json => @job.errors, :status => :unprocessable_entity }

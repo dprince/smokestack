@@ -1,8 +1,9 @@
-<div id="config_templates" class="ui-widget">
-
-<%= link_to 'New Config Template', new_config_template_path, :id => "config-template-new-link" %>
+<button class="btn btn-small" id="config-template-new-button">New Config Template</button>
 
 <script type="text/javascript">
+
+$('.navbar li').removeClass('active');
+$('#nav_config_templates').addClass('active');
 
 $(document).ready(function() {
 
@@ -13,14 +14,12 @@ $(document).ready(function() {
 
 </script>
 
-<%= form_tag('/config_templates/XX', :method => :delete, :id => "config-template-delete-form") %>
-</form>
-
 <%= form_tag('/config_templates/XX', :method => :clone, :id => "config-template-clone-form") %>
 </form>
 
-<table id="config-templates-table" class="ui-widget ui-widget-content data">
+<%= form_tag('/config_templates/XX', :method => :delete, :id => "config-template-delete-form") %>
+</form>
+
+<table id="config-templates-table" class="data table-bordered">
     <%= render :partial => 'table' %>
 </table>
-
-</div>

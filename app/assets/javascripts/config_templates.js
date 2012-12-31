@@ -3,8 +3,8 @@ var configTemplateIntervalId = setInterval(refreshConfigTemplates, 6000);
 
 function refreshConfigTemplates() { 
 
-    var selected = $("#tabs").tabs( "option", "selected" );
-    if (selected == configTemplatesTabId) {
+    var nav_class = $('#nav_config_templates').attr('class');
+    if (nav_class == 'active') {
         reload_config_templates_table($("#config-templates-table"));
     }
 
@@ -25,10 +25,10 @@ function reload_config_templates_table(container) {
 
 function config_template_selectors() {
 
-    $("#config-template-new-link").click(function(e){
+    $("#config-template-new-button").click(function(e){
          e.preventDefault();
 
-         $.get($(this).attr("href"), function(html_snippet) {
+         $.get('/config_templates/new', function(html_snippet) {
 
            $("#config-templates-dialog").html(
                html_snippet
@@ -54,53 +54,6 @@ function config_template_selectors() {
 }
 
 function config_template_table_selectors() {
-
-    $("#config-template-new-link").button({
-                icons: {
-                    primary: 'ui-icon-circle-plus'
-                }
-    }
-    );
-
-    $("a.config-template-destroy").button({
-        icons: {
-            primary: 'ui-icon-trash'
-        },
-        text: false
-    }
-    );
-
-    $("a.config-template-edit").button({
-        icons: {
-            primary: 'ui-icon-wrench'
-        },
-        text: false
-    }
-    );
-
-    $("a.config-template-show").button({
-        icons: {
-            primary: 'ui-icon-circle-zoomin'
-        },
-        text: false
-    }
-    );
-
-    $("a.config-template-nodes").button({
-        icons: {
-            primary: 'ui-icon-gear'
-        },
-        text: 'Node Configs'
-    }
-    );
-
-    $("a.config-template-clone").button({
-        icons: {
-            primary: 'ui-icon-copy'
-        },
-        text: 'Clone'
-    }
-    );
 
     $(".config-template-destroy").click(function(e){
 
@@ -242,18 +195,16 @@ function config_template_create_or_edit(method) {
         data: post_data,
         dataType: 'xml',
         success: function(data) {
-            id=$("id", data).text();
             $("#config-templates-dialog").dialog('close');
             reload_config_templates_table($("#config-templates-table"));
         },
-        error: function(data) {
-            err_html="<ul>";
+        error: function(data, textStatus, errorThrow) {
+            err_html="<div class='alert alert-error' id='config-template-error-messages'><ul>";
             $("error", data.responseXML).each (function() {
                 err_html+="<li>"+$(this).text()+"</li>";
             });
-            err_html+="</ul>";
-            $("#config-template-error-messages-content").html(err_html);
-            $("#config-template-error-messages").css("display", "inline");
+            err_html+="</ul></div>";
+            $("#config-template-error-messages").replaceWith(err_html);
         }
     });
 

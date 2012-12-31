@@ -1,6 +1,7 @@
 class SmokeTestsController < ApplicationController
 
   before_filter :authorize, :except => [:index, :show]
+  layout "default", :only => :index
 
   # GET /smoke_tests
   # GET /smoke_tests.json
@@ -93,8 +94,8 @@ class SmokeTestsController < ApplicationController
 
         @smoke_test.test_suites.clear if @smoke_test.test_suites.size == 0
         format.html { redirect_to(@smoke_test, :notice => 'Smoke test was successfully updated.') }
-        format.json  { head :ok }
-        format.xml  { head :ok }
+        format.json  { render :json => @smoke_test, :status => :ok }
+        format.xml  { render :xml => @smoke_test, :status => :ok }
       else
         format.html { render :action => "edit" }
         format.json  { render :json => @smoke_test.errors, :status => :unprocessable_entity }

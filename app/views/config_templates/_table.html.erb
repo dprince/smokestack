@@ -1,4 +1,4 @@
-  <tr class="ui-widget-header">
+  <tr class="header">
     <th>Name</th>
     <th>Description</th>
     <th>Enabled</th>
@@ -13,9 +13,9 @@
     <td><%= raw(chop_for_html(config_template.name, 40)) %></td>
     <td><%= raw(chop_for_html(config_template.description, 60)) %></td>
     <td><%= yes_no(config_template.enabled) %></td>
-    <td><%= link_to 'Edit', edit_config_template_path(config_template), :class => "config-template-edit" %></td>
-    <td><%= link_to 'Node Config', "/node_configs?config_template_id=#{config_template.id}", :class => "config-template-nodes" %></td>
-    <td><%= link_to 'Clone', "/config_templates/#{config_template.id}/clone", :class => "config-template-clone" %></td>
-    <td><%= link_to 'Destroy', config_template, :confirm => 'Are you sure?', :method => :delete, :class => "config-template-destroy" %></td>
+    <td><a href="<%= edit_config_template_path(config_template) %>" class="config-template-edit btn btn-small" title="Edit"><i class="icon-edit"></i>Edit</a></td>
+    <td><a href="<%= "/node_configs?config_template_id=#{config_template.id}" %>" class="config-template-nodes btn btn-small" title="Node Configs"><i class="icon-asterisk"></i>Node Configs</a></td>
+    <td><a href="<%= "/config_templates/#{config_template.id}/clone" %>" class="config-template-clone btn btn-small" title="Clone"><i class="icon-share"></i>Clone</a></td>
+    <td><a href="<%= "/config_templates/#{config_template.id}" %>" class="config-template-destroy btn btn-small" title="Delete"><i class="icon-trash"></i></a></td>
   </tr>
 <% end %>

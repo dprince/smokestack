@@ -1,4 +1,4 @@
-  <tr class="ui-widget-header">
+  <tr class="header">
     <th>Username</th>
     <th>First name</th>
     <th>Last name</th>
@@ -16,8 +16,8 @@
     <td><%= raw(chop_for_html(user.last_name)) %></td>
     <td><%= yes_no user.is_active %></td>
     <td><%= yes_no user.is_admin %></td>
-    <td><%= link_to 'Show', user, :class => "user-show" %></td>
-    <td><%= link_to 'Edit', edit_user_path(user), :class => "user-edit" %></td>
-    <td><%= link_to 'Destroy', user, :confirm => 'Are you sure?', :method => :delete, :class => "user-destroy" %></td>
+    <td><a href="<%= "/users/#{user.id}" %>" class="user-show btn btn-small" title="Show"><i class="icon-zoom-in"></i></a></td>
+    <td><a href="<%= edit_user_path(user) %>" class="user-edit btn btn-small" title="Edit"><i class="icon-edit"></i>Edit</a></td>
+    <td><a href="<%= "/users/#{user.id}" %>" class="user-destroy btn btn-small" title="Delete"><i class="icon-trash"></i></a></td>
   </tr>
 <% end %>

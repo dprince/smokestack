@@ -2,6 +2,7 @@ class ConfigTemplatesController < ApplicationController
 
   before_filter :require_admin
   before_filter :authorize
+  layout "default", :only => :index
 
   # GET /config_templates
   # GET /config_templates.xml
@@ -74,8 +75,8 @@ class ConfigTemplatesController < ApplicationController
     respond_to do |format|
       if @config_template.update_attributes(params[:config_template])
         format.html { redirect_to(@config_template, :notice => 'ConfigTemplate was successfully updated.') }
-        format.json  { head :ok }
-        format.xml  { head :ok }
+        format.json  { render :json => @config_template, :status => :ok }
+        format.xml  { render :xml => @config_template, :status => :ok }
       else
         format.html { render :action => "edit" }
         format.json  { render :json => @config_template.errors, :status => :unprocessable_entity }

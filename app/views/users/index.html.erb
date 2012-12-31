@@ -1,8 +1,9 @@
-<div id="users" class="ui-widget">
-
-<%= link_to 'New User', new_user_path, :id => "user-new-link" %>
+<button class="btn btn-small" id="user-new-button">New User</button>
 
 <script type="text/javascript">
+
+$('.navbar li').removeClass('active');
+$('#nav_users').addClass('active');
 
 $(document).ready(function() {
 
@@ -16,8 +17,6 @@ $(document).ready(function() {
 <%= form_tag('/users/XX', :method => :delete, :id => "user-delete-form") %>
 </form>
 
-<table id="users-table" class="ui-widget ui-widget-content data">
+<table id="users-table" class="data table-bordered">
     <%= render :partial => 'table' %>
 </table>
-
-</div>

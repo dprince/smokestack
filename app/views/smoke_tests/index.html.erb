@@ -1,10 +1,11 @@
-<div id="smoke-tests" class="ui-widget">
-
 <% if is_user %>
-<%= link_to 'New Test Configuration', new_smoke_test_path, :id => "smoke-test-new-link" %>
+<button class="btn btn-small" id="smoke-test-new-button">New Smoke Test</button>
 <% end %>
 
 <script type="text/javascript">
+
+$('.navbar li').removeClass('active');
+$('#nav_smoke_tests').addClass('active');
 
 $(document).ready(function() {
 
@@ -29,8 +30,6 @@ $(document).ready(function() {
     :value => form_authenticity_token) %>
 </form>
 
-<table id="smoke-tests-table" class="ui-widget ui-widget-content data">
+<table id="smoke-tests-table" class="data table-condensed table-bordered">
   <%= render :partial => 'table' %>
 </table>
-
-</div>

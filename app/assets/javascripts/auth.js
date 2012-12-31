@@ -10,11 +10,10 @@ function smokestack_auth () {
             location.reload();
         },
         error: function(data) {
-            $("#auth-error-messages").css("display", "inline");
-            err_html="<ul>";
+            err_html="<div class='alert alert-error' id='auth-error-messages'><ul>";
             err_html+="<li>Authentication failed.</li>";
-            err_html+="</ul>";
-            $("#auth-error-messages-content").html(err_html);
+            err_html+="</ul></div>";
+            $("#auth-error-messages").replaceWith(err_html);
         }
     });
 
@@ -32,8 +31,8 @@ function login_selectors() {
 
       $("#login-dialog").dialog({
         modal: true,
-        height: 275,
-        width: 400,
+        height: 350,
+        width: 450,
         buttons: {
           "Log In": function() { smokestack_auth(); }
         }
