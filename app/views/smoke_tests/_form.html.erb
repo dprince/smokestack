@@ -47,7 +47,7 @@
 <th>Adv<br/>Opts</th>
 </tr>
 
-<% if @smoke_test.nova_package_builder.deb_packager_url.blank? and @smoke_test.nova_package_builder.rpm_packager_url.blank? and @smoke_test.nova_package_builder.revision_hash.blank? %>
+<% if @smoke_test.nova_package_builder.packager_url.blank? and @smoke_test.nova_package_builder.revision_hash.blank? %>
   <% adv_nova_options_link = "" %>
   <% adv_nova_options_tr = "hide" %>
 <% else %>
@@ -67,13 +67,12 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= nova_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= nova_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= nova_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
 
-<% if @smoke_test.keystone_package_builder.deb_packager_url.blank? and @smoke_test.keystone_package_builder.rpm_packager_url.blank? and @smoke_test.keystone_package_builder.revision_hash.blank? %>
+<% if @smoke_test.keystone_package_builder.packager_url.blank? and @smoke_test.keystone_package_builder.revision_hash.blank? %>
   <% adv_keystone_options_link = "" %>
   <% adv_keystone_options_tr = "hide" %>
 <% else %>
@@ -93,13 +92,12 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= keystone_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= keystone_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= keystone_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
 
-<% if @smoke_test.glance_package_builder.deb_packager_url.blank? and @smoke_test.glance_package_builder.rpm_packager_url.blank? and @smoke_test.glance_package_builder.revision_hash.blank? %>
+<% if @smoke_test.glance_package_builder.packager_url.blank? and @smoke_test.glance_package_builder.revision_hash.blank? %>
   <% adv_glance_options_link = "" %>
   <% adv_glance_options_tr = "hide" %>
 <% else %>
@@ -119,13 +117,12 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= glance_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= glance_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= glance_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
 
-<% if @smoke_test.swift_package_builder.deb_packager_url.blank? and @smoke_test.swift_package_builder.rpm_packager_url.blank? and @smoke_test.swift_package_builder.revision_hash.blank? %>
+<% if @smoke_test.swift_package_builder.packager_url.blank? and @smoke_test.swift_package_builder.revision_hash.blank? %>
   <% adv_swift_options_link = "" %>
   <% adv_swift_options_tr = "hide" %>
 <% else %>
@@ -145,13 +142,12 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= swift_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= swift_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= swift_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
 
-<% if @smoke_test.cinder_package_builder.deb_packager_url.blank? and @smoke_test.cinder_package_builder.rpm_packager_url.blank? and @smoke_test.cinder_package_builder.revision_hash.blank? %>
+<% if @smoke_test.cinder_package_builder.packager_url.blank? and @smoke_test.cinder_package_builder.revision_hash.blank? %>
   <% adv_cinder_options_link = "" %>
   <% adv_cinder_options_tr = "hide" %>
 <% else %>
@@ -171,13 +167,12 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= cinder_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= cinder_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= cinder_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
 
-<% if @smoke_test.quantum_package_builder.deb_packager_url.blank? and @smoke_test.quantum_package_builder.rpm_packager_url.blank? and @smoke_test.quantum_package_builder.revision_hash.blank? %>
+<% if @smoke_test.quantum_package_builder.packager_url.blank? and @smoke_test.quantum_package_builder.revision_hash.blank? %>
   <% adv_quantum_options_link = "" %>
   <% adv_quantum_options_tr = "hide" %>
 <% else %>
@@ -197,8 +192,7 @@
       <td>&nbsp;</td>
       <td colspan="3">
         <font class="header">Revision/Hash: &nbsp;</font><%= quantum_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">DEB Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :deb_packager_url, :style => 'width: 90%' %><br/>
-        <font class="header">RPM Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :rpm_packager_url, :style => 'width: 90%' %>
+        <font class="header">Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= quantum_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>

@@ -82,28 +82,28 @@ class Job < ActiveRecord::Base
       end
 
       nova_builder=job.job_group.smoke_test.nova_package_builder
-      nova_deb_packager_url=nova_builder.deb_packager_url
-      nova_rpm_packager_url=nova_builder.rpm_packager_url
+      nova_packager_url=nova_builder.packager_url
+      nova_packager_branch=nova_builder.packager_branch
 
       glance_builder=job.job_group.smoke_test.glance_package_builder
-      glance_deb_packager_url=glance_builder.deb_packager_url
-      glance_rpm_packager_url=glance_builder.rpm_packager_url
+      glance_packager_url=glance_builder.packager_url
+      glance_packager_branch=glance_builder.packager_branch
 
       keystone_builder=job.job_group.smoke_test.keystone_package_builder
-      keystone_deb_packager_url=keystone_builder.deb_packager_url
-      keystone_rpm_packager_url=keystone_builder.rpm_packager_url
+      keystone_packager_url=keystone_builder.packager_url
+      keystone_packager_branch=keystone_builder.packager_branch
 
       swift_builder=job.job_group.smoke_test.swift_package_builder
-      swift_deb_packager_url=swift_builder.deb_packager_url
-      swift_rpm_packager_url=swift_builder.rpm_packager_url
+      swift_packager_url=swift_builder.packager_url
+      swift_packager_branch=swift_builder.packager_branch
 
       cinder_builder=job.job_group.smoke_test.cinder_package_builder
-      cinder_deb_packager_url=cinder_builder.deb_packager_url
-      cinder_rpm_packager_url=cinder_builder.rpm_packager_url
+      cinder_packager_url=cinder_builder.packager_url
+      cinder_packager_branch=cinder_builder.packager_branch
 
       quantum_builder=job.job_group.smoke_test.quantum_package_builder
-      quantum_deb_packager_url=quantum_builder.deb_packager_url
-      quantum_rpm_packager_url=quantum_builder.rpm_packager_url
+      quantum_packager_url=quantum_builder.packager_url
+      quantum_packager_branch=quantum_builder.packager_branch
 
       cookbook_url = ""
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
@@ -124,38 +124,38 @@ class Job < ActiveRecord::Base
         nova_builder.branch || "",
         nova_builder.merge_trunk.to_s,
         nova_builder.revision_hash,
-        nova_deb_packager_url,
-        nova_rpm_packager_url,
+        nova_packager_url,
+        nova_packager_branch,
         keystone_builder.url,
         keystone_builder.branch || "",
         keystone_builder.merge_trunk.to_s,
         keystone_builder.revision_hash,
-        keystone_deb_packager_url,
-        keystone_rpm_packager_url,
+        keystone_packager_url,
+        keystone_packager_branch,
         glance_builder.url,
         glance_builder.branch || "",
         glance_builder.merge_trunk.to_s,
         glance_builder.revision_hash,
-        glance_deb_packager_url,
-        glance_rpm_packager_url,
+        glance_packager_url,
+        glance_packager_branch,
         swift_builder.url,
         swift_builder.branch || "",
         swift_builder.merge_trunk.to_s,
         swift_builder.revision_hash,
-        swift_deb_packager_url,
-        swift_rpm_packager_url,
+        swift_packager_url,
+        swift_packager_branch,
         cinder_builder.url,
         cinder_builder.branch || "",
         cinder_builder.merge_trunk.to_s,
         cinder_builder.revision_hash,
-        cinder_deb_packager_url,
-        cinder_rpm_packager_url,
+        cinder_packager_url,
+        cinder_packager_branch,
         quantum_builder.url,
         quantum_builder.branch || "",
         quantum_builder.merge_trunk.to_s,
         quantum_builder.revision_hash,
-        quantum_deb_packager_url,
-        quantum_rpm_packager_url,
+        quantum_packager_url,
+        quantum_packager_branch,
         config_template_description,
         cookbook_url,
         node_configs_dir,

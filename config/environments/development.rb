@@ -44,25 +44,20 @@ ENV['QUANTUMCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-quantumclie
 
 ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
-# Default RPM packager URLS
-ENV['NOVA_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-nova.git"
-ENV['NOVACLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-novaclient.git"
-ENV['GLANCE_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-glance.git"
-ENV['GLANCECLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-glanceclient.git"
-ENV['KEYSTONE_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-keystone.git"
-ENV['KEYSTONECLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-keystoneclient.git"
-ENV['SWIFT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-swift.git"
-ENV['SWIFTCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-swiftclient.git"
-ENV['CINDER_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-cinder.git"
-ENV['CINDERCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-cinderclient.git"
-ENV['QUANTUM_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-quantum.git"
-ENV['QUANTUMCLIENT_RPM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-quantumclient.git"
-
-# Default DEB packager URLS
-ENV['NOVA_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/nova/ubuntu"
-ENV['GLANCE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/glance/ubuntu"
-ENV['KEYSTONE_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/keystone/ubuntu"
-ENV['SWIFT_DEB_PACKAGER_URL'] = "lp:~openstack-ubuntu-packagers/swift/ubuntu"
+# Default packager URLS use Fedora
+# NOTE: you can override/set these in your distro specific environments
+ENV['NOVA_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-nova.git"
+ENV['NOVACLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-novaclient.git"
+ENV['GLANCE_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-glance.git"
+ENV['GLANCECLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-glanceclient.git"
+ENV['KEYSTONE_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-keystone.git"
+ENV['KEYSTONECLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-keystoneclient.git"
+ENV['SWIFT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-swift.git"
+ENV['SWIFTCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-swiftclient.git"
+ENV['CINDER_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-cinder.git"
+ENV['CINDERCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-cinderclient.git"
+ENV['QUANTUM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-quantum.git"
+ENV['QUANTUMCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-quantumclient.git"
 
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
 ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"

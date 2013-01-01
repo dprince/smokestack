@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 33) do
+ActiveRecord::Schema.define(:version => 34) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -67,16 +67,16 @@ ActiveRecord::Schema.define(:version => 33) do
   end
 
   create_table "package_builders", :force => true do |t|
-    t.string   "type",             :default => "NovaPackageBuilder", :null => false
-    t.string   "url",                                                :null => false
+    t.string   "type",            :default => "NovaPackageBuilder", :null => false
+    t.string   "url",                                               :null => false
     t.string   "branch"
-    t.boolean  "merge_trunk",      :default => true,                 :null => false
-    t.integer  "smoke_test_id",                                      :null => false
+    t.boolean  "merge_trunk",     :default => true,                 :null => false
+    t.integer  "smoke_test_id",                                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "deb_packager_url", :default => ""
-    t.string   "revision_hash",    :default => ""
-    t.string   "rpm_packager_url", :default => ""
+    t.string   "revision_hash",   :default => ""
+    t.string   "packager_url",    :default => ""
+    t.string   "packager_branch", :default => ""
   end
 
   create_table "smoke_tests", :force => true do |t|
