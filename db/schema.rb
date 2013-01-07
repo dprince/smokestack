@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 35) do
+ActiveRecord::Schema.define(:version => 36) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -78,6 +78,10 @@ ActiveRecord::Schema.define(:version => 35) do
     t.string   "packager_url",    :default => ""
     t.string   "packager_branch", :default => ""
   end
+
+  add_index "package_builders", ["smoke_test_id"], :name => "index_package_builders_on_smoke_test_id"
+  add_index "package_builders", ["type", "smoke_test_id"], :name => "index_package_builders_on_type_and_smoke_test_id"
+  add_index "package_builders", ["type"], :name => "index_package_builders_on_type"
 
   create_table "smoke_tests", :force => true do |t|
     t.string   "description"
