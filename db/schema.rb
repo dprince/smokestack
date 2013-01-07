@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 34) do
+ActiveRecord::Schema.define(:version => 35) do
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -86,7 +86,10 @@ ActiveRecord::Schema.define(:version => 34) do
     t.datetime "updated_at"
     t.boolean  "unit_tests",   :default => true
     t.string   "cookbook_url"
+    t.string   "project"
   end
+
+  add_index "smoke_tests", ["project"], :name => "index_smoke_tests_on_project"
 
   create_table "smoke_tests_test_suites", :id => false, :force => true do |t|
     t.integer "smoke_test_id", :null => false

@@ -7,7 +7,7 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests.json
   # GET /smoke_tests.xml
   def index
-    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder])
+    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder], :order => [:project, :id])
 
     if params[:table_only] then
       render :partial => "table"

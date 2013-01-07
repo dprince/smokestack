@@ -51,4 +51,34 @@ class SmokeTest < ActiveRecord::Base
     return retval
   end
 
+  before_save :handle_before_save 
+  def handle_before_save
+    count = 0
+    if self.nova_package_builder and self.nova_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'nova'
+    elsif self.glance_package_builder and self.glance_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'glance'
+    elsif self.keystone_package_builder and self.keystone_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'keystone'
+    elsif self.swift_package_builder and self.swift_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'swift'
+    elsif self.cinder_package_builder and self.cinder_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'cinder'
+    elsif self.quantum_package_builder and self.quantum_package_builder.branch != 'master' then
+      count != 1
+      self.project = 'quantum'
+    end
+
+    if count =! 1 then
+      #unknown
+      self.project = nil
+    end
+
+  end
+
 end

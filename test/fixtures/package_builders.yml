@@ -3,71 +3,83 @@
 nova_builder_trunk:
   type: NovaPackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 keystone_builder_trunk:
   type: KeystonePackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 glance_builder_trunk:
   type: GlancePackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 swift_builder_trunk:
   type: SwiftPackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 cinder_builder_trunk:
   type: CinderPackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 quantum_builder_trunk:
   type: QuantumPackageBuilder
   url: trunk
+  branch: master
   merge_trunk: true
   smoke_test: trunk
 
 nova_builder_dev:
   type: NovaPackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
 
 keystone_builder_dev:
   type: KeystonePackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
 
 glance_builder_dev:
   type: GlancePackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
 
 swift_builder_dev:
   type: SwiftPackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
 
 cinder_builder_dev:
   type: CinderPackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
 
 quantum_builder_dev:
   type: QuantumPackageBuilder
   url: dev
+  branch: master
   merge_trunk: true
   smoke_test: dev1
