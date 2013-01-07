@@ -65,6 +65,7 @@ class UpdateSmokeTests5 < ActiveRecord::Migration
   end
 
   def self.down
+    remove_index :smoke_tests, :project
     remove_column :smoke_tests, :project
   end
 
