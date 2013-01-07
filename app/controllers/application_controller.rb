@@ -1,6 +1,13 @@
 class ApplicationController < ActionController::Base
     protect_from_forgery
 
+    before_filter :set_go
+    def set_go
+        if params[:go] and Util.valid_path?(params[:go]) then
+            @go = params[:go]
+        end
+    end
+
     def authorize
 
         authenticate_with_http_basic do |username, password|
