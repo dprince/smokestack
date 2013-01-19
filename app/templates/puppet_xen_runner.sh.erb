@@ -61,6 +61,8 @@ start_metric "Create Server Group"
 if rake kytoon:create GATEWAY_IP="$XENSERVER_IP"; then
 stop_metric
 
+    rake configure_package_mirrors
+
     build_packages
 
     # Copy hosts file to all nodes
@@ -86,7 +88,7 @@ stop_metric
     mv config.yml config/puppet-configs/smokestack/config.yml
     cp -a config/puppet-configs/smokestack /tmp/smokestack-config
    
-    rake fedora:create_rpm_repo SERVER_NAME="$BUILD_SERVER_NAME"
+    rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
 
     rake xen:install_plugins SOURCE_URL="$NOVA_URL" \
                              SOURCE_BRANCH="$NOVA_BRANCH" \

@@ -59,6 +59,7 @@ start_metric "Create Server Group"
 if rake kytoon:create; then
 stop_metric
 
+    rake configure_package_mirrors
 
     build_packages
 
@@ -76,7 +77,7 @@ stop_metric
     mv config.yml config/puppet-configs/smokestack/config.yml
     cp -a config/puppet-configs/smokestack /tmp/smokestack-config
    
-    rake fedora:create_rpm_repo SERVER_NAME="$BUILD_SERVER_NAME"
+    rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
  
     start_metric "Puppet Install"
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet failed."
