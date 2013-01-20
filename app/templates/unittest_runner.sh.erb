@@ -127,7 +127,7 @@ if ! is_master "$NOVA_URL" "$NOVA_GIT_MASTER" "$NOVA_BRANCH"; then
     MSG="${MSG}Nova pep8 failed. "
     cat nova_pep8.out.log | grep -v env=
   fi
-  cache_venv "nova"
+  [ $RETVAL == 0 ] && cache_venv "nova"
 fi
 #END NOVA
 
@@ -170,7 +170,7 @@ if ! is_master "$GLANCE_URL" "$GLANCE_GIT_MASTER" "$GLANCE_BRANCH"; then
     cat glance_pep8.out.log | grep -v env=
   fi
   rm -Rf "$GLANCE_TEST_TMP_DIR"
-  cache_venv "glance"
+  [ $RETVAL == 0 ] && cache_venv "glance"
 fi
 #END GLANCE
 
@@ -206,7 +206,7 @@ if ! is_master "$KEYSTONE_URL" "$KEYSTONE_GIT_MASTER" "$KEYSTONE_BRANCH"; then
     MSG="${MSG}Keystone pep8 failed. "
     cat keystone_pep8.out.log | grep -v env=
   fi
-  cache_venv "keystone"
+  [ $RETVAL == 0 ] && cache_venv "keystone"
 fi
 #END KEYSTONE
 
@@ -282,7 +282,7 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
     MSG="${MSG}Cinder pep8 failed. "
     cat cinder_pep8.out.log | grep -v env=
   fi
-  cache_venv "cinder"
+  [ $RETVAL == 0 ] && cache_venv "cinder"
 fi
 #END CINDER
 
@@ -321,7 +321,7 @@ if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
     MSG="${MSG}Quantum pep8 failed. "
     cat quantum_pep8.out.log | grep -v env=
   fi
-  cache_venv "quantum"
+  [ $RETVAL == 0 ] && cache_venv "quantum"
 fi
 #END QUANTUM
 
