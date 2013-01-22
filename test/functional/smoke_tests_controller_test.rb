@@ -48,7 +48,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
       smoke_test_attrs = {
         :description => "Nova trunk",
         :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:ruby_osapi).id]
+        :test_suite_ids => [test_suites(:torpedo).id]
       }
       post :create, :smoke_test => smoke_test_attrs
     end
@@ -127,7 +127,7 @@ class SmokeTestsControllerTest < ActionController::TestCase
     smoke_test = SmokeTest.find(:first, :conditions => ["description = ?", "Nova trunk"])
     smoke_test.update_attributes(
         :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:ruby_osapi).id]
+        :test_suite_ids => [test_suites(:torpedo).id]
     )
     smoke_test
   end

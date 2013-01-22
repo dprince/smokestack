@@ -12,7 +12,7 @@ class SmokeTestTest < ActiveSupport::TestCase
     smoke_test = SmokeTest.create(
         :description => "Nova trunk",
         :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:ruby_osapi).id]
+        :test_suite_ids => [test_suites(:torpedo).id]
     )
     assert_equal "Nova trunk", smoke_test.description
     assert_equal 1, smoke_test.config_templates.count
@@ -115,7 +115,7 @@ class SmokeTestTest < ActiveSupport::TestCase
     smoke_test = SmokeTest.create(
         :description => "Nova trunk",
         :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:ruby_osapi).id],
+        :test_suite_ids => [test_suites(:torpedo).id],
         :quantum_package_builder => qpb
     )
     assert_equal "Nova trunk", smoke_test.description
@@ -128,7 +128,7 @@ class SmokeTestTest < ActiveSupport::TestCase
     smoke_test = SmokeTest.create(
         :description => "Nova trunk",
         :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:ruby_osapi).id],
+        :test_suite_ids => [test_suites(:torpedo).id],
         :unit_tests => true
     )
   end
