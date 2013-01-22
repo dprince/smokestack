@@ -1,5 +1,5 @@
 var configTemplatesTabId = 3;
-var configTemplateIntervalId = setInterval(refreshConfigTemplates, 6000);
+var configTemplateIntervalId = setInterval(refreshConfigTemplates, 60000);
 
 function refreshConfigTemplates() { 
 

@@ -1,5 +1,5 @@
 var usersTabId = 2;
-var usersIntervalId = setInterval(refreshUsers, 6000);
+var usersIntervalId = setInterval(refreshUsers, 60000);
 
 function refreshUsers() { 
 

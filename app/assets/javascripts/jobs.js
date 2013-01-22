@@ -1,5 +1,5 @@
 var jobsTabId = 1;
-var jobsIntervalId = setInterval(refreshJobs, 6000);
+var jobsIntervalId = setInterval(refreshJobs, 60000);
 
 function refreshJobs() {
 

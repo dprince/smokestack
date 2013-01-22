@@ -1,5 +1,5 @@
 var smokeTestsTabId = 0;
-var smokeTestsIntervalId = setInterval(refreshSmokeTest, 6000);
+var smokeTestsIntervalId = setInterval(refreshSmokeTest, 60000);
 
 function refreshSmokeTest() { 
 
