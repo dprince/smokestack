@@ -477,8 +477,10 @@ function build_packages {
     stop_metric
 
     # distro agnostic hook to build custom required packages for upstream
+    start_metric "Build Misc"
     rake build_misc SERVER_NAME="$BUILD_SERVER_NAME" \
         || fail "Failed to build misc packages."
+    stop_metric
 
 }
 
