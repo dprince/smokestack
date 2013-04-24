@@ -32,13 +32,6 @@ class SmokeTest < ActiveRecord::Base
     end
   end
 
-  after_initialize :handle_after_init
-  def handle_after_init
-    if new_record? then
-      self.unit_tests = false
-    end
-  end
-
   validate :handle_validate
   def handle_validate
     retval=true
