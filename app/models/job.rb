@@ -81,6 +81,28 @@ class Job < ActiveRecord::Base
         end
       end
 
+      #write out config.yml
+      File.open(File.join(node_configs_dir, 'config.yml'), 'w') do |f|
+        #modules (puppet, etc)
+        f.write("modules:\n")
+        job.job_group.smoke_test.config_modules.each do |config_module|
+          conf_module_type = config_module.type.chomp('ConfigModule').upcase
+          f.write("    - name: #{conf_module_type.downcase}\n")
+          f.write("      url: #{config_module.url}\n")
+          f.write("      branch: #{config_module.branch}\n")
+          f.write("      revision: #{config_module.revision_hash}\n")
+          f.write("      merge_master: #{config_module.merge_trunk.to_s}\n")
+          #FIXME: this is puppet specific
+          f.write("      git_master: #{ENV["PUPPET_#{conf_module_type}_GIT_MASTER"]}\n")
+        end
+        #nodes info
+        f.write("nodes:\n")
+        job.config_template.node_configs.each do |node_config|
+          f.write("    - name: #{node_config.hostname}\n")
+          f.write("      manifest: #{node_config.hostname}\n")
+        end
+      end
+
       nova_builder=job.job_group.smoke_test.nova_package_builder
       nova_packager_url=nova_builder.packager_url
       nova_packager_branch=nova_builder.packager_branch
@@ -105,8 +127,16 @@ class Job < ActiveRecord::Base
       quantum_packager_url=quantum_builder.packager_url
       quantum_packager_branch=quantum_builder.packager_branch
 
+      # config modules (puppet, etc)
+      nova_config_module=job.job_group.smoke_test.nova_config_module
+      glance_config_module=job.job_group.smoke_test.glance_config_module
+      keystone_config_module=job.job_group.smoke_test.keystone_config_module
+      swift_config_module=job.job_group.smoke_test.swift_config_module
+      cinder_config_module=job.job_group.smoke_test.cinder_config_module
+      quantum_config_module=job.job_group.smoke_test.quantum_config_module
+
       cookbook_url = ""
-      if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test.cookbook_url.blank? then
+      if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test
         cookbook_url = job.job_group.smoke_test.cookbook_url
       elsif not job.config_template.nil? then
         cookbook_url = job.config_template.cookbook_repo_url
@@ -173,12 +203,19 @@ class Job < ActiveRecord::Base
             job.stderr=stderr.readlines.join.chomp
 
             ActiveRecord::Base.connection_handler.verify_active_connections!
-            job.nova_revision=Job.parse_nova_revision(job.stdout)
-            job.glance_revision=Job.parse_glance_revision(job.stdout)
-            job.keystone_revision=Job.parse_keystone_revision(job.stdout)
-            job.swift_revision=Job.parse_swift_revision(job.stdout)
-            job.cinder_revision=Job.parse_cinder_revision(job.stdout)
-            job.quantum_revision=Job.parse_quantum_revision(job.stdout)
+            job.nova_revision=Job.parse_revision('NOVA_REVISION',job.stdout)
+            job.glance_revision=Job.parse_revision('GLANCE_REVISION', job.stdout)
+            job.keystone_revision=Job.parse_revision('KEYSTONE_REVISION', job.stdout)
+            job.swift_revision=Job.parse_revision('SWIFT_REVISION', job.stdout)
+            job.cinder_revision=Job.parse_revision('CINDER_REVISION', job.stdout)
+            job.quantum_revision=Job.parse_revision('QUANTUM_REVISION', job.stdout)
+            # config module revisions (puppet, etc)
+            job.nova_conf_module_revision=Job.parse_revision('NOVA_CONFIG_MODULE_REVISION', job.stdout)
+            job.keystone_conf_module_revision=Job.parse_revision('KEYSTONE_CONFIG_MODULE_REVISION', job.stdout)
+            job.glance_conf_module_revision=Job.parse_revision('GLANCE_CONFIG_MODULE_REVISION', job.stdout)
+            job.swift_conf_module_revision=Job.parse_revision('SWIFT_CONFIG_MODULE_REVISION', job.stdout)
+            job.cinder_conf_module_revision=Job.parse_revision('CINDER_CONFIG_MODULE_REVISION', job.stdout)
+            job.quantum_conf_module_revision=Job.parse_revision('QUANTUM_CONFIG_MODULE_REVISION', job.stdout)
             job.msg=Job.parse_last_message(job.stdout)
             job.save
           end
@@ -210,55 +247,12 @@ class Job < ActiveRecord::Base
 
   end
 
-  def self.parse_nova_revision(stdout)
+  # search for revisions in a file
+  def self.parse_revision(type, stdout)
+    regex = Regexp.new("^#{type}=")
     stdout.each_line do |line|
-      if line =~ /^NOVA_REVISION/ then
-        return line.sub(/^NOVA_REVISION=/, "").chomp
-      end
-    end
-    return ""
-  end
-
-  def self.parse_glance_revision(stdout)
-    stdout.each_line do |line|
-      if line =~ /^GLANCE_REVISION/ then
-        return line.sub(/^GLANCE_REVISION=/, "").chomp
-      end
-    end
-    return ""
-  end
-
-  def self.parse_keystone_revision(stdout)
-    stdout.each_line do |line|
-      if line =~ /^KEYSTONE_REVISION/ then
-        return line.sub(/^KEYSTONE_REVISION=/, "").chomp
-      end
-    end
-    return ""
-  end
-
-  def self.parse_swift_revision(stdout)
-    stdout.each_line do |line|
-      if line =~ /^SWIFT_REVISION/ then
-        return line.sub(/^SWIFT_REVISION=/, "").chomp
-      end
-    end
-    return ""
-  end
-
-  def self.parse_cinder_revision(stdout)
-    stdout.each_line do |line|
-      if line =~ /^CINDER_REVISION/ then
-        return line.sub(/^CINDER_REVISION=/, "").chomp
-      end
-    end
-    return ""
-  end
-
-  def self.parse_quantum_revision(stdout)
-    stdout.each_line do |line|
-      if line =~ /^QUANTUM_REVISION/ then
-        return line.sub(/^QUANTUM_REVISION=/, "").chomp
+      if line =~ regex then
+        return line.sub(regex, "").chomp
       end
     end
     return ""

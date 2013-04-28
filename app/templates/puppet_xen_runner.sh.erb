@@ -71,22 +71,15 @@ stop_metric
     # obtain IP address of xenbr0
     XENBR0_IP=$(rake ssh 'ip a | grep xenbr0 | grep inet | sed -e "s|.*inet \([^/]*\).*|\1|"')
 
-    # Copy node configs into the project and write out config.yml
+    # Copy node configs into the project
     cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
-    echo "nodes:" > config.yml
     for FILE in $(ls config/puppet-configs/smokestack); do
-        echo "    - name: $FILE" >> config.yml
-        echo "      manifest: $FILE" >> config.yml
-
         # FIXME: need to figure out how to make xenbr1 a XenServer management
         # interface.
         # For now we replace XENAPI_CONNECTION_URL with the IP of xenbr0
         sed -e "s|XENAPI_CONNECTION_URL|http://$XENBR0_IP|g" -i "config/puppet-configs/smokestack/$FILE"
         
     done
-    cat config.yml
-    mv config.yml config/puppet-configs/smokestack/config.yml
-    cp -a config/puppet-configs/smokestack /tmp/smokestack-config
    
     rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
 

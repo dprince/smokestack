@@ -42,15 +42,59 @@ class SmokeTestsControllerTest < ActionController::TestCase
     assert_response 302
   end
 
-  test "should create smoke_test" do
+  test "should create smoke_test with no builders" do
     login_as(:bob)
     assert_difference('SmokeTest.count') do
-      smoke_test_attrs = {
-        :description => "Nova trunk",
-        :config_template_ids => [config_templates(:libvirt_psql).id],
-        :test_suite_ids => [test_suites(:torpedo).id]
-      }
-      post :create, :smoke_test => smoke_test_attrs
+      assert_no_difference('PackageBuilder.count') do
+        smoke_test_attrs = {
+          :description => "Nova trunk",
+          :config_template_ids => [config_templates(:libvirt_psql).id],
+          :test_suite_ids => [test_suites(:torpedo).id]
+        }
+        post :create, :smoke_test => smoke_test_attrs
+      end
+    end
+
+    assert_redirected_to smoke_test_path(assigns(:smoke_test))
+  end
+
+  test "should create smoke_test with package_builder" do
+    login_as(:bob)
+    assert_difference('SmokeTest.count') do
+      assert_difference('PackageBuilder.count', +1) do
+        smoke_test_attrs = {
+          :description => "Nova trunk",
+          :config_template_ids => [config_templates(:libvirt_psql).id],
+          :test_suite_ids => [test_suites(:torpedo).id],
+          :nova_package_builder_attributes => {
+            :url => 'https://asdf.openstack.org/p/openstack/nova',
+            :branch => 'master',
+            :merge_trunk => '1'
+          }
+        }
+        post :create, :smoke_test => smoke_test_attrs
+      end
+    end
+
+    assert_redirected_to smoke_test_path(assigns(:smoke_test))
+  end
+
+  test "should create smoke_test with config_module" do
+    login_as(:bob)
+    assert_difference('SmokeTest.count') do
+      assert_difference('ConfigModule.count', +1) do
+        smoke_test_attrs = {
+          :description => "Nova trunk",
+          :config_template_ids => [config_templates(:libvirt_psql).id],
+          :test_suite_ids => [test_suites(:torpedo).id],
+          :nova_config_module_attributes => {
+            :url => 'git://github.com/stackforge/puppet-nova.git',
+            :branch => 'master',
+            :merge_trunk => '0'
+          }
+        }
+        post :create, :smoke_test => smoke_test_attrs
+      end
     end
 
     assert_redirected_to smoke_test_path(assigns(:smoke_test))
@@ -77,6 +121,20 @@ class SmokeTestsControllerTest < ActionController::TestCase
     get :edit, :id => @smoke_test.to_param
     assert_response 302
   end
+
+=begin
+#NOTE: we don't support this yet
+  test "should get edit when no modules or builders" do
+    login_as(:bob)
+    # create a new smoke test (with no builders or modules)
+    smoke_test = SmokeTest.create(
+        :description => "Nova trunk",
+        :unit_tests => true
+    )
+    get :edit, :id => smoke_test.to_param
+    assert_response :success
+  end
+=end
 
   test "should update smoke_test" do
     login_as(:bob)

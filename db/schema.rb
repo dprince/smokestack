@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 37) do
+ActiveRecord::Schema.define(:version => 39) do
+
+  create_table "config_modules", :force => true do |t|
+    t.string   "type",          :default => "NovaConfigModule", :null => false
+    t.string   "url",                                           :null => false
+    t.string   "branch"
+    t.boolean  "merge_trunk",   :default => true,               :null => false
+    t.integer  "smoke_test_id",                                 :null => false
+    t.string   "revision_hash", :default => ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
@@ -38,17 +49,17 @@ ActiveRecord::Schema.define(:version => 37) do
   end
 
   create_table "jobs", :force => true do |t|
-    t.string   "status",                                   :default => "Pending"
-    t.text     "stdout",             :limit => 2147483647
-    t.text     "stderr",             :limit => 2147483647
+    t.string   "status",                                              :default => "Pending"
+    t.text     "stdout",                        :limit => 2147483647
+    t.text     "stderr",                        :limit => 2147483647
     t.string   "nova_revision"
     t.string   "msg"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "glance_revision"
-    t.integer  "job_group_id",                                                    :null => false
+    t.integer  "job_group_id",                                                               :null => false
     t.integer  "config_template_id"
-    t.string   "type",                                     :default => ""
+    t.string   "type",                                                :default => ""
     t.string   "keystone_revision"
     t.integer  "approved_by"
     t.datetime "start_time"
@@ -56,6 +67,12 @@ ActiveRecord::Schema.define(:version => 37) do
     t.string   "swift_revision"
     t.string   "cinder_revision"
     t.string   "quantum_revision"
+    t.string   "nova_conf_module_revision"
+    t.string   "keystone_conf_module_revision"
+    t.string   "glance_conf_module_revision"
+    t.string   "swift_conf_module_revision"
+    t.string   "cinder_conf_module_revision"
+    t.string   "quantum_conf_module_revision"
   end
 
   create_table "node_configs", :force => true do |t|

@@ -46,18 +46,28 @@ ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
 # Default packager URLS use Fedora
 # NOTE: you can override/set these in your distro specific environments
-ENV['NOVA_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-nova.git"
-ENV['NOVACLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-novaclient.git"
-ENV['GLANCE_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-glance.git"
-ENV['GLANCECLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-glanceclient.git"
-ENV['KEYSTONE_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-keystone.git"
-ENV['KEYSTONECLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-keystoneclient.git"
-ENV['SWIFT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-swift.git"
-ENV['SWIFTCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-swiftclient.git"
-ENV['CINDER_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-cinder.git"
-ENV['CINDERCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-cinderclient.git"
-ENV['QUANTUM_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-quantum.git"
-ENV['QUANTUMCLIENT_PACKAGER_URL'] = "git://github.com/fedora-openstack/openstack-python-quantumclient.git"
+ENV['NOVA_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-nova.git"
+ENV['NOVACLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-novaclient.git"
+ENV['GLANCE_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-glance.git"
+ENV['GLANCECLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-glanceclient.git"
+ENV['KEYSTONE_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-keystone.git"
+ENV['KEYSTONECLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-keystoneclient.git"
+ENV['SWIFT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-swift.git"
+ENV['SWIFTCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-swiftclient.git"
+ENV['CINDER_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-cinder.git"
+ENV['CINDERCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-cinderclient.git"
+ENV['QUANTUM_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-quantum.git"
+ENV['QUANTUMCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-quantumclient.git"
+
+# Config modules
+# NOTE: these default to upstream stackforge puppet modules but could
+# certainly be used with other config management choices as well.
+ENV['PUPPET_NOVA_GIT_MASTER'] = "git://github.com/stackforge/puppet-nova.git"
+ENV['PUPPET_GLANCE_GIT_MASTER'] = "git://github.com/stackforge/puppet-glance.git"
+ENV['PUPPET_KEYSTONE_GIT_MASTER'] = "git://github.com/stackforge/puppet-keystone.git"
+ENV['PUPPET_SWIFT_GIT_MASTER'] = "git://github.com/stackforge/puppet-swift.git"
+ENV['PUPPET_CINDER_GIT_MASTER'] = "git://github.com/stackforge/puppet-cinder.git"
+ENV['PUPPET_QUANTUM_GIT_MASTER'] = "git://github.com/stackforge/puppet-quantum.git"
 
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
 ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"

@@ -34,44 +34,120 @@ module SmokeTestsHelper
 
     return case project
       when 'nova' then
-        if smoke_test.nova_package_builder.branch then
-          'Nova: ' + smoke_test.nova_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'NovaPackageBuilder'}[0]
+        if builder then
+          'Nova: ' + builder.branch
         else
           'Nova: master'
         end
       when 'glance' then
-        if smoke_test.glance_package_builder.branch then
-          'Glance: ' + smoke_test.glance_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'GlancePackageBuilder'}[0]
+        if builder then
+          'Glance: ' + builder.branch
         else
           'Glance: master'
         end
       when 'keystone' then
-        if smoke_test.keystone_package_builder.branch then
-          'Keystone: ' + smoke_test.keystone_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'KeystonePackageBuilder'}[0]
+        if builder then
+          'Keystone: ' + builder.branch
         else
           'Keystone: master'
         end
       when 'swift' then
-        if smoke_test.swift_package_builder.branch then
-          'Swift: ' + smoke_test.swift_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'SwiftPackageBuilder'}[0]
+        if builder then
+          'Swift: ' + builder.branch
         else
           'Swift: master'
         end
       when 'cinder' then
-        if smoke_test.cinder_package_builder.branch then
-          'Cinder: ' + smoke_test.cinder_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'CinderPackageBuilder'}[0]
+        if builder then
+          'Cinder: ' + builder.branch
         else
           'Cinder: master'
         end
       when 'quantum' then
-        if smoke_test.quantum_package_builder.branch then
-          'Quantum: ' + smoke_test.quantum_package_builder.branch
+        builder = smoke_test.package_builders.select{|x| x.type == 'QuantumPackageBuilder'}[0]
+        if builder then
+          'Quantum: ' + builder.branch
         else
           'Quantum: master'
+        end
+      when 'puppet-nova' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'NovaConfigModule'}[0]
+        if conf_module then
+          'Puppet Nova: ' + conf_module.branch
+        else
+          'Puppet Nova: master'
+        end
+      when 'puppet-glance' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'GlanceConfigModule'}[0]
+        if conf_module then
+          'Puppet Glance: ' + conf_module.branch
+        else
+          'Puppet Glance: master'
+        end
+      when 'puppet-keystone' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'KeystoneConfigModule'}[0]
+        if conf_module then
+          'Puppet Keystone: ' + conf_module.branch
+        else
+          'Puppet Keystone: master'
+        end
+      when 'puppet-swift' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'SwiftConfigModule'}[0]
+        if conf_module then
+          'Puppet Swift: ' + conf_module.branch
+        else
+          'Puppet Swift: master'
+        end
+      when 'puppet-cinder' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'CinderConfigModule'}[0]
+        if conf_module then
+          'Puppet Cinder: ' + conf_module.branch
+        else
+          'Puppet Cinder: master'
+        end
+      when 'puppet-quantum' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'QuantumConfigModule'}[0]
+        if conf_module then
+          'Puppet Quantum: ' + conf_module.branch
+        else
+          'Puppet Quantum: master'
         end
       else ': master'
     end 
 
+  end
+
+  #has this builder been modified from default settings
+  def is_builder_stock(package_builder)
+    if package_builder.new_record? then
+      return true
+    else
+      builder_type = package_builder.type.chomp('PackageBuilder').upcase
+      return false if package_builder.url != ENV["#{builder_type}_GIT_MASTER"]
+      return false if package_builder.branch != 'master'
+      return false if not package_builder.packager_url.blank?
+      return false if not package_builder.packager_branch.blank?
+      return false if not package_builder.revision_hash.blank?
+    end
+    return true
+  end
+
+  #has this config_module been modified from default settings
+  def is_config_module_stock(config_module)
+    if config_module.new_record? then
+      return true
+    else
+      conf_module_type = config_module.type.chomp('ConfigModule').upcase
+      return false if config_module.url != ENV["PUPPET_#{conf_module_type}_GIT_MASTER"]
+      return false if config_module.branch != 'master'
+      return false if not config_module.revision_hash.blank?
+    end
+    return true
   end
 
 end

@@ -3,19 +3,24 @@ class SmokeTestsController < ApplicationController
   before_filter :authorize, :except => [:index, :show]
   layout "default", :only => :index
 
+  SMOKE_TESTS_OBJ_INCLUDES = [
+    :package_builders,
+    :config_modules
+  ]
+
   # GET /smoke_tests
   # GET /smoke_tests.json
   # GET /smoke_tests.xml
   def index
-    @smoke_tests = SmokeTest.find(:all, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder], :order => [:project, :id])
+    @smoke_tests = SmokeTest.find(:all, :include => SMOKE_TESTS_OBJ_INCLUDES, :order => [:project, :id])
 
     if params[:table_only] then
       render :partial => "table"
     else
       respond_to do |format|
         format.html # index.html.erb
-        format.json  { render :json => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder] }
-        format.xml  { render :xml => @smoke_tests, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder] }
+        format.json  { render :json => @smoke_tests } #formatted via as_json
+        format.xml  { render :xml => @smoke_tests, :include => SMOKE_TESTS_OBJ_INCLUDES }
       end
     end
   end
@@ -24,12 +29,12 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests/1.json
   # GET /smoke_tests/1.xml
   def show
-    @smoke_test = SmokeTest.find(params[:id], :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder])
+    @smoke_test = SmokeTest.find(params[:id], :include => SMOKE_TESTS_OBJ_INCLUDES)
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json  { render :json => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder] }
-      format.xml  { render :xml => @smoke_test, :include => [:nova_package_builder, :glance_package_builder, :keystone_package_builder, :swift_package_builder, :cinder_package_builder, :quantum_package_builder] }
+      format.json  { render :json => @smoke_test } #formated via as_json
+      format.xml  { render :xml => @smoke_test, :include => SMOKE_TESTS_OBJ_INCLUDES }
     end
   end
 
@@ -37,6 +42,7 @@ class SmokeTestsController < ApplicationController
   # GET /smoke_tests/new.xml
   def new
     @smoke_test = SmokeTest.new
+    # package builders
     @smoke_test.build_nova_package_builder
     @smoke_test.nova_package_builder.merge_trunk = false
     @smoke_test.build_glance_package_builder
@@ -49,6 +55,20 @@ class SmokeTestsController < ApplicationController
     @smoke_test.cinder_package_builder.merge_trunk = false
     @smoke_test.build_quantum_package_builder
     @smoke_test.quantum_package_builder.merge_trunk = false
+
+    # config modules
+    @smoke_test.build_nova_config_module
+    @smoke_test.nova_config_module.merge_trunk = false
+    @smoke_test.build_glance_config_module
+    @smoke_test.glance_config_module.merge_trunk = false
+    @smoke_test.build_keystone_config_module
+    @smoke_test.keystone_config_module.merge_trunk = false
+    @smoke_test.build_swift_config_module
+    @smoke_test.swift_config_module.merge_trunk = false
+    @smoke_test.build_cinder_config_module
+    @smoke_test.cinder_config_module.merge_trunk = false
+    @smoke_test.build_quantum_config_module
+    @smoke_test.quantum_config_module.merge_trunk = false
 
     respond_to do |format|
       format.html # new.html.erb

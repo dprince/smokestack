@@ -22,13 +22,12 @@
     <%= f.label :description %>
     <%= f.text_field :description, :class => 'input-large' %>
 
-<% if @smoke_test.cookbook_url.blank? %>
+  <% if @smoke_test.cookbook_url.blank? %>
   <% cookbook_url_div = "hide" %>
    <button style="float: right" title="Override Cookbook URL" class="btn" onclick='$("#cookbook-url-div").toggle(); $(this).hide(); return false;'>Override Cookbook URL</button>
 <% else %>
   <% cookbook_url_div = "" %>
 <% end %>
-
   </div>
 
   <div id="cookbook-url-div" class="field <%= cookbook_url_div %>">
@@ -36,8 +35,15 @@
     <%= f.text_field :cookbook_url, :style => 'width: 70%' %>
   </div>
 
-
-<br/>
+<h4>Package Builders</h4>
+<div class="btn-group" data-toggle="buttons-checkbox">
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.nova_package_builder) ? "" : "active" %>" onclick='$("#nova-package-builder").toggle(); if($("#nova-package-builder").is(":hidden")) { $("#nova-builder-adv-tr").hide() }'>Nova</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.keystone_package_builder) ? "" : "active" %>" onclick='$("#keystone-package-builder").toggle();  if($("#keystone-package-builder").is(":hidden")) { $("#keystone-builder-adv-tr").hide() }' >Keystone</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.glance_package_builder) ? "" : "active" %>" onclick='$("#glance-package-builder").toggle();  if($("#glance-package-builder").is(":hidden")) { $("#glance-builder-adv-tr").hide() }'>Glance</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.swift_package_builder) ? "" : "active" %>" onclick='$("#swift-package-builder").toggle();  if($("#swift-package-builder").is(":hidden")) { $("#swift-builder-adv-tr").hide() }'>Swift</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.cinder_package_builder) ? "" : "active" %>" onclick='$("#cinder-package-builder").toggle();  if($("#cinder-package-builder").is(":hidden")) { $("#cinder-builder-adv-tr").hide() }'>Cinder</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.quantum_package_builder) ? "" : "active" %>" onclick='$("#quantum-package-builder").toggle();  if($("#quantum-package-builder").is(":hidden")) { $("#quantum-builder-adv-tr").hide() }'>Quantum</button>
+</div>
 <table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
 <th>&nbsp;</th>
@@ -56,12 +62,12 @@
 <% end %>
 
   <%= f.fields_for :nova_package_builder do |nova_build_frm| %>
-    <tr>
+    <tr id="nova-package-builder" class="<%= is_builder_stock(@smoke_test.nova_package_builder) ? "hide" : "" %>">
       <td class="header">Nova Builder</td>
       <td><%= nova_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= nova_build_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= nova_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Nova Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_nova_options_link %>" onclick='$("#nova-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
+      <td><a title="Show/Hide Advanced Nova Build Options" class="smoke-test-edit-advanced btn btn-small" onclick='$("#nova-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
     <tr class="<%= adv_nova_options_tr %>" id="nova-builder-adv-tr">
       <td>&nbsp;</td>
@@ -81,7 +87,7 @@
 <% end %>
 
   <%= f.fields_for :keystone_package_builder do |keystone_build_frm| %>
-    <tr>
+    <tr id="keystone-package-builder" class="<%= is_builder_stock(@smoke_test.keystone_package_builder) ? "hide" : "" %>">
       <td class="header">Keystone Builder</td>
       <td><%= keystone_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= keystone_build_frm.text_field :branch, :class => 'input-large' %></td>
@@ -106,7 +112,7 @@
 <% end %>
 
   <%= f.fields_for :glance_package_builder do |glance_build_frm| %>
-    <tr>
+    <tr id="glance-package-builder" class="<%= is_builder_stock(@smoke_test.glance_package_builder) ? "hide" : "" %>">
       <td class="header">Glance Builder</td>
       <td><%= glance_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= glance_build_frm.text_field :branch, :class => 'input-large' %></td>
@@ -131,7 +137,7 @@
 <% end %>
 
   <%= f.fields_for :swift_package_builder do |swift_build_frm| %>
-    <tr>
+    <tr id="swift-package-builder" class="<%= is_builder_stock(@smoke_test.swift_package_builder) ? "hide" : "" %>">
       <td class="header">Swift Builder</td>
       <td><%= swift_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= swift_build_frm.text_field :branch, :class => 'input-large' %></td>
@@ -156,7 +162,7 @@
 <% end %>
 
   <%= f.fields_for :cinder_package_builder do |cinder_build_frm| %>
-    <tr>
+    <tr id="cinder-package-builder" class="<%= is_builder_stock(@smoke_test.cinder_package_builder) ? "hide" : "" %>">
       <td class="header">Cinder Builder</td>
       <td><%= cinder_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= cinder_build_frm.text_field :branch, :class => 'input-large' %></td>
@@ -181,7 +187,7 @@
 <% end %>
 
   <%= f.fields_for :quantum_package_builder do |quantum_build_frm| %>
-    <tr>
+    <tr id="quantum-package-builder" class="<%= is_builder_stock(@smoke_test.quantum_package_builder) ? "hide" : "" %>">
       <td class="header">Quantum Builder</td>
       <td><%= quantum_build_frm.text_field :url, :style => 'width: 90%' %></td>
       <td><%= quantum_build_frm.text_field :branch, :class => 'input-large' %></td>
@@ -194,6 +200,87 @@
         <font class="header">Revision/Hash: &nbsp;</font><%= quantum_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
         <font class="header">Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= quantum_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
+    </tr>
+  <% end %>
+
+</table>
+<hr/>
+
+<h4>Puppet Modules</h4>
+<div class="btn-group" data-toggle="buttons-checkbox">
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.nova_config_module) ? "" : "active" %>" onclick='$("#puppet-nova-config-module").toggle();'>Nova</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.keystone_config_module) ? "" : "active" %>" onclick='$("#puppet-keystone-config-module").toggle();'>Keystone</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.glance_config_module) ? "" : "active" %>" onclick='$("#puppet-glance-config-module").toggle();'>Glance</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.swift_config_module) ? "" : "active" %>" onclick='$("#puppet-swift-config-module").toggle();'>Swift</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.cinder_config_module) ? "" : "active" %>" onclick='$("#puppet-cinder-config-module").toggle();'>Cinder</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.quantum_config_module) ? "" : "active" %>" onclick='$("#puppet-quantum-config-module").toggle();'>Quantum</button>
+</div>
+<table class="table table-condensed table-bordered data" width="100%">
+<tr class="header">
+<th>&nbsp;</th>
+<th>URL</th>
+<th>Git Branch</th>
+<th>Revision<br/>Hash</th>
+<th>Merge<br/>Trunk</th>
+</tr>
+
+  <%= f.fields_for :nova_config_module do |nova_conf_module_frm| %>
+    <tr id="puppet-nova-config-module" class="<%= is_config_module_stock(@smoke_test.nova_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Nova</td>
+      <td><%= nova_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= nova_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= nova_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= nova_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :keystone_config_module do |keystone_conf_module_frm| %>
+    <tr id="puppet-keystone-config-module" class="<%= is_config_module_stock(@smoke_test.keystone_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Keystone</td>
+      <td><%= keystone_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= keystone_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= keystone_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= keystone_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :glance_config_module do |glance_conf_module_frm| %>
+    <tr id="puppet-glance-config-module" class="<%= is_config_module_stock(@smoke_test.glance_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Glance</td>
+      <td><%= glance_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= glance_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= glance_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= glance_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :swift_config_module do |swift_conf_module_frm| %>
+    <tr id="puppet-swift-config-module" class="<%= is_config_module_stock(@smoke_test.swift_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Swift</td>
+      <td><%= swift_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= swift_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= swift_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= swift_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :cinder_config_module do |cinder_conf_module_frm| %>
+    <tr id="puppet-cinder-config-module" class="<%= is_config_module_stock(@smoke_test.cinder_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Cinder</td>
+      <td><%= cinder_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= cinder_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= cinder_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= cinder_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :quantum_config_module do |quantum_conf_module_frm| %>
+    <tr id="puppet-quantum-config-module" class="<%= is_config_module_stock(@smoke_test.quantum_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Quantum</td>
+      <td><%= quantum_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= quantum_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= quantum_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= quantum_conf_module_frm.check_box :merge_trunk %></td>
     </tr>
   <% end %>
 
@@ -212,7 +299,7 @@
 <div style="float: left; margin-right: 200px;">
 <b>Test Suites:</b><br/>
 
-    <% TestSuite.find(:all).each do |suite| %>
+    <% TestSuite.find(:all, :conditions => ['enabled = ?', true]).each do |suite| %>
          <%= check_box_tag "smoke_test[test_suite_ids][]", "#{suite.id}", test_suite_checked(suite) -%>
          <%= suite.description %><br/>
     <% end %>

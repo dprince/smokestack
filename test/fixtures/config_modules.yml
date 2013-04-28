@@ -1,0 +1,85 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+nova_config_module_trunk:
+  type: NovaConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+keystone_config_module_trunk:
+  type: KeystoneConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+glance_config_module_trunk:
+  type: GlanceConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+swift_config_module_trunk:
+  type: SwiftConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+cinder_config_module_trunk:
+  type: CinderConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+quantum_config_module_trunk:
+  type: QuantumConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+nova_config_module_dev:
+  type: NovaConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+keystone_config_module_dev:
+  type: KeystoneConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+glance_config_module_dev:
+  type: GlanceConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+swift_config_module_dev:
+  type: SwiftConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+cinder_config_module_dev:
+  type: CinderConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+quantum_config_module_dev:
+  type: QuantumConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1

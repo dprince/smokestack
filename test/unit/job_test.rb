@@ -6,6 +6,7 @@ class JobTest < ActiveSupport::TestCase
   fixtures :job_groups
   fixtures :smoke_tests
   fixtures :package_builders
+  fixtures :config_modules
   fixtures :config_templates
 
   test "create" do
@@ -62,7 +63,7 @@ class JobTest < ActiveSupport::TestCase
 
   test "parse nova revision" do
     job = jobs(:two)
-    assert_equal "102", Job.parse_nova_revision(job.stdout)
+    assert_equal "102", Job.parse_revision('NOVA_REVISION', job.stdout)
   end
 
   test "parse message" do

@@ -66,16 +66,8 @@ stop_metric
     # Copy hosts file to all nodes
     copy_hosts
 
-    # Copy node configs into the project and write out config.yml
+    # Copy node configs into the project
     cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
-    echo "nodes:" > config.yml
-    for FILE in $(ls config/puppet-configs/smokestack); do
-        echo "    - name: $FILE" >> config.yml
-        echo "      manifest: $FILE" >> config.yml
-    done
-    cat config.yml
-    mv config.yml config/puppet-configs/smokestack/config.yml
-    cp -a config/puppet-configs/smokestack /tmp/smokestack-config
    
     rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
  
