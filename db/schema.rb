@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 39) do
+ActiveRecord::Schema.define(:version => 40) do
 
   create_table "config_modules", :force => true do |t|
     t.string   "type",          :default => "NovaConfigModule", :null => false
@@ -23,6 +23,10 @@ ActiveRecord::Schema.define(:version => 39) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "config_modules", ["smoke_test_id"], :name => "index_config_modules_on_smoke_test_id"
+  add_index "config_modules", ["type", "smoke_test_id"], :name => "index_config_modules_on_type_and_smoke_test_id"
+  add_index "config_modules", ["type"], :name => "index_config_modules_on_type"
 
   create_table "config_templates", :force => true do |t|
     t.string   "name",                                :null => false
