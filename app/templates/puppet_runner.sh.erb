@@ -62,6 +62,10 @@ stop_metric
     rake configure_package_mirrors
 
     build_packages
+    if [ -n "$RUN_TORPEDO" ]; then
+      rake fog:build_packages
+      rake torpedo:build_packages
+    fi
 
     # Copy hosts file to all nodes
     copy_hosts
@@ -95,7 +99,7 @@ stop_metric
         export TORPEDO_FLAVOR_REF=${TORPEDO_FLAVOR_REF:-"1"}
         export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"ami-tty"}
 
-        rake torpedo SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
+        rake torpedo:fire SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
         { rake tail_logs; fail "Hit by Torpedo."; }
         stop_metric
     fi
