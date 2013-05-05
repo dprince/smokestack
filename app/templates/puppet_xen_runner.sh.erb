@@ -152,7 +152,7 @@ EOF_RESERVE_IPS
 
     # Cache rpms all tests pass
     if [ -n "$RPM_CACHEURL" ]; then
-        rake fedora:fill_cache \
+        rake cache:fill_cache \
             CACHEURL=$RPM_CACHEURL \
             SERVER_NAME="$BUILD_SERVER_NAME"
     fi
