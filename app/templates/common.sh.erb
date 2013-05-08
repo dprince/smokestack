@@ -298,6 +298,12 @@ function stop_metric {
 
 function build_packages {
 
+    # hook to build misc packages to chase upstream
+    start_metric "Build Misc"
+    rake build_misc SERVER_NAME="$BUILD_SERVER_NAME" \
+        || fail "Failed to build misc packages."
+    stop_metric
+
     local NOVA_MERGE_MASTER=""
     if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
         NOVA_MERGE_MASTER="true"
@@ -474,12 +480,6 @@ function build_packages {
         RPM_PACKAGER_URL="$QUANTUMCLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
         || fail "Failed to build quantumclient packages."
-    stop_metric
-
-    # distro agnostic hook to build custom required packages for upstream
-    start_metric "Build Misc"
-    rake build_misc SERVER_NAME="$BUILD_SERVER_NAME" \
-        || fail "Failed to build misc packages."
     stop_metric
 
 }
