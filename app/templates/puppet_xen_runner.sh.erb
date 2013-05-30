@@ -77,8 +77,10 @@ stop_metric
 
     build_packages
     if [ -n "$RUN_TORPEDO" ]; then
-      rake fog:build_packages
-      rake torpedo:build_packages
+      rake fog:build_packages SERVER_NAME="$BUILD_SERVER_NAME" \
+        || fail "Failed to build fog."
+      rake torpedo:build_packages SERVER_NAME="$BUILD_SERVER_NAME" \
+        || fail "Failed to build torpedo."
     fi
 
     # Copy hosts file to all nodes
