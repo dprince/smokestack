@@ -9,6 +9,18 @@ export KEYSTONE_SERVER_NAME=${KEYSTONE_SERVER_NAME:-"nova1"}
 # Glance HOST (defaults to nova1)
 export GLANCE_SERVER_NAME=${GLANCE_SERVER_NAME:-"nova1"}
 
+# Nova API HOST (defaults to nova1)
+export NOVA_SERVER_NAME=${NOVA_SERVER_NAME:-"nova1"}
+
+# Cinder API HOST (defaults to nova1)
+export CINDER_SERVER_NAME=${CINDER_SERVER_NAME:-"nova1"}
+
+# Swift API HOST (defaults to nova1)
+export SWIFT_SERVER_NAME=${SWIFT_SERVER_NAME:-"nova1"}
+
+# Quantum API HOST (defaults to nova1) (only set if quantum is enabled)
+#export QUANTUM_SERVER_NAME=${QUANTUM_SERVER_NAME:-"nova1"}
+
 # Server name within the group which will be used to build packages
 export TEST_SUITE_SERVER_NAME=${TEST_SUITE_SERVER_NAME:-"nova1"}
 
@@ -79,7 +91,15 @@ stop_metric
     rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet failed."
     stop_metric
 
-    rake keystone:configure SERVER_NAME="$KEYSTONE_SERVER_NAME"
+    QUANTUM_API_ENDPOINT=${QUANTUM_SERVER_NAME:-"nova1"}
+    rake keystone:configure \
+        SERVER_NAME="$KEYSTONE_SERVER_NAME" \
+        CINDER_HOST="$CINDER_SERVER_NAME" \
+        GLANCE_HOST="$GLANCE_SERVER_NAME" \
+        NOVA_HOST="$NOVA_SERVER_NAME" \
+        SWIFT_HOST="$SWIFT_SERVER_NAME" \
+        KEYSTONE_HOST="$KEYSTONE_SERVER_NAME" \
+        QUANTUM_HOST="$QUANTUM_API_ENDPOINT" 
 
     rake glance:load_images SERVER_NAME="$GLANCE_SERVER_NAME"
 
