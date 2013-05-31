@@ -74,11 +74,11 @@ class JobTest < ActiveSupport::TestCase
   test "verify timeout" do
     ENV['JOB_TIMEOUT'] = '1'
     tmp_file="/tmp/smokestack_timeout_works"
-    job_script = "trap '{ touch #{tmp_file}; }' INT TERM EXIT\nsleep 20\n"
+    job_script = "trap '{ touch #{tmp_file}; }' INT TERM EXIT\necho 'hi stdout'\necho 'hi stderr' > /dev/stderr\nsleep 20\n"
     assert (not Job.run_job(jobs(:one), nil, job_script))
     job = Job.find(jobs(:one).id)
-    assert_nil job.stdout
-    assert_nil job.stderr
+    assert_equal "hi stdout", job.stdout
+    assert_equal "hi stderr", job.stderr
     assert_equal "Failed", job.status
     assert File.exists?(tmp_file)
     File.delete(tmp_file)

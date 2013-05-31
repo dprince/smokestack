@@ -192,43 +192,57 @@ class Job < ActiveRecord::Base
         server_group_json_file]
 
       job_timeout = ENV['JOB_TIMEOUT'] || '3600' #default to 1 hour
-      status = nil
-      job_pid = nil
+      $status = nil
+      $job_pid = nil
+      $stdout_lines=""
+      $stderr_lines=""
+
+      def self.stream(stdout, stderr)
+        begin
+          loop do
+            IO.select([stdout,stderr]).flatten.compact.each { |io|
+              if io.fileno == stdout.fileno
+                $stdout_lines += io.readpartial(1024).chomp
+              end
+              if io.fileno == stderr.fileno
+                $stderr_lines += io.readpartial(1024).chomp
+              end
+            }
+          end
+        rescue Errno::EAGAIN
+          retry
+        rescue EOFError
+        end
+      end
+
       begin
         Timeout::timeout(job_timeout.to_i) do
-          status = Open4::popen4(*args) do |pid, stdin, stdout, stderr|
-            job_pid = pid
+            $job_pid, stdin, stdout, stderr = Open4::popen4(*args)
             stdin.close
-            job.stdout=stdout.readlines.join.chomp
-            job.stderr=stderr.readlines.join.chomp
-
-            ActiveRecord::Base.connection_handler.verify_active_connections!
-            job.nova_revision=Job.parse_revision('NOVA_REVISION',job.stdout)
-            job.glance_revision=Job.parse_revision('GLANCE_REVISION', job.stdout)
-            job.keystone_revision=Job.parse_revision('KEYSTONE_REVISION', job.stdout)
-            job.swift_revision=Job.parse_revision('SWIFT_REVISION', job.stdout)
-            job.cinder_revision=Job.parse_revision('CINDER_REVISION', job.stdout)
-            job.quantum_revision=Job.parse_revision('QUANTUM_REVISION', job.stdout)
-            # config module revisions (puppet, etc)
-            job.nova_conf_module_revision=Job.parse_revision('NOVA_CONFIG_MODULE_REVISION', job.stdout)
-            job.keystone_conf_module_revision=Job.parse_revision('KEYSTONE_CONFIG_MODULE_REVISION', job.stdout)
-            job.glance_conf_module_revision=Job.parse_revision('GLANCE_CONFIG_MODULE_REVISION', job.stdout)
-            job.swift_conf_module_revision=Job.parse_revision('SWIFT_CONFIG_MODULE_REVISION', job.stdout)
-            job.cinder_conf_module_revision=Job.parse_revision('CINDER_CONFIG_MODULE_REVISION', job.stdout)
-            job.quantum_conf_module_revision=Job.parse_revision('QUANTUM_CONFIG_MODULE_REVISION', job.stdout)
-            job.msg=Job.parse_last_message(job.stdout)
-            job.save
-          end
+            stream(stdout, stderr)
+            Process.wait($job_pid)
+            $status = $?
         end
-      rescue Timeout::Error => te
-        Process.kill("HUP", job_pid)
         ActiveRecord::Base.connection_handler.verify_active_connections!
-        job.update_attribute(:msg, "Timeout: " + te.message)
-        job.update_attribute(:status, "Failed")
+        job.stdout=$stdout_lines
+        job.stderr=$stderr_lines
+        job.msg=Job.parse_last_message(job.stdout)
+        Job.parse_revisions(job)
+        job.save
+
+      rescue Timeout::Error => te
+        Process.kill("HUP", $job_pid)
+        ActiveRecord::Base.connection_handler.verify_active_connections!
+        job.stdout=$stdout_lines
+        job.stderr=$stderr_lines
+        Job.parse_revisions(job)
+        job.msg="Timeout: " + te.message
+        job.status="Failed"
+        job.save
         return false
       end
 
-      if status.exitstatus == 0
+      if $status.exitstatus == 0
         job.update_attribute(:status, "Success")
         return true
       else
@@ -245,6 +259,23 @@ class Job < ActiveRecord::Base
       FileUtils.rm_rf(base_dir)
     end
 
+  end
+
+  def self.parse_revisions(job)
+    # core project revisions
+    job.nova_revision=Job.parse_revision('NOVA_REVISION',job.stdout)
+    job.glance_revision=Job.parse_revision('GLANCE_REVISION', job.stdout)
+    job.keystone_revision=Job.parse_revision('KEYSTONE_REVISION', job.stdout)
+    job.swift_revision=Job.parse_revision('SWIFT_REVISION', job.stdout)
+    job.cinder_revision=Job.parse_revision('CINDER_REVISION', job.stdout)
+    job.quantum_revision=Job.parse_revision('QUANTUM_REVISION', job.stdout)
+    # config module revisions (puppet, etc)
+    job.nova_conf_module_revision=Job.parse_revision('NOVA_CONFIG_MODULE_REVISION', job.stdout)
+    job.keystone_conf_module_revision=Job.parse_revision('KEYSTONE_CONFIG_MODULE_REVISION', job.stdout)
+    job.glance_conf_module_revision=Job.parse_revision('GLANCE_CONFIG_MODULE_REVISION', job.stdout)
+    job.swift_conf_module_revision=Job.parse_revision('SWIFT_CONFIG_MODULE_REVISION', job.stdout)
+    job.cinder_conf_module_revision=Job.parse_revision('CINDER_CONFIG_MODULE_REVISION', job.stdout)
+    job.quantum_conf_module_revision=Job.parse_revision('QUANTUM_CONFIG_MODULE_REVISION', job.stdout)
   end
 
   # search for revisions in a file
