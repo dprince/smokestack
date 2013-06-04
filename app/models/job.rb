@@ -202,10 +202,10 @@ class Job < ActiveRecord::Base
           loop do
             IO.select([stdout,stderr]).flatten.compact.each { |io|
               if io.fileno == stdout.fileno
-                $stdout_lines += io.readpartial(1024).chomp
+                $stdout_lines += io.readpartial(1024)
               end
               if io.fileno == stderr.fileno
-                $stderr_lines += io.readpartial(1024).chomp
+                $stderr_lines += io.readpartial(1024)
               end
             }
           end
@@ -224,8 +224,8 @@ class Job < ActiveRecord::Base
             $status = $?
         end
         ActiveRecord::Base.connection_handler.verify_active_connections!
-        job.stdout=$stdout_lines
-        job.stderr=$stderr_lines
+        job.stdout=$stdout_lines.chomp
+        job.stderr=$stderr_lines.chomp
         job.msg=Job.parse_last_message(job.stdout)
         Job.parse_revisions(job)
         job.save
@@ -233,8 +233,8 @@ class Job < ActiveRecord::Base
       rescue Timeout::Error => te
         Process.kill("HUP", $job_pid)
         ActiveRecord::Base.connection_handler.verify_active_connections!
-        job.stdout=$stdout_lines
-        job.stderr=$stderr_lines
+        job.stdout=$stdout_lines.chomp
+        job.stderr=$stderr_lines.chomp
         Job.parse_revisions(job)
         job.msg="Timeout: " + te.message
         job.status="Failed"
