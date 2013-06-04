@@ -103,7 +103,9 @@ stop_metric
         KEYSTONE_HOST="$KEYSTONE_SERVER_NAME" \
         QUANTUM_HOST="$QUANTUM_API_ENDPOINT" 
 
+    start_metric "Load Glance Images"
     rake glance:load_images SERVER_NAME="$GLANCE_SERVER_NAME"
+    stop_metric
 
     if [ -n "$QUANTUM_SERVER_NAME" ]; then
         rake quantum:configure SERVER_NAME="$QUANTUM_SERVER_NAME"
