@@ -73,6 +73,7 @@ start_metric "Create Server Group"
 if rake kytoon:create GATEWAY_IP="$XENSERVER_IP"; then
 stop_metric
 
+    echo "HOSTNAME: $(rake ssh 'hostname')"
     rake configure_package_mirrors
 
     build_packages
