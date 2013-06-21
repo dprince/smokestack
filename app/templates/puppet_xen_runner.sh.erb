@@ -47,6 +47,13 @@ rake ssh bash <<-EOF_BASH
 until [ ! -f /tmp/do_not_delete ]; do
     sleep 1
 done
+
+# Shutdown nova compute so we release the xapi connections
+# Otherwise they seem to hang around w/ XenServer 6.1
+ssh nova1 bash <<-"EOF_NOVA1"
+  service openstack-nova-compute stop
+EOF_NOVA1
+
 EOF_BASH
 rake kytoon:delete
 }
