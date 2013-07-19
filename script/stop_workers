@@ -1,7 +1,7 @@
 #!/bin/bash
 WORKER_PIDS=$(ps -e -o pid,command | grep [r]esque | sed -e "s| *\([0-9]*\) .*|\1|" | xargs)
 if [ -n "$WORKER_PIDS" ]; then
-  kill -QUIT $WORKER_PIDS
+  sudo kill -QUIT $WORKER_PIDS
 else
   echo "No worker pids found."
   exit 1
