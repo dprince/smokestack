@@ -1,12 +1,12 @@
-class JobPuppetVpc < Job
+class JobPuppetCloudcue < Job
 
-  @queue=:vpc
+  @queue=:cloudcue
 
   def self.perform(id)
     5.times do 
       begin
-        job=JobPuppetVpc.find(id)
-        JobPuppetVpc.run_job(job, "puppet_runner.sh.erb")
+        job=JobPuppetCloudcue.find(id)
+        JobPuppetCloudcue.run_job(job, "puppet_runner.sh.erb")
         break
       rescue ActiveRecord::RecordNotFound
         sleep 5
@@ -16,7 +16,7 @@ class JobPuppetVpc < Job
 
   after_create :handle_after_create
   def handle_after_create
-    AsyncExec.run_job(JobPuppetVpc, self.id)
+    AsyncExec.run_job(JobPuppetCloudcue, self.id)
   end
 
 end

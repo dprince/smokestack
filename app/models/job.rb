@@ -6,9 +6,9 @@ require 'timeout'
 class Job < ActiveRecord::Base
 
   PUPPET_LIBVIRT = "Puppet Libvirt"
-  PUPPET_VPC = "Puppet Vpc"
+  PUPPET_CLOUDCUE = "Puppet Cloudcue"
   PUPPET_XEN = "Puppet Xen"
-  JOB_TYPES = [PUPPET_LIBVIRT, PUPPET_VPC, PUPPET_XEN]
+  JOB_TYPES = [PUPPET_LIBVIRT, PUPPET_CLOUDCUE, PUPPET_XEN]
 
   validates_presence_of :job_group_id
   belongs_to :job_group
@@ -27,7 +27,7 @@ class Job < ActiveRecord::Base
     self.job_group.update_status
   end
 
-  def self.run_job(job, template_name="puppet_vpc_runner.sh.erb", script_text=nil)
+  def self.run_job(job, template_name="puppet_runner.sh.erb", script_text=nil)
     ActiveRecord::Base.connection_handler.verify_active_connections!
     job.update_attributes(:status => "Running", :start_time => Time.now)
 
