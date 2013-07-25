@@ -8,18 +8,18 @@ class PackageBuilderTest < ActiveSupport::TestCase
     builder = PackageBuilder.create(
         :url => "lp:nova",
         :merge_trunk => true,
-		:smoke_test => smoke_tests(:trunk)
+        :smoke_test_id => smoke_tests(:trunk).id
     )
     assert_equal "lp:nova", builder.url
     assert_equal true, builder.merge_trunk
   end
 
   test "create fails without url" do
-    smoke_test = PackageBuilder.create(
+    builder = PackageBuilder.create(
         :merge_trunk => true,
-		:smoke_test => smoke_tests(:trunk)
+        :smoke_test_id => smoke_tests(:trunk).id
     )
-    assert_equal false, smoke_test.valid?
+    assert_equal false, builder.valid?
   end
 
 end

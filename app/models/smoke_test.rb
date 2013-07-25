@@ -108,16 +108,18 @@ class SmokeTest < ActiveRecord::Base
   end
 
   def as_json(options={})
-    hash = super
+    hash = {'smoke_test' => super}
     package_builders.each do |builder|
       builder_type = builder.type.chomp('PackageBuilder').downcase
       key = "#{builder_type}_package_builder"
-      hash['smoke_test'].store(key, builder.as_json[key])
+      #hash['smoke_test'].store(key, builder.as_json[key])
+      hash['smoke_test'].store(key, builder.as_json)
     end
     config_modules.each do |conf_mod|
       mod_type = conf_mod.type.chomp('ConfigModule').downcase
       key = "#{mod_type}_config_module"
-      hash['smoke_test'].store(key, conf_mod.as_json[key])
+      #hash['smoke_test'].store(key, conf_mod.as_json[key])
+      hash['smoke_test'].store(key, conf_mod.as_json)
     end
     hash
   end

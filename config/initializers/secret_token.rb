@@ -4,4 +4,4 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
-Smokestack::Application.config.secret_token = '05a550da21e30be24b359130b420506ec1ed20556ddecf29114f03dbca5730a8f4545c36e885878087c18fefaa6578c4273921b959e4d6c3ab5a14609dc88556'
+Smokestack::Application.config.secret_token = '0794ef51ebb96d285fb595c68a4074d051547dfb7d304242015c187497192c6ccaeae2fb0821fb7456db8bcceeaecbaeee91adccecb1afdc56542c2a0eff724a'
