@@ -35,8 +35,8 @@ cinder_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
-quantum_builder_trunk:
-  type: QuantumPackageBuilder
+neutron_builder_trunk:
+  type: NeutronPackageBuilder
   url: trunk
   branch: master
   merge_trunk: true
@@ -77,8 +77,8 @@ cinder_builder_dev:
   merge_trunk: true
   smoke_test: dev1
 
-quantum_builder_dev:
-  type: QuantumPackageBuilder
+neutron_builder_dev:
+  type: NeutronPackageBuilder
   url: dev
   branch: master
   merge_trunk: true

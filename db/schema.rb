@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 40) do
+ActiveRecord::Schema.define(:version => 41) do
 
   create_table "config_modules", :force => true do |t|
     t.string   "type",          :default => "NovaConfigModule", :null => false
@@ -70,13 +70,13 @@ ActiveRecord::Schema.define(:version => 40) do
     t.datetime "finish_time"
     t.string   "swift_revision"
     t.string   "cinder_revision"
-    t.string   "quantum_revision"
+    t.string   "neutron_revision"
     t.string   "nova_conf_module_revision"
     t.string   "keystone_conf_module_revision"
     t.string   "glance_conf_module_revision"
     t.string   "swift_conf_module_revision"
     t.string   "cinder_conf_module_revision"
-    t.string   "quantum_conf_module_revision"
+    t.string   "neutron_conf_module_revision"
   end
 
   create_table "node_configs", :force => true do |t|

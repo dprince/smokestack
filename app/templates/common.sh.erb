@@ -37,12 +37,12 @@ CINDER_REVISION=${29}
 CINDER_PACKAGER_URL=${30:-$CINDER_PACKAGER_URL}
 CINDER_PACKAGER_BRANCH=${31:-$CINDER_PACKAGER_BRANCH}
 
-QUANTUM_URL=${32}
-QUANTUM_BRANCH=${33}
-QUANTUM_MERGE_TRUNK=${34}
-QUANTUM_REVISION=${35}
-QUANTUM_PACKAGER_URL=${36:-$QUANTUM_PACKAGER_URL}
-QUANTUM_PACKAGER_BRANCH=${37:-$QUANTUM_PACKAGER_BRANCH}
+NEUTRON_URL=${32}
+NEUTRON_BRANCH=${33}
+NEUTRON_MERGE_TRUNK=${34}
+NEUTRON_REVISION=${35}
+NEUTRON_PACKAGER_URL=${36:-$NEUTRON_PACKAGER_URL}
+NEUTRON_PACKAGER_BRANCH=${37:-$NEUTRON_PACKAGER_BRANCH}
 
 CONFIG_TEMPLATE_DESCRIPTION=${38}
 COOKBOOK_URL=${39}
@@ -56,7 +56,7 @@ GLANCE_GIT_MASTER_BRANCH=${GLANCE_GIT_MASTER_BRANCH:-"master"}
 KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 SWIFT_GIT_MASTER_BRANCH=${SWIFT_GIT_MASTER_BRANCH:-"master"}
 CINDER_GIT_MASTER_BRANCH=${CINDER_GIT_MASTER_BRANCH:-"master"}
-QUANTUM_GIT_MASTER_BRANCH=${QUANTUM_GIT_MASTER_BRANCH:-"master"}
+NEUTRON_GIT_MASTER_BRANCH=${NEUTRON_GIT_MASTER_BRANCH:-"master"}
 
 # Setup default packager branches
 # These may be overridden by some environements
@@ -65,7 +65,7 @@ GLANCE_PACKAGER_BRANCH=${GLANCE_PACKAGER_BRANCH:-"master"}
 KEYSTONE_PACKAGER_BRANCH=${KEYSTONE_PACKAGER_BRANCH:-"master"}
 SWIFT_PACKAGER_BRANCH=${SWIFT_PACKAGER_BRANCH:-"master"}
 CINDER_PACKAGER_BRANCH=${CINDER_PACKAGER_BRANCH:-"master"}
-QUANTUM_PACKAGER_BRANCH=${QUANTUM_PACKAGER_BRANCH:-"master"}
+NEUTRON_PACKAGER_BRANCH=${NEUTRON_PACKAGER_BRANCH:-"master"}
 
 GIT_CACHE_DIR=${GIT_CACHE_DIR:-"$HOME/.smokestack_git_cache"}
 
@@ -239,28 +239,28 @@ function get_cinder_source_git {
 
 }
 
-function get_quantum_source_git {
+function get_neutron_source_git {
 
-        start_metric "Git Clone Quantum"
-	git_clone "$QUANTUM_GIT_MASTER" "quantum_source"
+        start_metric "Git Clone Neutron"
+	git_clone "$NEUTRON_GIT_MASTER" "neutron_source"
         stop_metric
-	pushd quantum_source
-	git fetch $QUANTUM_URL $QUANTUM_BRANCH || \
-		fail "Failed to git fetch branch $QUANTUM_BRANCH."
+	pushd neutron_source
+	git fetch $NEUTRON_URL $NEUTRON_BRANCH || \
+		fail "Failed to git fetch branch $NEUTRON_BRANCH."
 	git checkout -q FETCH_HEAD || fail "Failed to git checkout FETCH_HEAD."
 
-	if [ -n "$QUANTUM_REVISION" ]; then
-		git checkout $QUANTUM_REVISION || \
-			fail "Failed to revert to revision $QUANTUM_REVISION."
+	if [ -n "$NEUTRON_REVISION" ]; then
+		git checkout $NEUTRON_REVISION || \
+			fail "Failed to revert to revision $NEUTRON_REVISION."
 	else
-		QUANTUM_REVISION=$(git rev-parse --short HEAD)
-		[ -z "$QUANTUM_REVISION" ] && \
-			fail "Failed to obtain quantum revision from git."
+		NEUTRON_REVISION=$(git rev-parse --short HEAD)
+		[ -z "$NEUTRON_REVISION" ] && \
+			fail "Failed to obtain neutron revision from git."
 	fi
-	echo "QUANTUM_REVISION=$QUANTUM_REVISION"
+	echo "NEUTRON_REVISION=$NEUTRON_REVISION"
 
-	if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
-		git merge $QUANTUM_GIT_MASTER_BRANCH || fail "Failed to merge $QUANTUM_GIT_MASTER_BRANCH."
+	if [[ "$NEUTRON_MERGE_TRUNK" == "true" ]]; then
+		git merge $NEUTRON_GIT_MASTER_BRANCH || fail "Failed to merge $NEUTRON_GIT_MASTER_BRANCH."
 	fi
 
 	popd
@@ -452,34 +452,34 @@ function build_packages {
     stop_metric
 
 
-    if [ -n "$BUILD_QUANTUM" ]; then
-        local QUANTUM_MERGE_MASTER=""
-        if [[ "$QUANTUM_MERGE_TRUNK" == "true" ]]; then
-            QUANTUM_MERGE_MASTER="true"
+    if [ -n "$BUILD_NEUTRON" ]; then
+        local NEUTRON_MERGE_MASTER=""
+        if [[ "$NEUTRON_MERGE_TRUNK" == "true" ]]; then
+            NEUTRON_MERGE_MASTER="true"
         fi
-        start_metric "Build Quantum"
-        rake quantum:build_packages SOURCE_DIR="$TMP_DIR/quantum_source" \
+        start_metric "Build Neutron"
+        rake neutron:build_packages SOURCE_DIR="$TMP_DIR/neutron_source" \
             SERVER_NAME="$BUILD_SERVER_NAME" \
-            RPM_PACKAGER_URL="$QUANTUM_PACKAGER_URL" \
-            RPM_PACKAGER_BRANCH="$QUANTUM_PACKAGER_BRANCH" \
-            SOURCE_URL="$QUANTUM_URL" \
-            SOURCE_BRANCH="$QUANTUM_BRANCH" \
-            GIT_MASTER="$QUANTUM_GIT_MASTER" \
-            GIT_MERGE_MASTER_BRANCH="$QUANTUM_GIT_MASTER_BRANCH" \
-            MERGE_MASTER="$QUANTUM_MERGE_MASTER" \
-            REVISION="$QUANTUM_REVISION" \
+            RPM_PACKAGER_URL="$NEUTRON_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$NEUTRON_PACKAGER_BRANCH" \
+            SOURCE_URL="$NEUTRON_URL" \
+            SOURCE_BRANCH="$NEUTRON_BRANCH" \
+            GIT_MASTER="$NEUTRON_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$NEUTRON_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$NEUTRON_MERGE_MASTER" \
+            REVISION="$NEUTRON_REVISION" \
             CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build quantum packages."
+            || fail "Failed to build neutron packages."
         stop_metric
     fi
 
-    start_metric "Build Python-Quantumclient"
-    rake quantum:build_python_quantumclient \
+    start_metric "Build Python-Neutronclient"
+    rake neutron:build_python_neutronclient \
         SERVER_NAME="$BUILD_SERVER_NAME" \
-        SOURCE_URL="$QUANTUMCLIENT_GIT_MASTER" \
-        RPM_PACKAGER_URL="$QUANTUMCLIENT_PACKAGER_URL" \
+        SOURCE_URL="$NEUTRONCLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$NEUTRONCLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build quantumclient packages."
+        || fail "Failed to build neutronclient packages."
     stop_metric
 
 }

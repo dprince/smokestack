@@ -22,8 +22,8 @@ class SmokeTest < ActiveRecord::Base
   has_one :cinder_package_builder
   accepts_nested_attributes_for :cinder_package_builder
 
-  has_one :quantum_package_builder
-  accepts_nested_attributes_for :quantum_package_builder
+  has_one :neutron_package_builder
+  accepts_nested_attributes_for :neutron_package_builder
 
   # config modules (puppet, etc)
   has_one :nova_config_module
@@ -41,8 +41,8 @@ class SmokeTest < ActiveRecord::Base
   has_one :cinder_config_module
   accepts_nested_attributes_for :cinder_config_module
 
-  has_one :quantum_config_module
-  accepts_nested_attributes_for :quantum_config_module
+  has_one :neutron_config_module
+  accepts_nested_attributes_for :neutron_config_module
 
   has_and_belongs_to_many :config_templates
   has_and_belongs_to_many :test_suites
@@ -86,8 +86,8 @@ class SmokeTest < ActiveRecord::Base
       self.project = 'swift'
     elsif self.cinder_package_builder and self.cinder_package_builder.branch != 'master' then
       self.project = 'cinder'
-    elsif self.quantum_package_builder and self.quantum_package_builder.branch != 'master' then
-      self.project = 'quantum'
+    elsif self.neutron_package_builder and self.neutron_package_builder.branch != 'master' then
+      self.project = 'neutron'
     end
 
     # Puppet module project settings
@@ -101,8 +101,8 @@ class SmokeTest < ActiveRecord::Base
       self.project = 'puppet-swift'
     elsif self.cinder_config_module and self.cinder_config_module.branch != 'master' then
       self.project = 'puppet-cinder'
-    elsif self.quantum_config_module and self.quantum_config_module.branch != 'master' then
-      self.project = 'puppet-quantum'
+    elsif self.neutron_config_module and self.neutron_config_module.branch != 'master' then
+      self.project = 'puppet-neutron'
     end
 
   end

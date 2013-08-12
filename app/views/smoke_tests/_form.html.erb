@@ -42,7 +42,7 @@
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.glance_package_builder) ? "" : "active" %>" onclick='$("#glance-package-builder").toggle();  if($("#glance-package-builder").is(":hidden")) { $("#glance-builder-adv-tr").hide() }'>Glance</button>
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.swift_package_builder) ? "" : "active" %>" onclick='$("#swift-package-builder").toggle();  if($("#swift-package-builder").is(":hidden")) { $("#swift-builder-adv-tr").hide() }'>Swift</button>
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.cinder_package_builder) ? "" : "active" %>" onclick='$("#cinder-package-builder").toggle();  if($("#cinder-package-builder").is(":hidden")) { $("#cinder-builder-adv-tr").hide() }'>Cinder</button>
-  <button type="button" class="btn <%= is_builder_stock(@smoke_test.quantum_package_builder) ? "" : "active" %>" onclick='$("#quantum-package-builder").toggle();  if($("#quantum-package-builder").is(":hidden")) { $("#quantum-builder-adv-tr").hide() }'>Quantum</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.neutron_package_builder) ? "" : "active" %>" onclick='$("#neutron-package-builder").toggle();  if($("#neutron-package-builder").is(":hidden")) { $("#neutron-builder-adv-tr").hide() }'>Neutron</button>
 </div>
 <table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
@@ -178,27 +178,27 @@
     </tr>
   <% end %>
 
-<% if @smoke_test.quantum_package_builder.packager_url.blank? and @smoke_test.quantum_package_builder.revision_hash.blank? %>
-  <% adv_quantum_options_link = "" %>
-  <% adv_quantum_options_tr = "hide" %>
+<% if @smoke_test.neutron_package_builder.packager_url.blank? and @smoke_test.neutron_package_builder.revision_hash.blank? %>
+  <% adv_neutron_options_link = "" %>
+  <% adv_neutron_options_tr = "hide" %>
 <% else %>
-  <% adv_quantum_options_link = "hide" %>
-  <% adv_quantum_options_tr = "" %>
+  <% adv_neutron_options_link = "hide" %>
+  <% adv_neutron_options_tr = "" %>
 <% end %>
 
-  <%= f.fields_for :quantum_package_builder do |quantum_build_frm| %>
-    <tr id="quantum-package-builder" class="<%= is_builder_stock(@smoke_test.quantum_package_builder) ? "hide" : "" %>">
-      <td class="header">Quantum Builder</td>
-      <td><%= quantum_build_frm.text_field :url, :style => 'width: 90%' %></td>
-      <td><%= quantum_build_frm.text_field :branch, :class => 'input-large' %></td>
-      <td><%= quantum_build_frm.check_box :merge_trunk %></td>
-      <td><a title="Show/Hide Advanced Quantum Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_quantum_options_link %>" onclick='$("#quantum-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
+  <%= f.fields_for :neutron_package_builder do |neutron_build_frm| %>
+    <tr id="neutron-package-builder" class="<%= is_builder_stock(@smoke_test.neutron_package_builder) ? "hide" : "" %>">
+      <td class="header">Neutron Builder</td>
+      <td><%= neutron_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= neutron_build_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= neutron_build_frm.check_box :merge_trunk %></td>
+      <td><a title="Show/Hide Advanced Neutron Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_neutron_options_link %>" onclick='$("#neutron-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
     </tr>
-    <tr class="<%= adv_quantum_options_tr %>" id="quantum-builder-adv-tr">
+    <tr class="<%= adv_neutron_options_tr %>" id="neutron-builder-adv-tr">
       <td>&nbsp;</td>
       <td colspan="3">
-        <font class="header">Revision/Hash: &nbsp;</font><%= quantum_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
-        <font class="header">Package Builder URL: &nbsp;</font><%= quantum_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= quantum_build_frm.text_field :packager_branch, :class => 'input-large' %>
+        <font class="header">Revision/Hash: &nbsp;</font><%= neutron_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">Package Builder URL: &nbsp;</font><%= neutron_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= neutron_build_frm.text_field :packager_branch, :class => 'input-large' %>
       </td>
     </tr>
   <% end %>
@@ -213,7 +213,7 @@
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.glance_config_module) ? "" : "active" %>" onclick='$("#puppet-glance-config-module").toggle();'>Glance</button>
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.swift_config_module) ? "" : "active" %>" onclick='$("#puppet-swift-config-module").toggle();'>Swift</button>
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.cinder_config_module) ? "" : "active" %>" onclick='$("#puppet-cinder-config-module").toggle();'>Cinder</button>
-  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.quantum_config_module) ? "" : "active" %>" onclick='$("#puppet-quantum-config-module").toggle();'>Quantum</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.neutron_config_module) ? "" : "active" %>" onclick='$("#puppet-neutron-config-module").toggle();'>Neutron</button>
 </div>
 <table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
@@ -274,13 +274,13 @@
     </tr>
   <% end %>
 
-  <%= f.fields_for :quantum_config_module do |quantum_conf_module_frm| %>
-    <tr id="puppet-quantum-config-module" class="<%= is_config_module_stock(@smoke_test.quantum_config_module) ? "hide" : "" %>">
-      <td class="header">Puppet Quantum</td>
-      <td><%= quantum_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
-      <td><%= quantum_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
-      <td><%= quantum_conf_module_frm.text_field :revision_hash %></td>
-      <td><%= quantum_conf_module_frm.check_box :merge_trunk %></td>
+  <%= f.fields_for :neutron_config_module do |neutron_conf_module_frm| %>
+    <tr id="puppet-neutron-config-module" class="<%= is_config_module_stock(@smoke_test.neutron_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Neutron</td>
+      <td><%= neutron_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= neutron_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= neutron_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= neutron_conf_module_frm.check_box :merge_trunk %></td>
     </tr>
   <% end %>
 

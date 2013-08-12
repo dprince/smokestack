@@ -106,7 +106,7 @@ class SmokeTestTest < ActiveSupport::TestCase
 
   test "create with builder sets project" do
 
-    qpb = QuantumPackageBuilder.new(
+    qpb = NeutronPackageBuilder.new(
         :url => "git://foo.bar/nova",
         :branch => "linux_net_holler",
         :merge_trunk => true,
@@ -116,11 +116,11 @@ class SmokeTestTest < ActiveSupport::TestCase
         :description => "Nova trunk",
         :config_template_ids => [config_templates(:libvirt_psql).id],
         :test_suite_ids => [test_suites(:torpedo).id],
-        :quantum_package_builder => qpb
+        :neutron_package_builder => qpb
     )
     assert_equal "Nova trunk", smoke_test.description
     assert_equal 1, smoke_test.config_templates.count
-    assert_equal "quantum", smoke_test.project
+    assert_equal "neutron", smoke_test.project
   end
 
   private

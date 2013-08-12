@@ -53,8 +53,8 @@ class SmokeTestsController < ApplicationController
     @smoke_test.swift_package_builder.merge_trunk = false
     @smoke_test.build_cinder_package_builder
     @smoke_test.cinder_package_builder.merge_trunk = false
-    @smoke_test.build_quantum_package_builder
-    @smoke_test.quantum_package_builder.merge_trunk = false
+    @smoke_test.build_neutron_package_builder
+    @smoke_test.neutron_package_builder.merge_trunk = false
 
     # config modules
     @smoke_test.build_nova_config_module
@@ -67,8 +67,8 @@ class SmokeTestsController < ApplicationController
     @smoke_test.swift_config_module.merge_trunk = false
     @smoke_test.build_cinder_config_module
     @smoke_test.cinder_config_module.merge_trunk = false
-    @smoke_test.build_quantum_config_module
-    @smoke_test.quantum_config_module.merge_trunk = false
+    @smoke_test.build_neutron_config_module
+    @smoke_test.neutron_config_module.merge_trunk = false
 
     respond_to do |format|
       format.html # new.html.erb
@@ -128,14 +128,12 @@ class SmokeTestsController < ApplicationController
   # DELETE /smoke_tests/1.xml
   def destroy
     @smoke_test = SmokeTest.find(params[:id])
-    json=@smoke_test.to_json
-    xml=@smoke_test.to_xml
     @smoke_test.destroy
 
     respond_to do |format|
       format.html { redirect_to(smoke_tests_url) }
-      format.json  { render :json => json }
-      format.xml  { render :xml => xml }
+      format.json  { head :ok }
+      format.xml  { head :ok }
     end
   end
 

@@ -1,3 +1,12 @@
+class SmokeTest < ActiveRecord::Base
+  has_one :nova_config_module
+  has_one :glance_config_module
+  has_one :keystone_config_module
+  has_one :cinder_config_module
+  has_one :swift_config_module
+  has_one :quantum_config_module
+end
+
 class ConfigModule < ActiveRecord::Base
 end
 
@@ -55,7 +64,7 @@ class CreateConfigModules < ActiveRecord::Migration
       end
 
       if not smoke_test.quantum_config_module then
-        QuantumConfigModule.create(:url => ENV['PUPPET_QUANTUM_GIT_MASTER'], :merge_trunk => false, :branch => "master", :smoke_test_id => smoke_test.id)
+        QuantumConfigModule.create(:url => ENV['PUPPET_QUANTUM_GIT_MASTER'] || ENV['PUPPET_NEUTRON_GIT_MASTER'], :merge_trunk => false, :branch => "master", :smoke_test_id => smoke_test.id)
       end
 
     end

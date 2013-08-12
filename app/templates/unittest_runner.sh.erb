@@ -286,44 +286,44 @@ if ! is_master "$CINDER_URL" "$CINDER_GIT_MASTER" "$CINDER_BRANCH"; then
 fi
 #END CINDER
 
-##BEGIN QUANTUM
-if ! is_master "$QUANTUM_URL" "$QUANTUM_GIT_MASTER" "$QUANTUM_BRANCH"; then
+##BEGIN NEUTRON
+if ! is_master "$NEUTRON_URL" "$NEUTRON_GIT_MASTER" "$NEUTRON_BRANCH"; then
 
   TESTS_RUN=$(( $TESTS_RUN + 1 ))
-  if [ -n "$QUANTUM_URL" ]; then
-    get_quantum_source_git
+  if [ -n "$NEUTRON_URL" ]; then
+    get_neutron_source_git
   fi
-  cd $TMP_DIR/quantum_source
+  cd $TMP_DIR/neutron_source
   python setup.py sdist &> sdist.out || \
     { echo "Failed to create tarball."; cat sdist.out; exit 1; }
   cd dist
-  tar xf quantum*.tar.gz
-  rm quantum*.tar.gz
-  cd quantum*
-  get_venv_from_cache "quantum"
+  tar xf neutron*.tar.gz
+  rm neutron*.tar.gz
+  cd neutron*
+  get_venv_from_cache "neutron"
   #NOTE: temp fix for "File exists: '/tmp/-tests'" errors
-  rm -Rf /tmp/quantum-tests*
-  start_metric "Quantum Unit Tests"
-  ./run_tests.sh -V -P &> quantum.out.log
-  local QUANTUM_STATUS=$?
+  rm -Rf /tmp/neutron-tests*
+  start_metric "Neutron Unit Tests"
+  ./run_tests.sh -V -P &> neutron.out.log
+  local NEUTRON_STATUS=$?
   stop_metric
-  start_metric "Quantum Pep8"
-  ./run_tests.sh -V -p &> quantum_pep8.out.log
-  local QUANTUM_PEP8_STATUS=$?
+  start_metric "Neutron Pep8"
+  ./run_tests.sh -V -p &> neutron_pep8.out.log
+  local NEUTRON_PEP8_STATUS=$?
   stop_metric
-  if [ "$QUANTUM_STATUS" -ne "0" ]; then
+  if [ "$NEUTRON_STATUS" -ne "0" ]; then
     RETVAL=1
-    MSG="${MSG}Quantum tests failed. "
-    handle_venv_results Quantum quantum.out.log
+    MSG="${MSG}Neutron tests failed. "
+    handle_venv_results Neutron neutron.out.log
   fi
-  if [ "$QUANTUM_PEP8_STATUS" -ne "0" ]; then
+  if [ "$NEUTRON_PEP8_STATUS" -ne "0" ]; then
     RETVAL=1
-    MSG="${MSG}Quantum pep8 failed. "
-    cat quantum_pep8.out.log | grep -v env=
+    MSG="${MSG}Neutron pep8 failed. "
+    cat neutron_pep8.out.log | grep -v env=
   fi
-  [ $RETVAL == 0 ] && cache_venv "quantum"
+  [ $RETVAL == 0 ] && cache_venv "neutron"
 fi
-#END QUANTUM
+#END NEUTRON
 
 if [ $RETVAL -ne 0 ]; then
   fail "$MSG"

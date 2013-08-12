@@ -68,12 +68,12 @@ module SmokeTestsHelper
         else
           'Cinder: master'
         end
-      when 'quantum' then
-        builder = smoke_test.package_builders.select{|x| x.type == 'QuantumPackageBuilder'}[0]
+      when 'neutron' then
+        builder = smoke_test.package_builders.select{|x| x.type == 'NeutronPackageBuilder'}[0]
         if builder then
-          'Quantum: ' + builder.branch
+          'Neutron: ' + builder.branch
         else
-          'Quantum: master'
+          'Neutron: master'
         end
       when 'puppet-nova' then
         conf_module = smoke_test.config_modules.select{|x| x.type == 'NovaConfigModule'}[0]
@@ -110,12 +110,12 @@ module SmokeTestsHelper
         else
           'Puppet Cinder: master'
         end
-      when 'puppet-quantum' then
-        conf_module = smoke_test.config_modules.select{|x| x.type == 'QuantumConfigModule'}[0]
+      when 'puppet-neutron' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'NeutronConfigModule'}[0]
         if conf_module then
-          'Puppet Quantum: ' + conf_module.branch
+          'Puppet Neutron: ' + conf_module.branch
         else
-          'Puppet Quantum: master'
+          'Puppet Neutron: master'
         end
       else ': master'
     end 

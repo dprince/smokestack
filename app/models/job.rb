@@ -123,9 +123,9 @@ class Job < ActiveRecord::Base
       cinder_packager_url=cinder_builder.packager_url
       cinder_packager_branch=cinder_builder.packager_branch
 
-      quantum_builder=job.job_group.smoke_test.quantum_package_builder
-      quantum_packager_url=quantum_builder.packager_url
-      quantum_packager_branch=quantum_builder.packager_branch
+      neutron_builder=job.job_group.smoke_test.neutron_package_builder
+      neutron_packager_url=neutron_builder.packager_url
+      neutron_packager_branch=neutron_builder.packager_branch
 
       # config modules (puppet, etc)
       nova_config_module=job.job_group.smoke_test.nova_config_module
@@ -133,7 +133,7 @@ class Job < ActiveRecord::Base
       keystone_config_module=job.job_group.smoke_test.keystone_config_module
       swift_config_module=job.job_group.smoke_test.swift_config_module
       cinder_config_module=job.job_group.smoke_test.cinder_config_module
-      quantum_config_module=job.job_group.smoke_test.quantum_config_module
+      neutron_config_module=job.job_group.smoke_test.neutron_config_module
 
       cookbook_url = ""
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test
@@ -180,12 +180,12 @@ class Job < ActiveRecord::Base
         cinder_builder.revision_hash,
         cinder_packager_url,
         cinder_packager_branch,
-        quantum_builder.url,
-        quantum_builder.branch || "",
-        quantum_builder.merge_trunk.to_s,
-        quantum_builder.revision_hash,
-        quantum_packager_url,
-        quantum_packager_branch,
+        neutron_builder.url,
+        neutron_builder.branch || "",
+        neutron_builder.merge_trunk.to_s,
+        neutron_builder.revision_hash,
+        neutron_packager_url,
+        neutron_packager_branch,
         config_template_description,
         cookbook_url,
         node_configs_dir,
@@ -268,14 +268,14 @@ class Job < ActiveRecord::Base
     job.keystone_revision=Job.parse_revision('KEYSTONE_REVISION', job.stdout)
     job.swift_revision=Job.parse_revision('SWIFT_REVISION', job.stdout)
     job.cinder_revision=Job.parse_revision('CINDER_REVISION', job.stdout)
-    job.quantum_revision=Job.parse_revision('QUANTUM_REVISION', job.stdout)
+    job.neutron_revision=Job.parse_revision('NEUTRON_REVISION', job.stdout)
     # config module revisions (puppet, etc)
     job.nova_conf_module_revision=Job.parse_revision('NOVA_CONFIG_MODULE_REVISION', job.stdout)
     job.keystone_conf_module_revision=Job.parse_revision('KEYSTONE_CONFIG_MODULE_REVISION', job.stdout)
     job.glance_conf_module_revision=Job.parse_revision('GLANCE_CONFIG_MODULE_REVISION', job.stdout)
     job.swift_conf_module_revision=Job.parse_revision('SWIFT_CONFIG_MODULE_REVISION', job.stdout)
     job.cinder_conf_module_revision=Job.parse_revision('CINDER_CONFIG_MODULE_REVISION', job.stdout)
-    job.quantum_conf_module_revision=Job.parse_revision('QUANTUM_CONFIG_MODULE_REVISION', job.stdout)
+    job.neutron_conf_module_revision=Job.parse_revision('NEUTRON_CONFIG_MODULE_REVISION', job.stdout)
   end
 
   # search for revisions in a file

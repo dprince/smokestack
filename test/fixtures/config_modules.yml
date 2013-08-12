@@ -35,8 +35,8 @@ cinder_config_module_trunk:
   merge_trunk: true
   smoke_test: trunk
 
-quantum_config_module_trunk:
-  type: QuantumConfigModule
+neutron_config_module_trunk:
+  type: NeutronConfigModule
   url: trunk
   branch: master
   merge_trunk: true
@@ -77,8 +77,8 @@ cinder_config_module_dev:
   merge_trunk: true
   smoke_test: dev1
 
-quantum_config_module_dev:
-  type: QuantumConfigModule
+neutron_config_module_dev:
+  type: NeutronConfigModule
   url: dev
   branch: master
   merge_trunk: true

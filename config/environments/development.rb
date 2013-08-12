@@ -39,8 +39,8 @@ ENV['SWIFT_GIT_MASTER'] = "git://github.com/openstack/swift.git"
 ENV['SWIFTCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-swiftclient.git"
 ENV['CINDER_GIT_MASTER'] = "git://github.com/openstack/cinder.git"
 ENV['CINDERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-cinderclient.git"
-ENV['QUANTUM_GIT_MASTER'] = "git://github.com/openstack/quantum.git"
-ENV['QUANTUMCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-quantumclient.git"
+ENV['NEUTRON_GIT_MASTER'] = "git://github.com/openstack/neutron.git"
+ENV['NEUTRONCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-neutronclient.git"
 
 ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
@@ -56,8 +56,8 @@ ENV['SWIFT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-swift.g
 ENV['SWIFTCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-swiftclient.git"
 ENV['CINDER_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-cinder.git"
 ENV['CINDERCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-cinderclient.git"
-ENV['QUANTUM_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-quantum.git"
-ENV['QUANTUMCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-quantumclient.git"
+ENV['NEUTRON_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-neutron.git"
+ENV['NEUTRONCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-neutronclient.git"
 
 # Config modules
 # NOTE: these default to upstream stackforge puppet modules but could
@@ -67,7 +67,7 @@ ENV['PUPPET_GLANCE_GIT_MASTER'] = "git://github.com/stackforge/puppet-glance.git
 ENV['PUPPET_KEYSTONE_GIT_MASTER'] = "git://github.com/stackforge/puppet-keystone.git"
 ENV['PUPPET_SWIFT_GIT_MASTER'] = "git://github.com/stackforge/puppet-swift.git"
 ENV['PUPPET_CINDER_GIT_MASTER'] = "git://github.com/stackforge/puppet-cinder.git"
-ENV['PUPPET_QUANTUM_GIT_MASTER'] = "git://github.com/stackforge/puppet-quantum.git"
+ENV['PUPPET_NEUTRON_GIT_MASTER'] = "git://github.com/stackforge/puppet-quantum.git"
 
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
 ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"
