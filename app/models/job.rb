@@ -299,4 +299,8 @@ class Job < ActiveRecord::Base
     return failure_msg
   end
 
+  def as_json(options={})
+    hash = {self.type.underscore => super}
+  end
+
 end
