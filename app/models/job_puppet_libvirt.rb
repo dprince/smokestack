@@ -8,7 +8,7 @@ class JobPuppetLibvirt < Job
         job=JobPuppetLibvirt.find(id)
         JobPuppetLibvirt.run_job(job, "puppet_runner.sh.erb")
         break
-      rescue ActiveRecord::ActiveRecordError
+      rescue ActiveRecord::RecordNotFound
         sleep 5
       end
     end
