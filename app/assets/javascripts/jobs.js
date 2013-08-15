@@ -12,8 +12,15 @@ function refreshJobs() {
 
 function reload_jobs_table(container) {
 
+    search = window.location.search;
+    if ( search == '' ) {
+      search = "?table_only=true"
+    } else {
+      search += "&table_only=true"
+    }
+
     $.ajax({
-        url: '/jobs?table_only=true',
+        url: '/jobs' + search,
         type: 'GET',
         success: function(data) {
             container.html(data);
