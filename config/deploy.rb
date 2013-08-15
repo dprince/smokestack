@@ -10,7 +10,7 @@ def get_env(name)
   end
 end
 
-#set :user, 'smokestack'
+set :user, 'smokestack'
 
 role_web = get_env('SMOKESTACK_ROLE_WEB')
 role_app = get_env('SMOKESTACK_ROLE_APP')
