@@ -109,6 +109,10 @@ stop_metric
    
     rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
 
+    local NOVA_MERGE_MASTER=""
+    if [[ "$NOVA_MERGE_TRUNK" == "true" ]]; then
+        NOVA_MERGE_MASTER="true"
+    fi
     rake xen:install_plugins SOURCE_URL="$NOVA_URL" \
                              SOURCE_BRANCH="$NOVA_BRANCH" \
                              GIT_MASTER="$NOVA_GIT_MASTER" \
