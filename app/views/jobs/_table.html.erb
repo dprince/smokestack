@@ -20,6 +20,7 @@
     <th></th>
     <% if is_user %>
       <th></th>
+      <th></th>
     <% end %>
   </tr>
 
@@ -71,6 +72,7 @@
     </td>
     <td><a href="<%= "/jobs/#{job.id}" %>" class="job-show btn btn-small" title="Show"><i class="icon-zoom-in"></i></a></td>
     <% if show_edit_links %>
+      <td><a href="<%= "/jobs/#{job.id}/clone" %>" class="job-clone btn btn-small" title="Clone"><i class="icon-share"></i></a></td>
       <td><a href="<%= "/jobs/#{job.id}" %>" class="job-destroy btn btn-small" title="Delete"><i class="icon-trash"></i></a></td>
     <% end %>
   </tr>

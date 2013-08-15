@@ -11,6 +11,9 @@ $(document).ready(function() {
 
 </script>
 
+<%= form_tag('/job/XX', :method => :clone, :id => "job-clone-form") %>
+</form>
+
 <form action="/jobs/XX" method="POST" id="job-delete-form">
 <input type="hidden" name="_method" value="delete"/>
 <%= tag(:input, :type => "hidden",

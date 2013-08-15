@@ -73,4 +73,30 @@ class JobsController < ApplicationController
       format.xml  { render :xml => xml }
     end
   end
+
+  # POST /jobs/1/clone (used to rerun a job)
+  def clone
+
+    orig_job = Job.find(params[:id])
+
+    @job = Kernel.const_get(orig_job.type).new(
+      :job_group => orig_job.job_group,
+      :config_template => orig_job.config_template,
+    )
+
+    respond_to do |format|
+      if @job.save
+        format.html { redirect_to(@job, :notice => 'Job was successfully cloned.') }
+        format.json  { render :json => @job, :status => :created, :location => "jobs/#{@job.id}" }
+        format.xml  { render :xml => @job, :status => :created, :location => "jobs/#{@job.id}" }
+      else
+        format.html { render :action => "new" }
+        format.json  { render :json => @job.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @job.errors, :status => :unprocessable_entity }
+      end
+
+    end
+
+  end
+
 end

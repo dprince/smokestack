@@ -103,6 +103,27 @@ function job_table_selectors() {
 
        });
 
+    $(".job-clone").click(function(e){
+
+        e.preventDefault();
+        var post_data = $("#job-clone-form").serialize();
+
+        $.ajax({
+            url: $(this).attr("href"),
+            type: 'POST',
+            data: post_data,
+            dataType: 'json',
+            success: function(data) {
+                reload_jobs_table($("#jobs-table"));
+                alert('Job cloned.');
+            },
+            error: function(data) {
+                alert('Failed to clone job.');
+            }
+        });
+
+       });
+
 /*
     #row clicking (disabled for now)
     $('table.data tr td').not($('table.data tr td.noclick')).click(function() {

@@ -17,6 +17,11 @@ Smokestack::Application.routes.draw do
   end
 
   resources :jobs
+  resources :jobs do
+    member do
+      post 'clone'
+    end
+  end
 
   resources :node_configs
 
