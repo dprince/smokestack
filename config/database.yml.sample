@@ -12,6 +12,7 @@ test:
   password:
 
 production:
+  reconnect: true
   adapter: mysql
   database: smokestack_prod
   username: root
