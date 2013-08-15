@@ -8,7 +8,7 @@ class JobPuppetXen < Job
         job=JobPuppetXen.find(id)
         JobPuppetXen.run_job(job, "puppet_xen_runner.sh.erb")
         break
-      rescue ActiveRecord::RecordNotFound
+      rescue ActiveRecord::ActiveRecordError
         sleep 5
       end
     end

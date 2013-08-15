@@ -8,7 +8,7 @@ class JobUnitTester < Job
         job=JobUnitTester.find(id)
         JobUnitTester.run_job(job, "unittest_runner.sh.erb")
         break
-      rescue ActiveRecord::RecordNotFound
+      rescue ActiveRecord::ActiveRecordError
         sleep 5
       end
     end

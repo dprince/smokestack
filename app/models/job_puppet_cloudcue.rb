@@ -8,7 +8,7 @@ class JobPuppetCloudcue < Job
         job=JobPuppetCloudcue.find(id)
         JobPuppetCloudcue.run_job(job, "puppet_runner.sh.erb")
         break
-      rescue ActiveRecord::RecordNotFound
+      rescue ActiveRecord::ActiveRecordError
         sleep 5
       end
     end
