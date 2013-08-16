@@ -262,31 +262,31 @@ class Job < ActiveRecord::Base
   end
 
   def self.parse_revisions(job)
-    # core project revisions
-    job.nova_revision=Job.parse_revision('NOVA_REVISION',job.stdout)
-    job.glance_revision=Job.parse_revision('GLANCE_REVISION', job.stdout)
-    job.keystone_revision=Job.parse_revision('KEYSTONE_REVISION', job.stdout)
-    job.swift_revision=Job.parse_revision('SWIFT_REVISION', job.stdout)
-    job.cinder_revision=Job.parse_revision('CINDER_REVISION', job.stdout)
-    job.neutron_revision=Job.parse_revision('NEUTRON_REVISION', job.stdout)
-    # config module revisions (puppet, etc)
-    job.nova_conf_module_revision=Job.parse_revision('NOVA_CONFIG_MODULE_REVISION', job.stdout)
-    job.keystone_conf_module_revision=Job.parse_revision('KEYSTONE_CONFIG_MODULE_REVISION', job.stdout)
-    job.glance_conf_module_revision=Job.parse_revision('GLANCE_CONFIG_MODULE_REVISION', job.stdout)
-    job.swift_conf_module_revision=Job.parse_revision('SWIFT_CONFIG_MODULE_REVISION', job.stdout)
-    job.cinder_conf_module_revision=Job.parse_revision('CINDER_CONFIG_MODULE_REVISION', job.stdout)
-    job.neutron_conf_module_revision=Job.parse_revision('NEUTRON_CONFIG_MODULE_REVISION', job.stdout)
-  end
 
-  # search for revisions in a file
-  def self.parse_revision(type, stdout)
-    regex = Regexp.new("^#{type}=")
-    stdout.each_line do |line|
+    revisions = {}
+    regex = Regexp.new("^(.*_REVISION)=(.*)$")
+    job.stdout.each_line do |line|
       if line =~ regex then
-        return line.sub(regex, "").chomp
+        revisions.store($1, $2)
       end
     end
-    return ""
+
+    # core project revisions
+    job.nova_revision=revisions['NOVA_REVISION']
+    job.glance_revision=revisions['GLANCE_REVISION']
+    job.keystone_revision=revisions['KEYSTONE_REVISION']
+    job.swift_revision=revisions['SWIFT_REVISION']
+    job.cinder_revision=revisions['CINDER_REVISION']
+    job.neutron_revision=revisions['NEUTRON_REVISION']
+
+    # config module revisions (puppet, etc)
+    job.nova_conf_module_revision=revisions['NOVA_CONFIG_MODULE_REVISION']
+    job.keystone_conf_module_revision=revisions['KEYSTONE_CONFIG_MODULE_REVISION']
+    job.glance_conf_module_revision=revisions['GLANCE_CONFIG_MODULE_REVISION']
+    job.swift_conf_module_revision=revisions['SWIFT_CONFIG_MODULE_REVISION']
+    job.cinder_conf_module_revision=revisions['CINDER_CONFIG_MODULE_REVISION']
+    job.neutron_conf_module_revision=revisions['NEUTRON_CONFIG_MODULE_REVISION']
+    job
   end
 
   def self.parse_last_message(stdout)

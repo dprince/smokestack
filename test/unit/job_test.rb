@@ -63,7 +63,19 @@ class JobTest < ActiveSupport::TestCase
 
   test "parse nova revision" do
     job = jobs(:two)
-    assert_equal "102", Job.parse_revision('NOVA_REVISION', job.stdout)
+    job = Job.parse_revisions(job)
+    assert_equal "102", job.nova_revision
+    assert_equal "103", job.glance_revision
+    assert_equal "104", job.keystone_revision
+    assert_equal "105", job.swift_revision
+    assert_equal "106", job.cinder_revision
+    assert_equal "107", job.neutron_revision
+    assert_equal "202", job.nova_conf_module_revision
+    assert_equal "203", job.glance_conf_module_revision
+    assert_equal "204", job.keystone_conf_module_revision
+    assert_equal "205", job.swift_conf_module_revision
+    assert_equal "206", job.cinder_conf_module_revision
+    assert_equal "207", job.neutron_conf_module_revision
   end
 
   test "parse message" do
