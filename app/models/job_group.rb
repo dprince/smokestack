@@ -51,6 +51,10 @@ class JobGroup < ActiveRecord::Base
         status = 'Failed'
         break
       end
+      if job.status == 'BuildFail' then
+        status = 'BuildFail'
+        break
+      end
       if job.status == 'Running' then
         status = 'Running'
         break
