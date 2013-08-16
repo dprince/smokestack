@@ -76,6 +76,12 @@ function fail {
 	exit 1
 }
 
+function build_fail {
+	local MSG=$1
+	echo "FAILURE_MSG=$MSG"
+	exit 3 # special exit status for build failure
+}
+
 function git_clone {
 	local URL=${1:?"Please specify a URL."}
 	local DIR=${2:?"Please specify a DIR."}
@@ -301,7 +307,7 @@ function build_packages {
     # hook to build misc packages to chase upstream
     start_metric "Build Misc"
     rake build_misc SERVER_NAME="$BUILD_SERVER_NAME" \
-        || fail "Failed to build misc packages."
+        || build_fail "Failed to build misc packages."
     stop_metric
 
     local NOVA_MERGE_MASTER=""
@@ -320,7 +326,7 @@ function build_packages {
         MERGE_MASTER="$NOVA_MERGE_MASTER" \
         REVISION="$NOVA_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build nova packages."
+        || build_fail "Failed to build nova packages."
     stop_metric
 
     start_metric "Build Python-Novaclient"
@@ -329,7 +335,7 @@ function build_packages {
         SOURCE_URL="$NOVACLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$NOVACLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build novaclient packages."
+        || build_fail "Failed to build novaclient packages."
     stop_metric
    
     local GLANCE_MERGE_MASTER=""
@@ -349,7 +355,7 @@ function build_packages {
         MERGE_MASTER="$GLANCE_MERGE_MASTER" \
         REVISION="$GLANCE_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build glance packages."
+        || build_fail "Failed to build glance packages."
     stop_metric
 
     start_metric "Build Python-Glanceclient"
@@ -358,7 +364,7 @@ function build_packages {
         SOURCE_URL="$GLANCECLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$GLANCECLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build glanceclient packages."
+        || build_fail "Failed to build glanceclient packages."
     stop_metric
 
     local KEYSTONE_MERGE_MASTER=""
@@ -377,7 +383,7 @@ function build_packages {
         MERGE_MASTER="$KEYSTONE_MERGE_MASTER" \
         REVISION="$KEYSTONE_REVISION" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build keystone packages."
+        || build_fail "Failed to build keystone packages."
     stop_metric
 
     start_metric "Build Python-Keystoneclient"
@@ -386,7 +392,7 @@ function build_packages {
         SOURCE_URL="$KEYSTONECLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$KEYSTONECLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build keystoneclient packages."
+        || build_fail "Failed to build keystoneclient packages."
     stop_metric
 
     if [ -n "$BUILD_SWIFT" ]; then
@@ -406,7 +412,7 @@ function build_packages {
             MERGE_MASTER="$SWIFT_MERGE_MASTER" \
             REVISION="$SWIFT_REVISION" \
             CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build swift packages."
+            || build_fail "Failed to build swift packages."
         stop_metric
 
     fi
@@ -417,7 +423,7 @@ function build_packages {
         SOURCE_URL="$SWIFTCLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$SWIFTCLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build swiftclient packages."
+        || build_fail "Failed to build swiftclient packages."
     stop_metric
 
     if [ -n "$BUILD_CINDER" ]; then
@@ -437,7 +443,7 @@ function build_packages {
             MERGE_MASTER="$CINDER_MERGE_MASTER" \
             REVISION="$CINDER_REVISION" \
             CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build cinder packages."
+            || build_fail "Failed to build cinder packages."
         stop_metric
 
     fi
@@ -448,7 +454,7 @@ function build_packages {
         SOURCE_URL="$CINDERCLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$CINDERCLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build cinderclient packages."
+        || build_fail "Failed to build cinderclient packages."
     stop_metric
 
 
@@ -469,7 +475,7 @@ function build_packages {
             MERGE_MASTER="$NEUTRON_MERGE_MASTER" \
             REVISION="$NEUTRON_REVISION" \
             CACHEURL="$RPM_CACHEURL" \
-            || fail "Failed to build neutron packages."
+            || build_fail "Failed to build neutron packages."
         stop_metric
     fi
 
@@ -479,7 +485,7 @@ function build_packages {
         SOURCE_URL="$NEUTRONCLIENT_GIT_MASTER" \
         RPM_PACKAGER_URL="$NEUTRONCLIENT_PACKAGER_URL" \
         CACHEURL="$RPM_CACHEURL" \
-        || fail "Failed to build neutronclient packages."
+        || build_fail "Failed to build neutronclient packages."
     stop_metric
 
 }

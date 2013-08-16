@@ -245,6 +245,9 @@ class Job < ActiveRecord::Base
       if $status.exitstatus == 0
         job.update_attribute(:status, "Success")
         return true
+      elsif $status.exitstatus == 3
+        job.update_attribute(:status, "BuildFail")
+        return false
       else
         job.update_attribute(:status, "Failed")
         return false

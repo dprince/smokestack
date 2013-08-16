@@ -31,10 +31,14 @@ class JobTest < ActiveSupport::TestCase
 
   test "verify true job" do
     assert Job.run_job(jobs(:one), nil, "true")
+    job = Job.find(jobs(:one).id)
+    assert "Success", job.status
   end
 
-  test "verify false job" do
+  test "verify failed job" do
     assert !Job.run_job(jobs(:one), nil, "false")
+    job = Job.find(jobs(:one).id)
+    assert "Failed", job.status
   end
 
   test "verify stdout" do
@@ -49,6 +53,14 @@ class JobTest < ActiveSupport::TestCase
     job = Job.find(jobs(:one).id)
     assert_equal "", job.stdout
     assert_equal "yo", job.stderr
+  end
+
+  test "verify build failure exit status" do
+    assert !Job.run_job(jobs(:one), nil, "exit 3")
+    job = Job.find(jobs(:one).id)
+    assert_equal "BuildFail", job.status
+    assert_equal "", job.stdout
+    assert_equal "", job.stderr
   end
 
   test "update job status updates smoke test status" do

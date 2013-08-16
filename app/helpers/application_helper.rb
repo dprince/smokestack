@@ -3,6 +3,7 @@ module ApplicationHelper
     def status_image(status, show_image = true)
 
         image_name = case status
+        when "BuildFail" then "build_fail"
         when "Failed" then "failed"
         when "Running" then "running"
         when "Success" then "success"
