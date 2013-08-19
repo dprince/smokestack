@@ -63,6 +63,14 @@ class JobTest < ActiveSupport::TestCase
     assert_equal "", job.stderr
   end
 
+  test "verify test failure exit status" do
+    assert !Job.run_job(jobs(:one), nil, "exit 4")
+    job = Job.find(jobs(:one).id)
+    assert_equal "TestFail", job.status
+    assert_equal "", job.stdout
+    assert_equal "", job.stderr
+  end
+
   test "update job status updates smoke test status" do
     job = jobs(:one)
     job.update_attributes(

@@ -82,6 +82,12 @@ function build_fail {
 	exit 3 # special exit status for build failure
 }
 
+function test_fail {
+	local MSG=$1
+	echo "FAILURE_MSG=$MSG"
+	exit 4 # special exit status for test failures (Torpedo, Tempest, etc)
+}
+
 function git_clone {
 	local URL=${1:?"Please specify a URL."}
 	local DIR=${2:?"Please specify a DIR."}

@@ -124,7 +124,7 @@ stop_metric
         export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"ami-tty"}
 
         rake torpedo:fire SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
-        { rake tail_logs; fail "Hit by Torpedo."; }
+        { rake tail_logs; test_fail "Hit by Torpedo."; }
         stop_metric
     fi
                
@@ -134,7 +134,7 @@ stop_metric
         rake nova:smoke_tests_fedora \
             SERVER_NAME="$TEST_SUITE_SERVER_NAME" \
             NO_VOLUME="$SMOKE_TESTS_DISABLE_VOLUME" || \
-        { rake tail_logs; fail "Smoke tests failed."; }
+        { rake tail_logs; test_fail "Smoke tests failed."; }
         stop_metric
     fi
 
@@ -142,7 +142,7 @@ stop_metric
     if [ -n "$RUN_TEMPEST" ]; then
         start_metric "Tempest Smoke"
         rake tempest SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
-        { rake tail_logs; fail "Caught in a Tempest."; }
+        { rake tail_logs; test_fail "Caught in a Tempest."; }
         stop_metric
     fi
 

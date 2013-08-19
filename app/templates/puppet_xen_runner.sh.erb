@@ -166,7 +166,7 @@ EOF_RESERVE_IPS
         export TORPEDO_TEST_HARD_REBOOT=${TORPEDO_TEST_HARD_REBOOT:-"true"}
 
         rake torpedo:fire SERVER_NAME="$TEST_SUITE_SERVER_NAME" MODE=xen || \
-        { rake tail_logs; fail "Hit by Torpedo."; }
+        { rake tail_logs; test_fail "Hit by Torpedo."; }
         stop_metric
     fi
                
@@ -174,7 +174,7 @@ EOF_RESERVE_IPS
     #if [ -n "$RUN_NOVA_SMOKE_TESTS" ]; then
         #start_metric "Nova Smoke Tests"
         #rake nova:smoke_tests_fedora SERVER_NAME="$TEST_SUITE_SERVER_NAME" NO_VOLUME=true || \
-        #{ rake tail_logs; fail "Smoke tests failed."; }
+        #{ rake tail_logs; test_fail "Smoke tests failed."; }
         #stop_metric
     #fi
 
@@ -182,7 +182,7 @@ EOF_RESERVE_IPS
     if [ -n "$RUN_TEMPEST" ]; then
         start_metric "Tempest Smoke"
         rake tempest SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
-        { rake tail_logs; fail "Caught in a Tempest."; }
+        { rake tail_logs; test_fail "Caught in a Tempest."; }
         stop_metric
     fi
 

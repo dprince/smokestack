@@ -4,6 +4,7 @@ module ApplicationHelper
 
         image_name = case status
         when "BuildFail" then "build_fail"
+        when "TestFail" then "test_fail"
         when "Failed" then "failed"
         when "Running" then "running"
         when "Success" then "success"
