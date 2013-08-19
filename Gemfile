@@ -1,13 +1,13 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '3.2.14'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'popen4'
 gem 'mysql'
-gem 'resque'
+gem 'resque', '1.24.1'
 gem 'kytoon', '>= 1.4.0'
 
 # Gems used only for assets and not required
