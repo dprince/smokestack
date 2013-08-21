@@ -64,7 +64,7 @@ GEM
     i18n (0.6.5)
     journey (1.0.4)
     json (1.8.0)
-    kytoon (1.4.2)
+    kytoon (1.4.3)
       builder
       fog
       json
@@ -168,7 +168,7 @@ PLATFORMS
 DEPENDENCIES
   capistrano
   coffee-rails
-  kytoon (>= 1.4.2)
+  kytoon (>= 1.4.3)
   mysql
   popen4
   rails (= 3.2.14)
