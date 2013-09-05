@@ -6,19 +6,19 @@ Smoke test the OpenStack
 
 A web application with a REST based HTTP interface to help smoke test OpenStack. SmokeStack is focused on integration testing of OpenStack services and currently supports Nova, Keystone, and Glance, and Swift. SmokeStack is built on:
 
-* Rails 3.1
+* Rails 3.2
 * Resque: a redis backed job queue
-* Job runner templates: The default job runner uses firestack to spin up groups of servers. A job runner for unit tests is included as well.
+* Job runner templates: The default job runner uses FireStack/Kytoon to spin up groups of servers. Backends support using: Libvirt, OpenStack clouds, and XenServer
 * Configuration management to install and configure everything (Puppet)
-* Packages to install software (currently supports Fedora)
+* Packages to install software (multiple distros are supported)
 
 For more information and examples see the wiki: http://wiki.openstack.org/smokestack
 
 ## Installation
 
-Requires Ruby, Rubygems, and Ruby on Rails 3.1+.
+Requires Ruby, Rubygems, and Ruby on Rails 3.2.
 
-    gem install rails -v3.1.1
+    gem install rails -v3.2
 
 The application was developed with MySQL. The following gems are required:
 
@@ -83,17 +83,3 @@ username/password of admin/cloud
 
     # create a production db 
     RAILS_ENV=production bundle exec rake db:create db:migrate
-
-### Unit test workers (used to run unit tests, 1 instance per worker)
-
-    #Install dependencies to run Nova, Glance, Keystone tests in a virtualenv
-    sudo yum install -y rubygems ruby-devel mysql-devel git gcc python-devel libxslt-devel swig python-setuptools python-virtualenv zeromq-devel patch gcc-c++ openldap-devel
-
-    # install bundler then install gems via bundle
-    sudo gem install -y bundle --no-ri --no-rdoc
-
-    # cd to SmokeStack app installation directory
-    cd /opt/smokestack
-    bundle install
-
-    bundle exec rake resque:work QUEUE="unit"
