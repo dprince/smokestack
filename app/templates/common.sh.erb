@@ -531,16 +531,17 @@ function build_packages {
             CACHEURL="$RPM_CACHEURL" \
             || build_fail "Failed to build ceilometer packages."
         stop_metric
-    fi
 
-    start_metric "Build Python-Ceilometerclient"
-    rake ceilometer:build_python_ceilometerclient \
-        SERVER_NAME="$BUILD_SERVER_NAME" \
-        SOURCE_URL="$CEILOMETERCLIENT_GIT_MASTER" \
-        RPM_PACKAGER_URL="$CEILOMETERCLIENT_PACKAGER_URL" \
-        CACHEURL="$RPM_CACHEURL" \
-        || build_fail "Failed to build ceilometerclient packages."
-    stop_metric
+        start_metric "Build Python-Ceilometerclient"
+        rake ceilometer:build_python_ceilometerclient \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            SOURCE_URL="$CEILOMETERCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$CEILOMETERCLIENT_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || build_fail "Failed to build ceilometerclient packages."
+        stop_metric
+
+    fi
 
     if [ -n "$BUILD_HEAT" ]; then
         local HEAT_MERGE_MASTER=""
