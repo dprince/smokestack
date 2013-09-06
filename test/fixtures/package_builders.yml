@@ -42,6 +42,20 @@ neutron_builder_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+ceilometer_builder_trunk:
+  type: CeilometerPackageBuilder
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+heat_builder_trunk:
+  type: HeatPackageBuilder
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
 nova_builder_dev:
   type: NovaPackageBuilder
   url: dev
@@ -79,6 +93,20 @@ cinder_builder_dev:
 
 neutron_builder_dev:
   type: NeutronPackageBuilder
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+ceilometer_builder_dev:
+  type: CeilometerPackageBuilder
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+heat_builder_dev:
+  type: HeatPackageBuilder
   url: dev
   branch: master
   merge_trunk: true

@@ -43,6 +43,8 @@
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.swift_package_builder) ? "" : "active" %>" onclick='$("#swift-package-builder").toggle();  if($("#swift-package-builder").is(":hidden")) { $("#swift-builder-adv-tr").hide() }'>Swift</button>
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.cinder_package_builder) ? "" : "active" %>" onclick='$("#cinder-package-builder").toggle();  if($("#cinder-package-builder").is(":hidden")) { $("#cinder-builder-adv-tr").hide() }'>Cinder</button>
   <button type="button" class="btn <%= is_builder_stock(@smoke_test.neutron_package_builder) ? "" : "active" %>" onclick='$("#neutron-package-builder").toggle();  if($("#neutron-package-builder").is(":hidden")) { $("#neutron-builder-adv-tr").hide() }'>Neutron</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.ceilometer_package_builder) ? "" : "active" %>" onclick='$("#ceilometer-package-builder").toggle();  if($("#ceilometer-package-builder").is(":hidden")) { $("#ceilometer-builder-adv-tr").hide() }'>Ceilometer</button>
+  <button type="button" class="btn <%= is_builder_stock(@smoke_test.heat_package_builder) ? "" : "active" %>" onclick='$("#heat-package-builder").toggle();  if($("#heat-package-builder").is(":hidden")) { $("#heat-builder-adv-tr").hide() }'>Heat</button>
 </div>
 <table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
@@ -203,6 +205,58 @@
     </tr>
   <% end %>
 
+<% if @smoke_test.ceilometer_package_builder.packager_url.blank? and @smoke_test.ceilometer_package_builder.revision_hash.blank? %>
+  <% adv_ceilometer_options_link = "" %>
+  <% adv_ceilometer_options_tr = "hide" %>
+<% else %>
+  <% adv_ceilometer_options_link = "hide" %>
+  <% adv_ceilometer_options_tr = "" %>
+<% end %>
+
+  <%= f.fields_for :ceilometer_package_builder do |ceilometer_build_frm| %>
+    <tr id="ceilometer-package-builder" class="<%= is_builder_stock(@smoke_test.ceilometer_package_builder) ? "hide" : "" %>">
+      <td class="header">Ceilometer Builder</td>
+      <td><%= ceilometer_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= ceilometer_build_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= ceilometer_build_frm.check_box :merge_trunk %></td>
+      <td><a title="Show/Hide Advanced Neutron Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_ceilometer_options_link %>" onclick='$("#ceilometer-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
+    </tr>
+    <tr class="<%= adv_ceilometer_options_tr %>" id="ceilometer-builder-adv-tr">
+      <td>&nbsp;</td>
+      <td colspan="3">
+        <font class="header">Revision/Hash: &nbsp;</font><%= ceilometer_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">Package Builder URL: &nbsp;</font><%= ceilometer_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= ceilometer_build_frm.text_field :packager_branch, :class => 'input-large' %>
+      </td>
+    </tr>
+  <% end %>
+
+<% if @smoke_test.heat_package_builder.packager_url.blank? and @smoke_test.heat_package_builder.revision_hash.blank? %>
+  <% adv_heat_options_link = "" %>
+  <% adv_heat_options_tr = "hide" %>
+<% else %>
+  <% adv_heat_options_link = "hide" %>
+  <% adv_heat_options_tr = "" %>
+<% end %>
+
+  <%= f.fields_for :heat_package_builder do |heat_build_frm| %>
+    <tr id="heat-package-builder" class="<%= is_builder_stock(@smoke_test.heat_package_builder) ? "hide" : "" %>">
+      <td class="header">Neutron Builder</td>
+      <td><%= heat_build_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= heat_build_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= heat_build_frm.check_box :merge_trunk %></td>
+      <td><a title="Show/Hide Advanced Neutron Build Options" class="smoke-test-edit-advanced btn btn-small <%= adv_heat_options_link %>" onclick='$("#heat-builder-adv-tr").toggle();'><i class="icon-wrench"></i></a></td>
+    </tr>
+    <tr class="<%= adv_heat_options_tr %>" id="heat-builder-adv-tr">
+      <td>&nbsp;</td>
+      <td colspan="3">
+        <font class="header">Revision/Hash: &nbsp;</font><%= heat_build_frm.text_field :revision_hash, :class => 'input-large' %><br/>
+        <font class="header">Package Builder URL: &nbsp;</font><%= heat_build_frm.text_field :packager_url, :class => 'input-xlarge' %>&nbsp;<font class="header">Branch: &nbsp;</font><%= heat_build_frm.text_field :packager_branch, :class => 'input-large' %>
+      </td>
+    </tr>
+  <% end %>
+
+
+
 </table>
 <hr/>
 
@@ -214,6 +268,8 @@
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.swift_config_module) ? "" : "active" %>" onclick='$("#puppet-swift-config-module").toggle();'>Swift</button>
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.cinder_config_module) ? "" : "active" %>" onclick='$("#puppet-cinder-config-module").toggle();'>Cinder</button>
   <button type="button" class="btn <%= is_config_module_stock(@smoke_test.neutron_config_module) ? "" : "active" %>" onclick='$("#puppet-neutron-config-module").toggle();'>Neutron</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.ceilometer_config_module) ? "" : "active" %>" onclick='$("#puppet-ceilometer-config-module").toggle();'>Ceilometer</button>
+  <button type="button" class="btn <%= is_config_module_stock(@smoke_test.heat_config_module) ? "" : "active" %>" onclick='$("#puppet-heat-config-module").toggle();'>Heat</button>
 </div>
 <table class="table table-condensed table-bordered data" width="100%">
 <tr class="header">
@@ -281,6 +337,26 @@
       <td><%= neutron_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
       <td><%= neutron_conf_module_frm.text_field :revision_hash %></td>
       <td><%= neutron_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :ceilometer_config_module do |ceilometer_conf_module_frm| %>
+    <tr id="puppet-ceilometer-config-module" class="<%= is_config_module_stock(@smoke_test.ceilometer_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Ceilometer</td>
+      <td><%= ceilometer_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= ceilometer_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= ceilometer_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= ceilometer_conf_module_frm.check_box :merge_trunk %></td>
+    </tr>
+  <% end %>
+
+  <%= f.fields_for :heat_config_module do |heat_conf_module_frm| %>
+    <tr id="puppet-heat-config-module" class="<%= is_config_module_stock(@smoke_test.heat_config_module) ? "hide" : "" %>">
+      <td class="header">Puppet Heat</td>
+      <td><%= heat_conf_module_frm.text_field :url, :style => 'width: 90%' %></td>
+      <td><%= heat_conf_module_frm.text_field :branch, :class => 'input-large' %></td>
+      <td><%= heat_conf_module_frm.text_field :revision_hash %></td>
+      <td><%= heat_conf_module_frm.check_box :merge_trunk %></td>
     </tr>
   <% end %>
 

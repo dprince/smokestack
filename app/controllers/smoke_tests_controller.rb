@@ -55,6 +55,10 @@ class SmokeTestsController < ApplicationController
     @smoke_test.cinder_package_builder.merge_trunk = false
     @smoke_test.build_neutron_package_builder
     @smoke_test.neutron_package_builder.merge_trunk = false
+    @smoke_test.build_ceilometer_package_builder
+    @smoke_test.ceilometer_package_builder.merge_trunk = false
+    @smoke_test.build_heat_package_builder
+    @smoke_test.heat_package_builder.merge_trunk = false
 
     # config modules
     @smoke_test.build_nova_config_module
@@ -69,6 +73,10 @@ class SmokeTestsController < ApplicationController
     @smoke_test.cinder_config_module.merge_trunk = false
     @smoke_test.build_neutron_config_module
     @smoke_test.neutron_config_module.merge_trunk = false
+    @smoke_test.build_ceilometer_config_module
+    @smoke_test.ceilometer_config_module.merge_trunk = false
+    @smoke_test.build_heat_config_module
+    @smoke_test.heat_config_module.merge_trunk = false
 
     respond_to do |format|
       format.html # new.html.erb

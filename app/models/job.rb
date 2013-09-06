@@ -127,6 +127,14 @@ class Job < ActiveRecord::Base
       neutron_packager_url=neutron_builder.packager_url
       neutron_packager_branch=neutron_builder.packager_branch
 
+      ceilometer_builder=job.job_group.smoke_test.ceilometer_package_builder
+      ceilometer_packager_url=ceilometer_builder.packager_url
+      ceilometer_packager_branch=ceilometer_builder.packager_branch
+
+      heat_builder=job.job_group.smoke_test.heat_package_builder
+      heat_packager_url=heat_builder.packager_url
+      heat_packager_branch=heat_builder.packager_branch
+
       # config modules (puppet, etc)
       nova_config_module=job.job_group.smoke_test.nova_config_module
       glance_config_module=job.job_group.smoke_test.glance_config_module
@@ -134,6 +142,8 @@ class Job < ActiveRecord::Base
       swift_config_module=job.job_group.smoke_test.swift_config_module
       cinder_config_module=job.job_group.smoke_test.cinder_config_module
       neutron_config_module=job.job_group.smoke_test.neutron_config_module
+      ceilometer_config_module=job.job_group.smoke_test.ceilometer_config_module
+      heat_config_module=job.job_group.smoke_test.heat_config_module
 
       cookbook_url = ""
       if job.job_group.smoke_test.cookbook_url and not job.job_group.smoke_test
@@ -186,6 +196,18 @@ class Job < ActiveRecord::Base
         neutron_builder.revision_hash,
         neutron_packager_url,
         neutron_packager_branch,
+        ceilometer_builder.url,
+        ceilometer_builder.branch || "",
+        ceilometer_builder.merge_trunk.to_s,
+        ceilometer_builder.revision_hash,
+        ceilometer_packager_url,
+        ceilometer_packager_branch,
+        heat_builder.url,
+        heat_builder.branch || "",
+        heat_builder.merge_trunk.to_s,
+        heat_builder.revision_hash,
+        heat_packager_url,
+        heat_packager_branch,
         config_template_description,
         cookbook_url,
         node_configs_dir,
@@ -284,6 +306,8 @@ class Job < ActiveRecord::Base
     job.swift_revision=revisions['SWIFT_REVISION']
     job.cinder_revision=revisions['CINDER_REVISION']
     job.neutron_revision=revisions['NEUTRON_REVISION']
+    job.ceilometer_revision=revisions['CEILOMETER_REVISION']
+    job.heat_revision=revisions['HEAT_REVISION']
 
     # config module revisions (puppet, etc)
     job.nova_conf_module_revision=revisions['NOVA_CONFIG_MODULE_REVISION']
@@ -292,6 +316,8 @@ class Job < ActiveRecord::Base
     job.swift_conf_module_revision=revisions['SWIFT_CONFIG_MODULE_REVISION']
     job.cinder_conf_module_revision=revisions['CINDER_CONFIG_MODULE_REVISION']
     job.neutron_conf_module_revision=revisions['NEUTRON_CONFIG_MODULE_REVISION']
+    job.ceilometer_conf_module_revision=revisions['CEILOMETER_CONFIG_MODULE_REVISION']
+    job.heat_conf_module_revision=revisions['HEAT_CONFIG_MODULE_REVISION']
     job
   end
 

@@ -48,6 +48,10 @@ ENV['CINDER_GIT_MASTER'] = "git://github.com/openstack/cinder.git"
 ENV['CINDERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-cinderclient.git"
 ENV['NEUTRON_GIT_MASTER'] = "git://github.com/openstack/neutron.git"
 ENV['NEUTRONCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-neutronclient.git"
+ENV['CEILOMETER_GIT_MASTER'] = "git://github.com/openstack/ceilometer.git"
+ENV['CEILOMETERCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-ceilometerclient.git"
+ENV['HEAT_GIT_MASTER'] = "git://github.com/openstack/heat.git"
+ENV['HEATCLIENT_GIT_MASTER'] = "git://github.com/openstack/python-heatclient.git"
 
 ENV['FIRESTACK_URL'] = "git://github.com/dprince/firestack.git"
 
@@ -65,6 +69,10 @@ ENV['CINDER_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-cinder
 ENV['CINDERCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-cinderclient.git"
 ENV['NEUTRON_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-neutron.git"
 ENV['NEUTRONCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-neutronclient.git"
+ENV['CEILOMETER_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-ceilometer.git"
+ENV['CEILOMETERCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-ceilometerclient.git"
+ENV['HEAT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-heat.git"
+ENV['HEATCLIENT_PACKAGER_URL'] = "git://github.com/redhat-openstack/openstack-python-heatclient.git"
 
 # Config modules
 # NOTE: these default to upstream stackforge puppet modules but could
@@ -74,7 +82,8 @@ ENV['PUPPET_GLANCE_GIT_MASTER'] = "git://github.com/stackforge/puppet-glance.git
 ENV['PUPPET_KEYSTONE_GIT_MASTER'] = "git://github.com/stackforge/puppet-keystone.git"
 ENV['PUPPET_SWIFT_GIT_MASTER'] = "git://github.com/stackforge/puppet-swift.git"
 ENV['PUPPET_CINDER_GIT_MASTER'] = "git://github.com/stackforge/puppet-cinder.git"
-ENV['PUPPET_NEUTRON_GIT_MASTER'] = "git://github.com/stackforge/puppet-quantum.git"
-
+ENV['PUPPET_NEUTRON_GIT_MASTER'] = "git://github.com/stackforge/puppet-neutron.git"
+ENV['PUPPET_CEILOMETER_GIT_MASTER'] = "git://github.com/stackforge/puppet-ceilometer.git"
+ENV['PUPPET_HEAT_GIT_MASTER'] = "git://github.com/stackforge/puppet-heat.git"
 ENV['PASTE_SITE_URL'] = "http://paste.openstack.org/"
 ENV['METRICS_DATA_FILE'] = "/tmp/smokestack_metrics.txt"

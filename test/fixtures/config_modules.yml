@@ -42,6 +42,20 @@ neutron_config_module_trunk:
   merge_trunk: true
   smoke_test: trunk
 
+ceilometer_config_module_trunk:
+  type: CeilometerConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
+heat_config_module_trunk:
+  type: HeatConfigModule
+  url: trunk
+  branch: master
+  merge_trunk: true
+  smoke_test: trunk
+
 nova_config_module_dev:
   type: NovaConfigModule
   url: dev
@@ -79,6 +93,20 @@ cinder_config_module_dev:
 
 neutron_config_module_dev:
   type: NeutronConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+ceilometer_config_module_dev:
+  type: CeilometerConfigModule
+  url: dev
+  branch: master
+  merge_trunk: true
+  smoke_test: dev1
+
+heat_config_module_dev:
+  type: HeatConfigModule
   url: dev
   branch: master
   merge_trunk: true

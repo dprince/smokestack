@@ -5,12 +5,14 @@
 <% end %>
     <th>Configuration</th>
     <th>Status</th>
-    <th>Nova<br/>Revision</th>
-    <th>Keystone<br/>Revision</th>
-    <th>Glance<br/>Revision</th>
-    <th>Cinder<br/>Revision</th>
-    <th>Swift<br/>Revision</th>
-    <th>Neutron<br/>Revision</th>
+    <th>Nova</th>
+    <th>Keystone</th>
+    <th>Glance</th>
+    <th>Cinder</th>
+    <th>Swift</th>
+    <th>Neutron</th>
+    <th>Ceilo</th>
+    <th>Heat</th>
     <th>Runtime</th>
 <% if local_assigns[:show_updated_at] %>
     <th>Updated at</th>
@@ -23,7 +25,6 @@
       <th></th>
     <% end %>
   </tr>
-
 <% show_edit_links = is_user %>
 
 <% @jobs.each do |job| %>
@@ -31,7 +32,7 @@
     <td><%= job.id %></td>
     <% if local_assigns[:show_description] %>
       <% if job.job_group.smoke_test then %>
-        <td><%= raw(chop_for_html(job.job_group.smoke_test.description, 50)) %></td>
+        <td><%= raw(chop_for_html(job.job_group.smoke_test.description.sub(/^[^ ]* /, ""), 50)) %></td>
       <% else %>
         <td>&nbsp;</td>
       <% end %>
@@ -50,6 +51,8 @@
     <td><%= raw(chop_for_html(job.cinder_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.swift_revision, 7)) %></td>
     <td><%= raw(chop_for_html(job.neutron_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.ceilometer_revision, 7)) %></td>
+    <td><%= raw(chop_for_html(job.heat_revision, 7)) %></td>
     <td><%= job_runtime(job) %></td>
     <% if local_assigns[:show_updated_at] %>
       <td><%= timestamp(job.updated_at.in_time_zone) %></td>

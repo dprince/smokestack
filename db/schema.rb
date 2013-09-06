@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 41) do
+ActiveRecord::Schema.define(:version => 42) do
 
   create_table "config_modules", :force => true do |t|
     t.string   "type",          :default => "NovaConfigModule", :null => false
@@ -53,17 +53,17 @@ ActiveRecord::Schema.define(:version => 41) do
   end
 
   create_table "jobs", :force => true do |t|
-    t.string   "status",                                              :default => "Pending"
-    t.text     "stdout",                        :limit => 2147483647
-    t.text     "stderr",                        :limit => 2147483647
+    t.string   "status",                                                :default => "Pending"
+    t.text     "stdout",                          :limit => 2147483647
+    t.text     "stderr",                          :limit => 2147483647
     t.string   "nova_revision"
     t.string   "msg"
-    t.datetime "created_at",                                                                 :null => false
-    t.datetime "updated_at",                                                                 :null => false
+    t.datetime "created_at",                                                                   :null => false
+    t.datetime "updated_at",                                                                   :null => false
     t.string   "glance_revision"
-    t.integer  "job_group_id",                                                               :null => false
+    t.integer  "job_group_id",                                                                 :null => false
     t.integer  "config_template_id"
-    t.string   "type",                                                :default => ""
+    t.string   "type",                                                  :default => ""
     t.string   "keystone_revision"
     t.integer  "approved_by"
     t.datetime "start_time"
@@ -77,6 +77,10 @@ ActiveRecord::Schema.define(:version => 41) do
     t.string   "swift_conf_module_revision"
     t.string   "cinder_conf_module_revision"
     t.string   "neutron_conf_module_revision"
+    t.string   "ceilometer_revision"
+    t.string   "heat_revision"
+    t.string   "ceilometer_conf_module_revision"
+    t.string   "heat_conf_module_revision"
   end
 
   create_table "node_configs", :force => true do |t|

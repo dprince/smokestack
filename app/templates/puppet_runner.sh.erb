@@ -21,6 +21,12 @@ export SWIFT_SERVER_NAME=${SWIFT_SERVER_NAME:-"nova1"}
 # Neutron API HOST (defaults to nova1) (only set if neutron is enabled)
 #export NEUTRON_SERVER_NAME=${NEUTRON_SERVER_NAME:-"nova1"}
 
+# Ceilometer HOST (defaults to nova1)
+export CEILOMETER_SERVER_NAME=${CEILOMETER_SERVER_NAME:-"nova1"}
+
+# Heat HOST (defaults to nova1)
+export HEAT_SERVER_NAME=${HEAT_SERVER_NAME:-"nova1"}
+
 # Server name within the group which will be used to build packages
 export TEST_SUITE_SERVER_NAME=${TEST_SUITE_SERVER_NAME:-"nova1"}
 
@@ -88,11 +94,14 @@ stop_metric
     cp -a "$NODES_CONFIG_DIR" config/puppet-configs/smokestack
    
     rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
- 
-    start_metric "Puppet Install"
-    rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet failed."
+
+    rake -T
+
+    start_metric "Puppet Modules"
+    rake puppet:modules SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet modules failed."
     stop_metric
 
+    start_metric "Keystone Configure"
     NEUTRON_API_ENDPOINT=${NEUTRON_SERVER_NAME:-"nova1"}
     rake keystone:configure \
         SERVER_NAME="$KEYSTONE_SERVER_NAME" \
@@ -101,7 +110,14 @@ stop_metric
         NOVA_HOST="$NOVA_SERVER_NAME" \
         SWIFT_HOST="$SWIFT_SERVER_NAME" \
         KEYSTONE_HOST="$KEYSTONE_SERVER_NAME" \
-        NEUTRON_HOST="$NEUTRON_API_ENDPOINT" 
+        NEUTRON_HOST="$NEUTRON_API_ENDPOINT" \
+        CEILOMETER_HOST="$CEILOMETER_SERVER_NAME" \
+        HEAT_HOST="$HEAT_SERVER_NAME"
+    stop_metric
+
+    start_metric "Puppet Run"
+    rake puppet:run || fail "Puppet run failed."
+    stop_metric
 
     start_metric "Load Glance Images"
     rake glance:load_images SERVER_NAME="$GLANCE_SERVER_NAME"

@@ -44,10 +44,24 @@ NEUTRON_REVISION=${35}
 NEUTRON_PACKAGER_URL=${36:-$NEUTRON_PACKAGER_URL}
 NEUTRON_PACKAGER_BRANCH=${37:-$NEUTRON_PACKAGER_BRANCH}
 
-CONFIG_TEMPLATE_DESCRIPTION=${38}
-COOKBOOK_URL=${39}
-NODES_CONFIG_DIR=${40}
-SERVER_GROUP_JSON_CONF=${41}
+CEILOMETER_URL=${38}
+CEILOMETER_BRANCH=${39}
+CEILOMETER_MERGE_TRUNK=${40}
+CEILOMETER_REVISION=${41}
+CEILOMETER_PACKAGER_URL=${42:-$CEILOMETER_PACKAGER_URL}
+CEILOMETER_PACKAGER_BRANCH=${43:-$CEILOMETER_PACKAGER_BRANCH}
+
+HEAT_URL=${44}
+HEAT_BRANCH=${45}
+HEAT_MERGE_TRUNK=${46}
+HEAT_REVISION=${47}
+HEAT_PACKAGER_URL=${48:-$HEAT_PACKAGER_URL}
+HEAT_PACKAGER_BRANCH=${49:-$HEAT_PACKAGER_BRANCH}
+
+CONFIG_TEMPLATE_DESCRIPTION=${50}
+COOKBOOK_URL=${51}
+NODES_CONFIG_DIR=${52}
+SERVER_GROUP_JSON_CONF=${53}
 
 # Setup default branches to merge if MERGE_TRUNK is checked
 # These may be overridden by some environements
@@ -57,6 +71,8 @@ KEYSTONE_GIT_MASTER_BRANCH=${KEYSTONE_GIT_MASTER_BRANCH:-"master"}
 SWIFT_GIT_MASTER_BRANCH=${SWIFT_GIT_MASTER_BRANCH:-"master"}
 CINDER_GIT_MASTER_BRANCH=${CINDER_GIT_MASTER_BRANCH:-"master"}
 NEUTRON_GIT_MASTER_BRANCH=${NEUTRON_GIT_MASTER_BRANCH:-"master"}
+CEILOMETER_GIT_MASTER_BRANCH=${CEILOMETER_GIT_MASTER_BRANCH:-"master"}
+HEAT_GIT_MASTER_BRANCH=${HEAT_GIT_MASTER_BRANCH:-"master"}
 
 # Setup default packager branches
 # These may be overridden by some environements
@@ -66,6 +82,8 @@ KEYSTONE_PACKAGER_BRANCH=${KEYSTONE_PACKAGER_BRANCH:-"master"}
 SWIFT_PACKAGER_BRANCH=${SWIFT_PACKAGER_BRANCH:-"master"}
 CINDER_PACKAGER_BRANCH=${CINDER_PACKAGER_BRANCH:-"master"}
 NEUTRON_PACKAGER_BRANCH=${NEUTRON_PACKAGER_BRANCH:-"master"}
+CEILOMETER_PACKAGER_BRANCH=${CEILOMETER_PACKAGER_BRANCH:-"master"}
+HEAT_PACKAGER_BRANCH=${HEAT_PACKAGER_BRANCH:-"master"}
 
 GIT_CACHE_DIR=${GIT_CACHE_DIR:-"$HOME/.smokestack_git_cache"}
 
@@ -493,6 +511,67 @@ function build_packages {
         CACHEURL="$RPM_CACHEURL" \
         || build_fail "Failed to build neutronclient packages."
     stop_metric
+
+    if [ -n "$BUILD_CEILOMETER" ]; then
+        local CEILOMETER_MERGE_MASTER=""
+        if [[ "$CEILOMETER_MERGE_TRUNK" == "true" ]]; then
+            CEILOMETER_MERGE_MASTER="true"
+        fi
+        start_metric "Build Ceilometer"
+        rake ceilometer:build_packages SOURCE_DIR="$TMP_DIR/ceilometer_source" \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            RPM_PACKAGER_URL="$CEILOMETER_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$CEILOMETER_PACKAGER_BRANCH" \
+            SOURCE_URL="$CEILOMETER_URL" \
+            SOURCE_BRANCH="$CEILOMETER_BRANCH" \
+            GIT_MASTER="$CEILOMETER_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$CEILOMETER_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$CEILOMETER_MERGE_MASTER" \
+            REVISION="$CEILOMETER_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || build_fail "Failed to build ceilometer packages."
+        stop_metric
+    fi
+
+    start_metric "Build Python-Ceilometerclient"
+    rake ceilometer:build_python_ceilometerclient \
+        SERVER_NAME="$BUILD_SERVER_NAME" \
+        SOURCE_URL="$CEILOMETERCLIENT_GIT_MASTER" \
+        RPM_PACKAGER_URL="$CEILOMETERCLIENT_PACKAGER_URL" \
+        CACHEURL="$RPM_CACHEURL" \
+        || build_fail "Failed to build ceilometerclient packages."
+    stop_metric
+
+    if [ -n "$BUILD_HEAT" ]; then
+        local HEAT_MERGE_MASTER=""
+        if [[ "$HEAT_MERGE_TRUNK" == "true" ]]; then
+            HEAT_MERGE_MASTER="true"
+        fi
+        start_metric "Build Heat"
+        rake heat:build_packages SOURCE_DIR="$TMP_DIR/heat_source" \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            RPM_PACKAGER_URL="$HEAT_PACKAGER_URL" \
+            RPM_PACKAGER_BRANCH="$HEAT_PACKAGER_BRANCH" \
+            SOURCE_URL="$HEAT_URL" \
+            SOURCE_BRANCH="$HEAT_BRANCH" \
+            GIT_MASTER="$HEAT_GIT_MASTER" \
+            GIT_MERGE_MASTER_BRANCH="$HEAT_GIT_MASTER_BRANCH" \
+            MERGE_MASTER="$HEAT_MERGE_MASTER" \
+            REVISION="$HEAT_REVISION" \
+            CACHEURL="$RPM_CACHEURL" \
+            || build_fail "Failed to build heat packages."
+        stop_metric
+
+        start_metric "Build Python-Heatclient"
+        rake heat:build_python_heatclient \
+            SERVER_NAME="$BUILD_SERVER_NAME" \
+            SOURCE_URL="$HEATCLIENT_GIT_MASTER" \
+            RPM_PACKAGER_URL="$HEATCLIENT_PACKAGER_URL" \
+            CACHEURL="$RPM_CACHEURL" \
+            || build_fail "Failed to build heatclient packages."
+        stop_metric
+
+    fi
 
 }
 

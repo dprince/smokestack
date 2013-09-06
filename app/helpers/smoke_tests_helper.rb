@@ -75,6 +75,20 @@ module SmokeTestsHelper
         else
           'Neutron: master'
         end
+      when 'ceilometer' then
+        builder = smoke_test.package_builders.select{|x| x.type == 'CeilometerPackageBuilder'}[0]
+        if builder then
+          'Ceilometer: ' + builder.branch
+        else
+          'Ceilometer: master'
+        end
+      when 'heat' then
+        builder = smoke_test.package_builders.select{|x| x.type == 'HeatPackageBuilder'}[0]
+        if builder then
+          'Heat: ' + builder.branch
+        else
+          'Heat: master'
+        end
       when 'puppet-nova' then
         conf_module = smoke_test.config_modules.select{|x| x.type == 'NovaConfigModule'}[0]
         if conf_module then
@@ -116,6 +130,20 @@ module SmokeTestsHelper
           'Puppet Neutron: ' + conf_module.branch
         else
           'Puppet Neutron: master'
+        end
+      when 'puppet-ceilometer' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'CeilometerConfigModule'}[0]
+        if conf_module then
+          'Puppet Ceilometer: ' + conf_module.branch
+        else
+          'Puppet Ceilometer: master'
+        end
+      when 'puppet-heat' then
+        conf_module = smoke_test.config_modules.select{|x| x.type == 'HeatConfigModule'}[0]
+        if conf_module then
+          'Puppet Heat: ' + conf_module.branch
+        else
+          'Puppet Heat: master'
         end
       else ': master'
     end 

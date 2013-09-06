@@ -25,6 +25,12 @@ class SmokeTest < ActiveRecord::Base
   has_one :neutron_package_builder
   accepts_nested_attributes_for :neutron_package_builder
 
+  has_one :ceilometer_package_builder
+  accepts_nested_attributes_for :ceilometer_package_builder
+
+  has_one :heat_package_builder
+  accepts_nested_attributes_for :heat_package_builder
+
   # config modules (puppet, etc)
   has_one :nova_config_module
   accepts_nested_attributes_for :nova_config_module
@@ -43,6 +49,12 @@ class SmokeTest < ActiveRecord::Base
 
   has_one :neutron_config_module
   accepts_nested_attributes_for :neutron_config_module
+
+  has_one :ceilometer_config_module
+  accepts_nested_attributes_for :ceilometer_config_module
+
+  has_one :heat_config_module
+  accepts_nested_attributes_for :heat_config_module
 
   has_and_belongs_to_many :config_templates
   has_and_belongs_to_many :test_suites
@@ -88,6 +100,10 @@ class SmokeTest < ActiveRecord::Base
       self.project = 'cinder'
     elsif self.neutron_package_builder and self.neutron_package_builder.branch != 'master' then
       self.project = 'neutron'
+    elsif self.ceilometer_package_builder and self.ceilometer_package_builder.branch != 'master' then
+      self.project = 'ceilometer'
+    elsif self.heat_package_builder and self.heat_package_builder.branch != 'master' then
+      self.project = 'heat'
     end
 
     # Puppet module project settings
@@ -103,6 +119,10 @@ class SmokeTest < ActiveRecord::Base
       self.project = 'puppet-cinder'
     elsif self.neutron_config_module and self.neutron_config_module.branch != 'master' then
       self.project = 'puppet-neutron'
+    elsif self.ceilometer_config_module and self.ceilometer_config_module.branch != 'master' then
+      self.project = 'puppet-ceilometer'
+    elsif self.heat_config_module and self.heat_config_module.branch != 'master' then
+      self.project = 'puppet-heat'
     end
 
   end
