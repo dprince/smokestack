@@ -127,7 +127,7 @@ stop_metric
                              REVISION="$NOVA_REVISION"
  
     start_metric "Puppet Modules"
-    rake puppet:install SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet modules failed."
+    rake puppet:modules SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet modules failed."
     stop_metric
 
     start_metric "Keystone Configure"
