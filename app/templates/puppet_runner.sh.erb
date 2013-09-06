@@ -95,8 +95,6 @@ stop_metric
    
     rake create_package_repo SERVER_NAME="$BUILD_SERVER_NAME"
 
-    rake -T
-
     start_metric "Puppet Modules"
     rake puppet:modules SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet modules failed."
     stop_metric
