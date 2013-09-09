@@ -1,7 +1,7 @@
 class ConfigTemplatesController < ApplicationController
 
-  before_filter :require_admin
-  before_filter :authorize
+  before_filter :require_admin, :except => :index
+  before_filter :authorize, :except => :index
   layout "default", :only => :index
 
   # GET /config_templates
@@ -14,8 +14,8 @@ class ConfigTemplatesController < ApplicationController
     else
       respond_to do |format|
         format.html # index.html.erb
-        format.json  { render :json => @config_templates }
-        format.xml  { render :xml => @config_templates }
+        format.json  { render :json => @config_templates, :only => [:id, :name, :description] }
+        format.xml  { render :xml => @config_templates, :only => [:id, :name, :description] }
       end
     end
   end

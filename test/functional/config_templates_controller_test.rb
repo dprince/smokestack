@@ -17,9 +17,15 @@ class ConfigTemplatesControllerTest < ActionController::TestCase
     assert_not_nil assigns(:config_templates)
   end
 
-  test "should not get index" do
-    get :index
-    assert_response 401
+  test "should get index" do
+    # we allow public index queries but limit it to :id, :name, :description
+    get :index, :format => :json
+    assert_response 200
+    templates = JSON.parse(@response.body)
+    assert_equal "Libvirt Postgres", templates[0]['name']
+    assert_equal "Libvirt QEME w/ Postgres", templates[0]['description']
+    assert_nil templates[0]['server_group_json']
+    assert_nil templates[0]['environment']
   end
 
   test "should get new as admin" do
