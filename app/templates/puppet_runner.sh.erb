@@ -110,7 +110,7 @@ stop_metric
         KEYSTONE_HOST="$KEYSTONE_SERVER_NAME" \
         NEUTRON_HOST="$NEUTRON_API_ENDPOINT" \
         CEILOMETER_HOST="$CEILOMETER_SERVER_NAME" \
-        HEAT_HOST="$HEAT_SERVER_NAME"
+        HEAT_HOST="$HEAT_SERVER_NAME" || fail "Keystone config failed."
     stop_metric
 
     start_metric "Puppet Run"
