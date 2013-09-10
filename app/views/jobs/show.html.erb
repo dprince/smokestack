@@ -1,13 +1,3 @@
-<script type="text/javascript">
-
-$(document).ready(function() {
-
-  $("#job_accordion").accordion({ fillSpace: false, autoHeight: false, clearStyle: true });
-
-});
-
-</script>
-
 <% if notice then %>
 <p id="notice"><%= notice %></p>
 <% end %>
@@ -30,10 +20,10 @@ $(document).ready(function() {
 <% end %>
 </div>
 <% if @job.stdout or @job.stderr then %>
-<div id="job_accordion">
+<div>
 
 <% if @job.stdout then %>
-<h3><a href="#">Standard Out</a></h3>
+<h3>Standard Out</h3>
 <div>
 <form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
 <input type="hidden" name="language" value="text"/>
@@ -48,7 +38,7 @@ $(document).ready(function() {
 <% end %>
 
 <% if @job.stderr then %>
-<h3><a href="#">Standard Error</a></h3>
+<h3>Standard Error</h3>
 <div>
 <form action="<%= ENV['PASTE_SITE_URL'] %>" method="POST" target="_blank">
 <input type="hidden" name="language" value="text"/>

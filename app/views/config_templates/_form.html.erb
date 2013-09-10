@@ -1,13 +1,3 @@
-<script type="text/javascript">
-
-$(document).ready(function() {
-
-  $("#config_template_accordion").accordion({ fillSpace: false, autoHeight: false, clearStyle: true });
-
-});
-
-</script>
-
 <div id="config-template-error-messages" />
 
 <%= form_for(@config_template, :html => { :id => "config-template-form", :onsubmit => "create_config_template(); return false;", :class => "form-inline" } ) do |f| %>
@@ -43,14 +33,14 @@ $(document).ready(function() {
     <%= f.text_field :cookbook_repo_url, :size => "60" %>
   </div>
 
-<div id="config_template_accordion">
-  <h3><a href="#">Server Group</a></h3>
+<div>
+  <h3>Server Group</h3>
   <div>
     <%= f.label :server_group_json %>
     <%= f.text_area :server_group_json, :cols => "80", :class => "wide" %>
   </div>
 
-  <h3><a href="#">Environment</a></h3>
+  <h3>Environment</h3>
   <div>
     <%= f.label :environment %>
     <%= f.text_area :environment, :cols => "80", :class => "wide" %>
