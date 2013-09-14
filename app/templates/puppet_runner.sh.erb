@@ -135,7 +135,7 @@ stop_metric
         export TORPEDO_PING_TIMEOUT=${TORPEDO_PING_TIMEOUT:-"60"}
         export TORPEDO_TEST_REBUILD_SERVER=${TORPEDO_TEST_REBUILD_SERVER:-"true"}
         export TORPEDO_FLAVOR_REF=${TORPEDO_FLAVOR_REF:-"1"}
-        export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"ami-tty"}
+        export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"cirros"}
 
         rake torpedo:fire SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
         { rake tail_logs; test_fail "Hit by Torpedo."; }
