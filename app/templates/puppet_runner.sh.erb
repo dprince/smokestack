@@ -48,6 +48,8 @@ EOF_COPY_HOSTS
 
 function delete_group {
 
+rake tail_logs
+
 #for debugging purposes you can touch this file to hang the group
 rake ssh bash <<-EOF_BASH
 until [ ! -f /tmp/do_not_delete ]; do
@@ -70,12 +72,24 @@ function setup {
 
 }
 
+function create_group {
+    local COUNT=0
+    echo "Creating Server group..."
+    start_metric "Create Server Group"
+    until rake kytoon:create; do
+        echo "Failed to create server group. Retrying..."
+        [ "$COUNT" -eq "3" ] && fail "Failed to create server group."
+        COUNT=$(( $COUNT + 1 ))
+        sleep $(( $COUNT * 5 ))
+    done
+    stop_metric
+}
+
 function run_job {
 
-trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
-start_metric "Create Server Group"
-if rake kytoon:create; then
-stop_metric
+    trap "{ delete_group; cd /tmp; rm -Rf $TMP_DIR; }" INT TERM EXIT
+
+    create_group
 
     rake configure_package_mirrors
 
@@ -135,10 +149,9 @@ stop_metric
         export TORPEDO_PING_TIMEOUT=${TORPEDO_PING_TIMEOUT:-"60"}
         export TORPEDO_TEST_REBUILD_SERVER=${TORPEDO_TEST_REBUILD_SERVER:-"true"}
         export TORPEDO_FLAVOR_REF=${TORPEDO_FLAVOR_REF:-"1"}
-        export TORPEDO_IMAGE_NAME=${TORPEDO_IMAGE_NAME:-"cirros"}
 
         rake torpedo:fire SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
-        { rake tail_logs; test_fail "Hit by Torpedo."; }
+            test_fail "Hit by Torpedo."
         stop_metric
     fi
                
@@ -148,7 +161,7 @@ stop_metric
         rake nova:smoke_tests_fedora \
             SERVER_NAME="$TEST_SUITE_SERVER_NAME" \
             NO_VOLUME="$SMOKE_TESTS_DISABLE_VOLUME" || \
-        { rake tail_logs; test_fail "Smoke tests failed."; }
+            test_fail "Smoke tests failed."
         stop_metric
     fi
 
@@ -156,7 +169,7 @@ stop_metric
     if [ -n "$RUN_TEMPEST" ]; then
         start_metric "Tempest Smoke"
         rake tempest SERVER_NAME="$TEST_SUITE_SERVER_NAME" || \
-        { rake tail_logs; test_fail "Caught in a Tempest."; }
+            test_fail "Caught in a Tempest."
         stop_metric
     fi
 
@@ -166,11 +179,6 @@ stop_metric
             CACHEURL=$RPM_CACHEURL \
             SERVER_NAME="$BUILD_SERVER_NAME"
     fi
-
-else
-    rake tail_logs
-    fail "Failed to create server group."
-fi
 
 }
 
