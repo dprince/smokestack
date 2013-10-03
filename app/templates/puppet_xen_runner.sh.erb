@@ -124,7 +124,8 @@ stop_metric
                              GIT_MASTER="$NOVA_GIT_MASTER" \
                              GIT_MERGE_MASTER_BRANCH="$NOVA_GIT_MASTER_BRANCH" \
                              MERGE_MASTER="$NOVA_MERGE_MASTER" \
-                             REVISION="$NOVA_REVISION"
+                             REVISION="$NOVA_REVISION" \
+                             || fail "Failed to install dom0 Xen plugins."
  
     start_metric "Puppet Modules"
     rake puppet:modules SOURCE_URL="$COOKBOOK_URL" PUPPET_CONFIG="smokestack" || fail "Puppet modules failed."
