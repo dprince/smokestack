@@ -1,6 +1,8 @@
 # SmokeStack
 
-Smoke test the OpenStack
+Smoke test the OpenStack (Archived)
+
+** This project is no longer maintained.
 
 ## Description
 
